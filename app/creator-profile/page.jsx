@@ -5,10 +5,19 @@ export default function CreatorProfilePage() {
     <main className="creatorPage">
       <nav className="nav">
         <div className="brand">
-          <div className="brandMark">
-            <span></span>
+          <img
+            src="/logo-ripple.png"
+            alt="Impact Creator Hub logo"
+            className="brandLogo"
+          />
+
+          <div>
+            <strong>Impact Creator Hub</strong>
+            <p className="brandTagline">
+              <span>Build your brand. </span>
+              <span>Grow your impact.</span>
+            </p>
           </div>
-          <strong>Impact Creator Hub</strong>
         </div>
 
         <div className="navLinks">
@@ -305,44 +314,20 @@ export default function CreatorProfilePage() {
           font-size: 18px;
         }
 
-        .brandMark {
-          width: 38px;
-          height: 38px;
-          background: #050505;
-          border-radius: 8px;
-          display: grid;
-          place-items: center;
-          position: relative;
-          overflow: hidden;
-          box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+        .brandLogo {
+          width: 56px;
+          height: 56px;
+          object-fit: contain;
         }
 
-        .brandMark::before,
-        .brandMark::after,
-        .brandMark span {
-          content: "";
-          position: absolute;
-          border-radius: 50%;
-          border-style: solid;
-          border-color: #00d8e8;
-          border-right-color: transparent;
-        }
-
-        .brandMark::before {
-          inset: 5px;
-          border-width: 4px;
-        }
-
-        .brandMark::after {
-          inset: 12px;
-          border-width: 4px;
-        }
-
-        .brandMark span {
-          width: 8px;
-          height: 8px;
-          border-width: 4px;
-          border-right-color: #00d8e8;
+        .brandTagline {
+          margin: 2px 0 0;
+          color: #f28c82;
+          font-size: 9px;
+          font-weight: 800;
+          letter-spacing: 0.2em;
+          line-height: 1.2;
+          text-transform: uppercase;
         }
 
         .navLinks {
