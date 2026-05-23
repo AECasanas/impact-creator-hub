@@ -1,2 +1,5 @@
-export { dynamic } from "../onboarding/creator/page";
-export { default } from "../onboarding/creator/page";
+import CreatorOnboardingPage from "../onboarding/creator/page";
+
+export const dynamic = "force-dynamic";
+
+export default CreatorOnboardingPage;
