@@ -34,21 +34,38 @@ const designChoices = [
 ];
 
 const logoColors = [
-  ["Electric Cyan", "#00e8f0"],
-  ["Cobalt Blue", "#0877ff"],
-  ["Royal Blue", "#1f4cff"],
-  ["Teal Blue", "#13d2d8"],
-  ["Vivid Red", "#ff0718"],
-  ["Warm Orange", "#ff7a00"],
-  ["Amber Orange", "#ff9a0a"],
-  ["Emerald Green", "#00e95d"],
+  {
+    name: "Orange",
+    color: "#ff6a00",
+    image: "/logo-colors/impact-logo-orange.svg",
+  },
+  {
+    name: "Gray",
+    color: "#9a9a9a",
+    image: "/logo-colors/impact-logo-gray.svg",
+  },
+  {
+    name: "Red",
+    color: "#e00016",
+    image: "/logo-colors/impact-logo-red.svg",
+  },
+  {
+    name: "White",
+    color: "#ffffff",
+    image: "/logo-colors/impact-logo-white.svg",
+  },
+  {
+    name: "Purple",
+    color: "#8a3ffc",
+    image: "/logo-colors/impact-logo-purple.svg",
+  },
 ];
 
 export default function FreeCreatorProfileSetupPage() {
   const [selectedDesign, setSelectedDesign] = useState(designChoices[0].title);
-  const [selectedLogoColor, setSelectedLogoColor] = useState(logoColors[0][0]);
-  const selectedLogoHex =
-    logoColors.find(([name]) => name === selectedLogoColor)?.[1] ?? logoColors[0][1];
+  const [selectedLogoColor, setSelectedLogoColor] = useState(logoColors[0].name);
+  const selectedLogo =
+    logoColors.find((logo) => logo.name === selectedLogoColor) ?? logoColors[0];
 
   return (
     <main className="freeSetupPage">
@@ -144,19 +161,19 @@ export default function FreeCreatorProfileSetupPage() {
           </div>
 
           <div className="logoGrid">
-            {logoColors.map(([name, color]) => (
+            {logoColors.map((logo) => (
               <button
-                className={`logoOption ${selectedLogoColor === name ? "selected" : ""}`}
-                style={{ "--logo-color": color }}
+                className={`logoOption ${selectedLogoColor === logo.name ? "selected" : ""}`}
+                style={{ "--logo-color": logo.color }}
                 type="button"
-                aria-pressed={selectedLogoColor === name}
-                onClick={() => setSelectedLogoColor(name)}
-                key={name}
+                aria-pressed={selectedLogoColor === logo.name}
+                onClick={() => setSelectedLogoColor(logo.name)}
+                key={logo.name}
               >
                 <span className="logoTile">
-                  <span className="logoMark"></span>
+                  <img className="logoImage" src={logo.image} alt={`${logo.name} Impact logo`} />
                 </span>
-                <strong>{name}</strong>
+                <strong>{logo.name}</strong>
               </button>
             ))}
           </div>
@@ -170,8 +187,8 @@ export default function FreeCreatorProfileSetupPage() {
               Logo color: <strong>{selectedLogoColor}</strong>
             </span>
           </div>
-          <div className="summaryLogo" style={{ "--logo-color": selectedLogoHex }}>
-            <span className="logoMark"></span>
+          <div className="summaryLogo" style={{ "--logo-color": selectedLogo.color }}>
+            <img src={selectedLogo.image} alt={`${selectedLogo.name} Impact logo preview`} />
           </div>
         </section>
 
@@ -503,22 +520,22 @@ export default function FreeCreatorProfileSetupPage() {
 
         .logoGrid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 18px;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 14px;
         }
 
         .logoOption {
           display: grid;
-          gap: 14px;
+          gap: 10px;
           justify-items: center;
           border: 1px solid rgba(255, 255, 255, 0.12);
-          border-radius: 24px;
+          border-radius: 20px;
           background: rgba(255, 255, 255, 0.06);
           color: var(--logo-color);
           cursor: pointer;
           font: inherit;
           font-weight: 900;
-          padding: 20px;
+          padding: 14px;
           transition:
             border-color 160ms ease,
             box-shadow 160ms ease,
@@ -534,43 +551,21 @@ export default function FreeCreatorProfileSetupPage() {
         }
 
         .logoTile {
-          width: 142px;
-          height: 112px;
+          width: 108px;
+          height: 90px;
           display: grid;
           place-items: center;
-          border-radius: 18px;
+          border-radius: 14px;
           background: #020202;
           box-shadow: inset 0 0 28px rgba(255, 255, 255, 0.03);
+          overflow: hidden;
         }
 
-        .logoMark,
-        .logoMark::before,
-        .logoMark::after {
-          content: "";
-          position: absolute;
-          border-radius: 50%;
-          border-style: solid;
-          border-color: var(--logo-color);
-          border-right-color: transparent;
-          filter: drop-shadow(0 0 9px var(--logo-color));
-        }
-
-        .logoMark {
-          position: relative;
-          width: 78px;
-          height: 78px;
-          border-width: 10px;
-        }
-
-        .logoMark::before {
-          inset: 16px;
-          border-width: 8px;
-        }
-
-        .logoMark::after {
-          inset: 35px;
-          border-width: 8px;
-          border-right-color: var(--logo-color);
+        .logoImage {
+          width: 100%;
+          height: 100%;
+          display: block;
+          object-fit: cover;
         }
 
         .choiceSummary {
@@ -607,13 +602,22 @@ export default function FreeCreatorProfileSetupPage() {
 
         .summaryLogo {
           --logo-color: #00e8f0;
-          width: 122px;
-          height: 122px;
+          width: 112px;
+          height: 112px;
           flex: 0 0 auto;
           display: grid;
           place-items: center;
-          border-radius: 26px;
+          border-radius: 24px;
           background: #020202;
+          box-shadow: 0 0 28px color-mix(in srgb, var(--logo-color) 22%, transparent);
+          overflow: hidden;
+        }
+
+        .summaryLogo img {
+          width: 100%;
+          height: 100%;
+          display: block;
+          object-fit: cover;
         }
 
         .nextStepBanner {

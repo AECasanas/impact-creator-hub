@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Impact logo white">
+  <rect width="512" height="512" fill="#000000"/>
+  <g fill="none" stroke="#ffffff" stroke-linecap="butt" filter="url(#glow)">
+    <circle cx="256" cy="256" r="166" stroke-width="38" stroke-dasharray="930 112" stroke-dashoffset="56"/>
+    <circle cx="256" cy="256" r="104" stroke-width="30" stroke-dasharray="570 84" stroke-dashoffset="42"/>
+    <circle cx="256" cy="256" r="48" stroke-width="28"/>
+  </g>
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
