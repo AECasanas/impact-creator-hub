@@ -306,20 +306,43 @@ export default function CreatorProfilePage() {
         }
 
         .brandMark {
-          width: 34px;
-          height: 34px;
-          border: 4px solid #16c7c9;
-          border-radius: 50%;
+          width: 38px;
+          height: 38px;
+          background: #050505;
+          border-radius: 8px;
           display: grid;
           place-items: center;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+        }
+
+        .brandMark::before,
+        .brandMark::after,
+        .brandMark span {
+          content: "";
+          position: absolute;
+          border-radius: 50%;
+          border-style: solid;
+          border-color: #00d8e8;
+          border-right-color: transparent;
+        }
+
+        .brandMark::before {
+          inset: 5px;
+          border-width: 4px;
+        }
+
+        .brandMark::after {
+          inset: 12px;
+          border-width: 4px;
         }
 
         .brandMark span {
-          width: 12px;
-          height: 12px;
-          border: 3px solid #16c7c9;
-          border-radius: 50%;
-          display: block;
+          width: 8px;
+          height: 8px;
+          border-width: 4px;
+          border-right-color: #00d8e8;
         }
 
         .navLinks {
@@ -702,7 +725,7 @@ export default function CreatorProfilePage() {
         }
 
         .postcardSection {
-          max-width: 1060px;
+          max-width: 880px;
           margin: 34px auto 24px;
         }
 
@@ -720,15 +743,15 @@ export default function CreatorProfilePage() {
         }
 
         .postcard {
-          height: 560px;
+          height: 430px;
           background:
             radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.45), transparent 32%),
             linear-gradient(135deg, #f4dfbd 0%, #efd3aa 100%);
           border: 1px solid #cfaf7f;
-          box-shadow: 0 18px 38px rgba(74, 52, 24, 0.18);
+          box-shadow: 0 16px 30px rgba(74, 52, 24, 0.14);
           position: relative;
           overflow: hidden;
-          padding: 54px 58px;
+          padding: 34px 38px;
           color: #252018;
         }
 
@@ -745,11 +768,11 @@ export default function CreatorProfilePage() {
 
         .postTopLeft {
           position: absolute;
-          top: 48px;
-          left: 58px;
+          top: 34px;
+          left: 38px;
           font-family: Georgia, serif;
           letter-spacing: 0.05em;
-          font-size: 14px;
+          font-size: 11px;
           z-index: 1;
         }
 
@@ -760,50 +783,50 @@ export default function CreatorProfilePage() {
 
         .postTopLeft span {
           margin-top: 4px;
-          font-size: 13px;
+          font-size: 10px;
         }
 
         .postTitle {
           position: absolute;
-          top: 54px;
+          top: 36px;
           left: 50%;
           transform: translateX(-50%);
           font-family: Georgia, "Times New Roman", serif;
-          font-size: 46px;
+          font-size: 30px;
           letter-spacing: 0.13em;
           z-index: 1;
         }
 
         .postmark {
           position: absolute;
-          top: 82px;
-          right: 210px;
-          width: 112px;
-          height: 112px;
-          border: 3px solid rgba(40, 35, 28, 0.75);
+          top: 72px;
+          right: 152px;
+          width: 82px;
+          height: 82px;
+          border: 2px solid rgba(40, 35, 28, 0.72);
           border-radius: 50%;
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
           font-family: "Courier New", monospace;
-          font-size: 14px;
+          font-size: 10px;
           transform: rotate(-12deg);
           z-index: 1;
         }
 
         .postmark strong {
-          font-size: 20px;
-          margin: 3px 0;
+          font-size: 14px;
+          margin: 2px 0;
         }
 
         .stamp {
           position: absolute;
-          top: 48px;
-          right: 58px;
-          width: 105px;
-          height: 122px;
-          border: 3px dashed rgba(40, 35, 28, 0.65);
+          top: 34px;
+          right: 38px;
+          width: 74px;
+          height: 88px;
+          border: 2px dashed rgba(40, 35, 28, 0.65);
           background: linear-gradient(135deg, #294f76, #10243f);
           color: white;
           display: flex;
@@ -815,20 +838,20 @@ export default function CreatorProfilePage() {
         }
 
         .stamp span {
-          font-size: 28px;
+          font-size: 18px;
           letter-spacing: 0.08em;
         }
 
         .stamp small {
-          font-size: 24px;
-          margin-top: 10px;
+          font-size: 16px;
+          margin-top: 6px;
         }
 
         .postDivider {
           position: absolute;
-          top: 185px;
-          bottom: 58px;
-          left: 59%;
+          top: 134px;
+          bottom: 38px;
+          left: 60%;
           width: 2px;
           background: rgba(34, 30, 25, 0.78);
           z-index: 1;
@@ -836,48 +859,48 @@ export default function CreatorProfilePage() {
 
         .postMessage {
           position: absolute;
-          left: 58px;
-          top: 178px;
-          width: 50%;
+          left: 38px;
+          top: 132px;
+          width: 51%;
           z-index: 1;
           font-family: "Segoe Script", "Brush Script MT", cursive;
-          font-size: 30px;
-          line-height: 1.55;
+          font-size: 19px;
+          line-height: 1.35;
           color: #173b78;
         }
 
         .postMessage p {
-          margin: 0 0 14px;
+          margin: 0 0 10px;
         }
 
         .postMessage p:first-child {
-          font-size: 36px;
+          font-size: 24px;
         }
 
         .signature {
           text-align: right;
-          padding-right: 40px;
+          padding-right: 24px;
         }
 
         .postContact {
           position: absolute;
-          left: 63%;
-          top: 242px;
-          width: 30%;
+          left: 64%;
+          top: 176px;
+          width: 29%;
           z-index: 1;
           font-family: "Segoe Script", "Brush Script MT", cursive;
           color: #173b78;
         }
 
         .postContact h3 {
-          font-size: 34px;
-          margin: 0 0 14px;
+          font-size: 23px;
+          margin: 0 0 10px;
           font-weight: 400;
         }
 
         .postContact p {
-          font-size: 26px;
-          margin: 0 0 12px;
+          font-size: 17px;
+          margin: 0 0 8px;
           line-height: 1.2;
         }
 
@@ -1056,7 +1079,7 @@ export default function CreatorProfilePage() {
 
           .postcard {
             height: auto;
-            padding: 40px 28px;
+            padding: 34px 24px;
           }
 
           .postTopLeft,
@@ -1078,27 +1101,27 @@ export default function CreatorProfilePage() {
 
           .postTitle {
             text-align: center;
-            margin: 28px 0;
+            margin: 22px 0;
           }
 
           .postmark,
           .stamp {
-            margin: 18px auto;
+            margin: 14px auto;
           }
 
           .postDivider {
             width: 100%;
             height: 2px;
-            margin: 30px 0;
+            margin: 24px 0;
           }
 
           .postMessage,
           .postContact {
-            font-size: 24px;
+            font-size: 20px;
           }
 
           .postContact p {
-            font-size: 22px;
+            font-size: 18px;
           }
 
           .upgradeBanner {
