@@ -344,13 +344,13 @@ export default function FreeCreatorProfileSetupPage() {
                   ) : (
                     <span>Upload Photo</span>
                   )}
-                  <img
-                    className="photoLogoBadge"
-                    src={selectedLogo.image}
-                    alt=""
-                    onError={(event) => handleLogoImageError(event, selectedLogo)}
-                  />
                 </div>
+                <img
+                  className="photoLogoBadge"
+                  src={selectedLogo.image}
+                  alt=""
+                  onError={(event) => handleLogoImageError(event, selectedLogo)}
+                />
                 <div className="bannerText">
                   <strong>Your Name</strong>
                   <span>Food. Travel. Lifestyle.</span>
@@ -479,13 +479,13 @@ export default function FreeCreatorProfileSetupPage() {
                   ) : (
                     <span>Photo</span>
                   )}
-                  <img
-                    className="summaryPhotoLogoBadge"
-                    src={selectedLogo.image}
-                    alt=""
-                    onError={(event) => handleLogoImageError(event, selectedLogo)}
-                  />
                 </div>
+                <img
+                  className="summaryPhotoLogoBadge"
+                  src={selectedLogo.image}
+                  alt=""
+                  onError={(event) => handleLogoImageError(event, selectedLogo)}
+                />
                 <div className="summaryMiniText">
                   <strong>Your Name</strong>
                   <span>{selectedDesign}</span>
@@ -974,10 +974,10 @@ export default function FreeCreatorProfileSetupPage() {
           display: grid;
           justify-items: center;
           gap: 8px;
+          overflow: visible;
         }
 
         .summaryPhotoCircle {
-          position: relative;
           width: 155px;
           height: 155px;
           display: grid;
@@ -1001,13 +1001,15 @@ export default function FreeCreatorProfileSetupPage() {
 
         .summaryPhotoLogoBadge {
           position: absolute;
-          right: -4px;
-          bottom: -4px;
-          width: 42px !important;
-          height: 42px !important;
+          left: calc(50% + 38px);
+          top: 112px;
+          z-index: 2;
+          width: 48px !important;
+          height: 48px !important;
           border: 4px solid #ffffff;
           border-radius: 50%;
           background: #000000;
+          object-fit: cover;
           box-shadow: 0 8px 18px rgba(16, 23, 47, 0.22);
         }
 
@@ -1113,10 +1115,10 @@ export default function FreeCreatorProfileSetupPage() {
           display: grid;
           justify-items: center;
           gap: 12px;
+          overflow: visible;
         }
 
         .photoCircle {
-          position: relative;
           width: 230px;
           height: 230px;
           display: grid;
@@ -1143,13 +1145,15 @@ export default function FreeCreatorProfileSetupPage() {
 
         .photoLogoBadge {
           position: absolute;
-          right: -6px;
-          bottom: -6px;
-          width: 54px !important;
-          height: 54px !important;
+          left: calc(50% + 64px);
+          top: 165px;
+          z-index: 2;
+          width: 64px !important;
+          height: 64px !important;
           border: 5px solid #ffffff;
           border-radius: 50%;
           background: #000000;
+          object-fit: cover;
           box-shadow: 0 10px 22px rgba(16, 23, 47, 0.24);
         }
 
