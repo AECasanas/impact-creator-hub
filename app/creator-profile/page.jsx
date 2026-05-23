@@ -41,7 +41,7 @@ export default function CreatorProfilePage() {
             className="profilePhoto"
           />
           <div className="socialBadge" aria-label="Impact Creator Hub profile badge">
-            <span className="badgeRing"></span>
+            <img src="/logo-ripple.png" alt="" />
           </div>
         </div>
 
@@ -413,9 +413,7 @@ export default function CreatorProfilePage() {
           bottom: 30px;
           width: 64px;
           height: 64px;
-          background:
-            radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.18), transparent 28%),
-            linear-gradient(135deg, #ff6a61 0%, #f28c82 46%, #10172f 47%, #05090b 100%);
+          background: #050505;
           border-radius: 50%;
           border: 6px solid white;
           display: grid;
@@ -424,35 +422,12 @@ export default function CreatorProfilePage() {
           overflow: hidden;
         }
 
-        .badgeRing,
-        .badgeRing::before,
-        .badgeRing::after {
-          content: "";
-          position: absolute;
-          border-radius: 50%;
-          border-style: solid;
-        }
-
-        .badgeRing {
-          width: 38px;
-          height: 38px;
-          border-width: 5px;
-          border-color: #67e8f9;
-          border-right-color: transparent;
-          transform: rotate(-8deg);
-        }
-
-        .badgeRing::before {
-          inset: 7px;
-          border-width: 4px;
-          border-color: #ffffff;
-          border-right-color: transparent;
-        }
-
-        .badgeRing::after {
-          inset: 16px;
-          border-width: 4px;
-          border-color: #f28c82;
+        .socialBadge img {
+          width: 100%;
+          height: 100%;
+          display: block;
+          object-fit: cover;
+          transform: scale(1.18);
         }
 
         .freeBadge {
