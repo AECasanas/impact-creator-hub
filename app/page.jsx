@@ -10,8 +10,8 @@ export default function Home() {
           A simple home for creators to share their story, audience highlights,
           and collaboration opportunities.
         </p>
-        <Link className="primary-link" href="/creator-profile">
-          View Creator Profile
+        <Link className="primary-link" href="/create-profile">
+          Get Started
         </Link>
       </section>
     </main>
