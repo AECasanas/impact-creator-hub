@@ -6,8 +6,8 @@ const profileOptions = [
     title: "Create a Free Creator Profile",
     description:
       "Launch a polished public profile with your bio, platforms, featured work, and ways for brands to connect.",
-    href: "/creator-profile",
-    cta: "View Free Profile",
+    href: "/create-profile/free",
+    cta: "Start Free Profile",
   },
   {
     label: "For brand outreach",

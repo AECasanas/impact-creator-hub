@@ -41,7 +41,7 @@ export default function CreatorProfilePage() {
             className="profilePhoto"
           />
           <div className="socialBadge" aria-label="Impact Creator Hub profile badge">
-            <img src="/logo-ripple.png" alt="" />
+            <span className="neonLogoMark"></span>
           </div>
         </div>
 
@@ -418,16 +418,39 @@ export default function CreatorProfilePage() {
           border: 6px solid white;
           display: grid;
           place-items: center;
-          box-shadow: 0 12px 26px rgba(16, 23, 47, 0.22);
+          box-shadow:
+            0 12px 26px rgba(16, 23, 47, 0.22),
+            0 0 22px rgba(0, 232, 240, 0.35);
           overflow: hidden;
         }
 
-        .socialBadge img {
-          width: 100%;
-          height: 100%;
-          display: block;
-          object-fit: cover;
-          transform: scale(1.18);
+        .neonLogoMark,
+        .neonLogoMark::before,
+        .neonLogoMark::after {
+          content: "";
+          position: absolute;
+          border-radius: 50%;
+          border-style: solid;
+          border-color: #00e8f0;
+          border-right-color: transparent;
+          filter: drop-shadow(0 0 6px rgba(0, 232, 240, 0.9));
+        }
+
+        .neonLogoMark {
+          width: 44px;
+          height: 44px;
+          border-width: 6px;
+        }
+
+        .neonLogoMark::before {
+          inset: 9px;
+          border-width: 5px;
+        }
+
+        .neonLogoMark::after {
+          inset: 19px;
+          border-width: 5px;
+          border-right-color: #00e8f0;
         }
 
         .freeBadge {
