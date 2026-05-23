@@ -51,9 +51,15 @@ type CreatorProfile = {
   creator_collaboration_options?: CollaborationOption[];
 };
 
+type FormVariant = "free" | "impact-kit";
+
 function text(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+}
+
+function safeReturnTo(value: string | null) {
+  return value === "/create-profile/impact-kit" ? value : "/create-profile/free";
 }
 
 function entryText(entries: FormDataEntryValue[], index: number) {
@@ -72,13 +78,14 @@ function toSlug(value: string) {
 async function saveCreatorProfile(formData: FormData) {
   "use server";
 
+  const returnTo = safeReturnTo(text(formData, "return_to"));
   const supabase = await createClient();
   const {
     data: { user }
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/create-profile?auth=required");
+    redirect(`${returnTo}?auth=required`);
   }
 
   const displayName = text(formData, "display_name") ?? "Impact Creator";
@@ -229,17 +236,23 @@ async function saveCreatorProfile(formData: FormData) {
   redirect(`/creator/${creatorProfile.slug}`);
 }
 
-export default async function CreatorOnboardingPage({
-  searchParams
+export async function CreatorProfileFormPage({
+  searchParams,
+  variant = "free"
 }: {
   searchParams: Promise<{ saved?: string; auth?: string }>;
+  variant?: FormVariant;
 }) {
   const { auth } = await searchParams;
+  const isImpactKit = variant === "impact-kit";
+  const returnTo = isImpactKit ? "/create-profile/impact-kit" : "/create-profile/free";
+  const profileBadge = isImpactKit ? "Impact Kit" : "Free creator profile";
+
   if (!isSupabaseConfigured()) {
     return (
       <main className="hero">
-        <p className="eyebrow">Creator onboarding</p>
-        <h1 className="page-title">Connect Supabase to start onboarding.</h1>
+        <p className="eyebrow">{isImpactKit ? "Impact Kit" : "Free creator profile"}</p>
+        <h1 className="page-title">Connect Supabase to start this profile.</h1>
         <p className="lede">
           Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your
           environment, then apply supabase/schema.sql before creators save data.
@@ -256,8 +269,8 @@ export default async function CreatorOnboardingPage({
   if (!user) {
     return (
       <main className="hero">
-        <p className="eyebrow">Creator onboarding</p>
-        <h1 className="page-title">Sign in before creating your profile.</h1>
+        <p className="eyebrow">{isImpactKit ? "Impact Kit" : "Free creator profile"}</p>
+        <h1 className="page-title">Sign in before saving your profile.</h1>
         <p className="lede">
           Supabase Auth should be connected to your preferred sign-in flow. Once
           signed in, creators can manage only their own profile data.
@@ -289,16 +302,19 @@ export default async function CreatorOnboardingPage({
   return (
     <main className="stack">
       <section className="hero">
-        <p className="eyebrow">Creator onboarding</p>
-        <h1 className="page-title">Build your public impact profile.</h1>
+        <p className="eyebrow">{isImpactKit ? "Impact Kit" : "Free creator profile"}</p>
+        <h1 className="page-title">
+          {isImpactKit ? "Build your creator Impact Kit." : "Build your free creator profile."}
+        </h1>
         <p className="lede">
-          Add the story, proof points, and URLs brands need. Images stay as URL
-          fields for now, with payments, uploads, and brand search intentionally
-          left out.
+          {isImpactKit
+            ? "Add audience stats, rate card details, featured collaborations, and partnership options for brands."
+            : "Add the story, proof points, and URLs brands need. Images stay as URL fields for now."}
         </p>
       </section>
 
       <form action={saveCreatorProfile} className="card stack">
+        <input name="return_to" type="hidden" value={returnTo} />
         <div className="form-grid">
           <div className="field">
             <label htmlFor="display_name">Display name</label>
@@ -334,8 +350,8 @@ export default async function CreatorOnboardingPage({
             <input
               id="profile_badge"
               name="profile_badge"
-              defaultValue={creatorProfile?.profile_badge ?? "Free creator profile"}
-              placeholder="Free creator profile"
+              defaultValue={creatorProfile?.profile_badge ?? profileBadge}
+              placeholder={profileBadge}
             />
           </div>
           <div className="field">
@@ -605,4 +621,12 @@ export default async function CreatorOnboardingPage({
       </form>
     </main>
   );
+}
+
+export default async function CreatorOnboardingPage({
+  searchParams
+}: {
+  searchParams: Promise<{ saved?: string; auth?: string }>;
+}) {
+  return CreatorProfileFormPage({ searchParams, variant: "free" });
 }
