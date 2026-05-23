@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 const designChoices = [
   {
     title: "Light Profile",
@@ -19,7 +21,7 @@ const designChoices = [
     title: "Editorial Template",
     label: "Story-first layout",
     description:
-      "A larger hero, postcard note, featured work, and an about section for lifestyle creators.",
+      "A larger hero, featured work, creator story, and an about section for lifestyle creators.",
     theme: "editorial",
   },
   {
@@ -43,6 +45,11 @@ const logoColors = [
 ];
 
 export default function FreeCreatorProfileSetupPage() {
+  const [selectedDesign, setSelectedDesign] = useState(designChoices[0].title);
+  const [selectedLogoColor, setSelectedLogoColor] = useState(logoColors[0][0]);
+  const selectedLogoHex =
+    logoColors.find(([name]) => name === selectedLogoColor)?.[1] ?? logoColors[0][1];
+
   return (
     <main className="freeSetupPage">
       <section className="setupShell">
@@ -89,7 +96,12 @@ export default function FreeCreatorProfileSetupPage() {
 
           <div className="designGrid">
             {designChoices.map((choice) => (
-              <article className={`designCard ${choice.theme}`} key={choice.title}>
+              <article
+                className={`designCard ${choice.theme} ${
+                  selectedDesign === choice.title ? "selected" : ""
+                }`}
+                key={choice.title}
+              >
                 <div className="miniPreview">
                   <div className="miniNav"></div>
                   <div className="miniHero">
@@ -109,7 +121,13 @@ export default function FreeCreatorProfileSetupPage() {
                 <p>{choice.label}</p>
                 <h3>{choice.title}</h3>
                 <span>{choice.description}</span>
-                <button type="button">Choose {choice.title}</button>
+                <button
+                  type="button"
+                  aria-pressed={selectedDesign === choice.title}
+                  onClick={() => setSelectedDesign(choice.title)}
+                >
+                  {selectedDesign === choice.title ? "Selected" : `Choose ${choice.title}`}
+                </button>
               </article>
             ))}
           </div>
@@ -127,7 +145,14 @@ export default function FreeCreatorProfileSetupPage() {
 
           <div className="logoGrid">
             {logoColors.map(([name, color]) => (
-              <button className="logoOption" style={{ "--logo-color": color }} type="button" key={name}>
+              <button
+                className={`logoOption ${selectedLogoColor === name ? "selected" : ""}`}
+                style={{ "--logo-color": color }}
+                type="button"
+                aria-pressed={selectedLogoColor === name}
+                onClick={() => setSelectedLogoColor(name)}
+                key={name}
+              >
                 <span className="logoTile">
                   <span className="logoMark"></span>
                 </span>
@@ -137,15 +162,32 @@ export default function FreeCreatorProfileSetupPage() {
           </div>
         </section>
 
+        <section className="choiceSummary" aria-label="Selected free profile choices">
+          <div>
+            <p className="eyebrow">Your free profile draft</p>
+            <h2>{selectedDesign}</h2>
+            <span>
+              Logo color: <strong>{selectedLogoColor}</strong>
+            </span>
+          </div>
+          <div className="summaryLogo" style={{ "--logo-color": selectedLogoHex }}>
+            <span className="logoMark"></span>
+          </div>
+        </section>
+
         <section className="nextStepBanner">
           <div>
             <p>Free version selected</p>
             <span>
               Start with limited profile details, public links, featured work,
-              and basic collaboration options.
+              and basic collaboration options. The creator postcard is reserved
+              for a premium profile upgrade.
             </span>
           </div>
-          <a href="/creator-profile">Preview Free Profile</a>
+          <div className="bannerActions">
+            <a href="/creator-profile">Preview Free Profile</a>
+            <a href="/signup">Save Choices</a>
+          </div>
         </section>
       </section>
 
@@ -307,6 +349,18 @@ export default function FreeCreatorProfileSetupPage() {
           border: 1px solid rgba(255, 255, 255, 0.13);
           border-radius: 26px;
           background: rgba(255, 255, 255, 0.08);
+          transition:
+            border-color 160ms ease,
+            box-shadow 160ms ease,
+            transform 160ms ease;
+        }
+
+        .designCard.selected {
+          border-color: #00e8f0;
+          box-shadow:
+            0 0 0 2px rgba(0, 232, 240, 0.18),
+            0 24px 60px rgba(0, 232, 240, 0.14);
+          transform: translateY(-3px);
         }
 
         .designCard.light {
@@ -438,6 +492,11 @@ export default function FreeCreatorProfileSetupPage() {
           font-weight: 900;
         }
 
+        .designCard.selected button {
+          background: #10172f;
+          color: #ffffff;
+        }
+
         .logoChoiceSection {
           background: rgba(0, 0, 0, 0.28);
         }
@@ -460,6 +519,18 @@ export default function FreeCreatorProfileSetupPage() {
           font: inherit;
           font-weight: 900;
           padding: 20px;
+          transition:
+            border-color 160ms ease,
+            box-shadow 160ms ease,
+            transform 160ms ease;
+        }
+
+        .logoOption.selected {
+          border-color: var(--logo-color);
+          box-shadow:
+            0 0 0 2px color-mix(in srgb, var(--logo-color) 28%, transparent),
+            0 0 28px color-mix(in srgb, var(--logo-color) 34%, transparent);
+          transform: translateY(-3px);
         }
 
         .logoTile {
@@ -502,6 +573,49 @@ export default function FreeCreatorProfileSetupPage() {
           border-right-color: var(--logo-color);
         }
 
+        .choiceSummary {
+          margin-top: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 22px;
+          padding: 28px 34px;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 28px;
+          background: rgba(255, 255, 255, 0.94);
+          color: #10172f;
+          box-shadow: 0 24px 70px rgba(0, 0, 0, 0.18);
+        }
+
+        .choiceSummary .eyebrow {
+          color: #007585;
+        }
+
+        .choiceSummary h2 {
+          margin: 10px 0;
+          color: #10172f;
+          font-size: clamp(2rem, 4vw, 3rem);
+        }
+
+        .choiceSummary span {
+          color: #596273;
+        }
+
+        .choiceSummary strong {
+          color: #10172f;
+        }
+
+        .summaryLogo {
+          --logo-color: #00e8f0;
+          width: 122px;
+          height: 122px;
+          flex: 0 0 auto;
+          display: grid;
+          place-items: center;
+          border-radius: 26px;
+          background: #020202;
+        }
+
         .nextStepBanner {
           margin-top: 24px;
           display: flex;
@@ -532,6 +646,17 @@ export default function FreeCreatorProfileSetupPage() {
           font-weight: 900;
         }
 
+        .bannerActions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+
+        .bannerActions a:last-child {
+          background: #ff6a61;
+          color: #ffffff;
+        }
+
         @media (max-width: 1060px) {
           .designGrid,
           .logoGrid {
@@ -545,6 +670,7 @@ export default function FreeCreatorProfileSetupPage() {
           }
 
           .nav,
+          .choiceSummary,
           .nextStepBanner {
             align-items: flex-start;
             flex-direction: column;
