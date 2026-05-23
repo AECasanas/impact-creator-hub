@@ -1,223 +1,1130 @@
-import Link from "next/link";
-
-const avatarSrc =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'%3E%3Crect width='320' height='320' fill='%23fff1ea'/%3E%3Ccircle cx='160' cy='128' r='72' fill='%23ef7d6f'/%3E%3Cpath d='M68 286c17-63 62-100 92-100s75 37 92 100' fill='%230c3554'/%3E%3Ccircle cx='132' cy='122' r='8' fill='%230c3554'/%3E%3Ccircle cx='188' cy='122' r='8' fill='%230c3554'/%3E%3Cpath d='M132 158c18 18 38 18 56 0' stroke='%230c3554' stroke-width='8' stroke-linecap='round' fill='none'/%3E%3Ctext x='160' y='55' text-anchor='middle' font-family='Georgia, serif' font-size='28' fill='%230c3554'%3EMR%3C/text%3E%3C/svg%3E";
-
-const stats = [
-  ["Instagram", "25K-50K Followers"],
-  ["TikTok", "50K-100K Followers"],
-  ["YouTube", "5K-10K Subscribers"],
-  ["Blog / Website", "10K+ Monthly Views"],
-];
-
-const featuredWork = [
-  {
-    brand: "Fresh Market Miami",
-    project: "Instagram Reel + Stories",
-    category: "Food & Grocery",
-  },
-  {
-    brand: "Visit Florida",
-    project: "Travel Guide Series",
-    category: "Travel & Tourism",
-  },
-  {
-    brand: "Sunrise Coffee Co.",
-    project: "TikTok Video Campaign",
-    category: "Beverage",
-  },
-];
-
-const collaborationOptions = [
-  ["Sponsored Content", "Reels, Stories, Posts"],
-  ["Product Features", "Unboxing, Reviews, Demonstrations"],
-  ["Brand Collaborations", "Creative Campaigns"],
-];
-
-const socialLinks = ["Instagram", "TikTok", "YouTube", "My Blog"];
-
 export default function CreatorProfilePage() {
   return (
-    <main className="profile-page">
-      <nav className="profile-nav" aria-label="Main navigation">
-        <Link href="/" className="brand-mark">
-          Impact Creator Hub
-        </Link>
-        <div className="nav-links">
-          <a href="#featured">Featured Work</a>
-          <a href="#about">About</a>
-          <a href="#connect">Connect</a>
+    <main className="creatorPage">
+      <nav className="nav">
+        <div className="brand">
+          <div className="brandMark">
+            <span></span>
+          </div>
+          <strong>Impact Creator Hub</strong>
+        </div>
+
+        <div className="navLinks">
+          <a>Discover Creators</a>
+          <a>For Brands</a>
+          <a>Resources</a>
+          <a>About</a>
+        </div>
+
+        <div className="navActions">
+          <button className="loginBtn">Log In</button>
+          <button className="joinBtn">Join the Hub</button>
         </div>
       </nav>
 
-      <section className="creator-hero">
-        <div className="hero-copy">
-          <p className="profile-badge">Free Creator Profile</p>
+      <section className="hero">
+        <div className="photoWrap">
           <img
-            className="profile-photo"
-            src={avatarSrc}
-            alt="Placeholder portrait of Maya Rivera"
+            src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
+            alt="Maya Rivera"
+            className="profilePhoto"
           />
-          <p className="profile-kicker">Food. Travel. Lifestyle.</p>
+          <div className="socialBadge">◎</div>
+        </div>
+
+        <div className="heroText">
+          <div className="freeBadge">
+            <span>✦</span> FREE CREATOR PROFILE
+          </div>
+
           <h1>Maya Rivera</h1>
-          <p className="profile-location">Miami, Florida</p>
-          <p className="profile-bio">
-            I&apos;m a Miami-based content creator and foodie who loves sharing
-            local eats, travel spots, and everyday moments that make life
-            beautiful.
+          <p className="niche">Food. Travel. Lifestyle.</p>
+          <p className="location">● Miami, Florida</p>
+
+          <p className="intro">
+            I’m a Miami-based content creator and foodie who loves sharing local
+            eats, travel spots, and everyday moments that make life beautiful.
           </p>
-          <div className="hero-actions">
-            <a className="button button-primary" href="mailto:hello@mayarivera.co">
-              Work With Me
-            </a>
-            <a className="button button-secondary" href="#connect">
-              View Links
-            </a>
+
+          <div className="heroButtons">
+            <button className="primaryBtn">Work With Me →</button>
+            <button className="secondaryBtn">View Links</button>
           </div>
         </div>
 
-        <aside className="stats-card" aria-label="Creator audience statistics">
-          <p className="stats-title">Audience Snapshot</p>
-          {stats.map(([platform, reach]) => (
-            <div className="stat-row" key={platform}>
-              <span>{platform}</span>
-              <strong>{reach}</strong>
-            </div>
-          ))}
-        </aside>
-      </section>
-
-      <section className="profile-section postcard-section" aria-labelledby="postcard-heading">
-        <div className="section-heading">
-          <p className="eyebrow">Postcard From the Creator</p>
-          <h2 id="postcard-heading">A note from Maya</h2>
-        </div>
-        <article className="postcard" aria-label="Postcard from Maya Rivera">
-          <div className="postcard-topline">
-            <div className="postcard-location">
-              <span>MIAMI CREATOR SERIES</span>
-              <span>Food, Travel &amp; Lifestyle</span>
-            </div>
-            <div className="postcard-title">POST CARD</div>
-            <div className="postcard-mail">
-              <div className="stamp-box" aria-hidden="true">
-                <span>STAMP</span>
-              </div>
-              <div className="postmark" aria-hidden="true">
-                <span>MAY 23</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="postcard-body">
-            <div className="postcard-message">
-              <p>Hi there!</p>
-              <p>
-                I&apos;m Maya, a Miami-based creator sharing local eats, travel
-                moments, and everyday beauty.
-              </p>
-              <p>
-                My work is about helping people discover places, flavors, and
-                experiences that feel warm, real, and memorable.
-              </p>
-              <p>
-                Lately, I&apos;m inspired by neighborhood restaurants, coastal
-                colors, and the little details that make a day feel special.
-              </p>
-              <p>&mdash; Maya</p>
-            </div>
-            <div className="postcard-divider" aria-hidden="true" />
-            <address className="postcard-contact">
-              <strong>Maya Rivera</strong>
-              <span>Content Creator</span>
-              <span>Food, Travel &amp; Lifestyle</span>
-              <span>Miami, Florida</span>
-              <span>hello@mayarivera.co</span>
-              <span>@mayarivera</span>
-            </address>
-          </div>
-        </article>
-      </section>
-
-      <section className="profile-section" id="featured" aria-labelledby="featured-heading">
-        <div className="section-heading">
-          <p className="eyebrow">Featured Work</p>
-          <h2 id="featured-heading">Recent collaborations</h2>
-        </div>
-        <div className="work-grid">
-          {featuredWork.map((work) => (
-            <article className="work-card" key={work.brand}>
-              <p>{work.category}</p>
-              <h3>{work.brand}</h3>
-              <span>{work.project}</span>
-            </article>
-          ))}
+        <div className="plantArea">
+          <div className="plantStem"></div>
+          <div className="leaf leafOne"></div>
+          <div className="leaf leafTwo"></div>
+          <div className="leaf leafThree"></div>
+          <div className="leaf leafFour"></div>
+          <div className="vase"></div>
         </div>
       </section>
 
-      <section className="profile-grid">
-        <article className="profile-section" id="about" aria-labelledby="about-heading">
-          <div className="section-heading">
-            <p className="eyebrow">About Me</p>
-            <h2 id="about-heading">Life through a Miami lens</h2>
+      <section className="mainCard statsCard">
+        <div className="stat">
+          <div className="statIcon instagram">◎</div>
+          <div>
+            <span>Instagram</span>
+            <strong>25K – 50K</strong>
+            <small>Followers</small>
           </div>
+        </div>
+
+        <div className="stat">
+          <div className="statIcon tiktok">♪</div>
+          <div>
+            <span>TikTok</span>
+            <strong>50K – 100K</strong>
+            <small>Followers</small>
+          </div>
+        </div>
+
+        <div className="stat">
+          <div className="statIcon youtube">▶</div>
+          <div>
+            <span>YouTube</span>
+            <strong>5K – 10K</strong>
+            <small>Subscribers</small>
+          </div>
+        </div>
+
+        <div className="stat last">
+          <div className="statIcon web">◎</div>
+          <div>
+            <span>Blog / Website</span>
+            <strong>10K+</strong>
+            <small>Monthly Views</small>
+          </div>
+        </div>
+      </section>
+
+      <section className="mainCard featuredCard">
+        <div className="sectionHeader">
+          <h2>Featured Work</h2>
+          <a>View All →</a>
+        </div>
+
+        <div className="workGrid">
+          <article className="workItem">
+            <img
+              src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80"
+              alt="Fresh Market Miami"
+            />
+            <div>
+              <h3>Fresh Market Miami</h3>
+              <p>Instagram Reel + Stories</p>
+              <span>Food & Grocery</span>
+            </div>
+          </article>
+
+          <article className="workItem">
+            <img
+              src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80"
+              alt="Visit Florida"
+            />
+            <div>
+              <h3>Visit Florida</h3>
+              <p>Travel Guide Series</p>
+              <span>Travel & Tourism</span>
+            </div>
+          </article>
+
+          <article className="workItem">
+            <img
+              src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=900&q=80"
+              alt="Sunrise Coffee Co."
+            />
+            <div>
+              <h3>Sunrise Coffee Co.</h3>
+              <p>TikTok Video Campaign</p>
+              <span>Beverage</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section className="postcardSection">
+        <div className="postcardIntro">
+          <p>Postcard From the Creator</p>
+          <h2>A personal note from Maya</h2>
+        </div>
+
+        <div className="postcard">
+          <div className="postTopLeft">
+            <strong>MIAMI CREATOR SERIES</strong>
+            <span>Food, Travel & Lifestyle</span>
+          </div>
+
+          <div className="postTitle">POST CARD</div>
+
+          <div className="postmark">
+            <span>MIAMI, FL</span>
+            <strong>MAY 18</strong>
+            <span>2026</span>
+          </div>
+
+          <div className="stamp">
+            <span>ICH</span>
+            <small>5¢</small>
+          </div>
+
+          <div className="postDivider"></div>
+
+          <div className="postMessage">
+            <p>Hi there!</p>
+            <p>
+              I’m Maya, a Miami-based creator sharing local eats, travel
+              moments, and everyday beauty.
+            </p>
+            <p>
+              My work is about helping people discover places, flavors, and
+              experiences that feel warm, real, and memorable.
+            </p>
+            <p>
+              Lately, I’m inspired by neighborhood restaurants, coastal colors,
+              and the little details that make a day feel special.
+            </p>
+            <p className="signature">— Maya</p>
+          </div>
+
+          <div className="postContact">
+            <h3>Maya Rivera</h3>
+            <p>Content Creator</p>
+            <p>Food, Travel & Lifestyle</p>
+            <p>Miami, Florida</p>
+            <p>hello@mayarivera.co</p>
+            <p>@mayarivera</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mainCard infoCard">
+        <div className="infoCol">
+          <h2>About Me</h2>
+          <div className="underline"></div>
           <p>
             I love exploring new places, trying local restaurants, and capturing
             the little moments that make life special. My content is all about
             inspiration, authenticity, and making every day a beautiful
             adventure.
           </p>
-          <div className="detail-list">
-            <span>Miami, Florida</span>
-            <span>Dog Mom &amp; Coffee Lover</span>
-          </div>
-        </article>
 
-        <article className="profile-section" aria-labelledby="work-together-heading">
-          <div className="section-heading">
-            <p className="eyebrow">Ways to Work Together</p>
-            <h2 id="work-together-heading">Collaboration options</h2>
+          <div className="miniLine">♡ Miami, Florida</div>
+          <div className="miniLine">♡ Dog Mom & Coffee Lover</div>
+        </div>
+
+        <div className="infoCol middle">
+          <h2>Ways to Work Together</h2>
+          <div className="underline"></div>
+
+          <div className="service">
+            <span>✦</span>
+            <div>
+              <strong>Sponsored Content</strong>
+              <p>Reels, Stories, Posts</p>
+            </div>
           </div>
-          <div className="collab-list">
-            {collaborationOptions.map(([title, description]) => (
-              <div key={title}>
-                <strong>{title}</strong>
-                <span>{description}</span>
-              </div>
-            ))}
+
+          <div className="service">
+            <span>▢</span>
+            <div>
+              <strong>Product Features</strong>
+              <p>Unboxing, Reviews, Demonstrations</p>
+            </div>
           </div>
-          <p className="profile-note">
+
+          <div className="service">
+            <span>♢</span>
+            <div>
+              <strong>Brand Collaborations</strong>
+              <p>Creative Campaigns</p>
+            </div>
+          </div>
+
+          <div className="freeNote">
             This is a free creator profile with limited collaboration details.
+          </div>
+        </div>
+
+        <div className="infoCol">
+          <h2>Let’s Connect</h2>
+          <div className="underline"></div>
+          <p>
+            Find me on my favorite platforms and let’s create something amazing!
           </p>
-        </article>
-      </section>
 
-      <section className="profile-section connect-section" id="connect" aria-labelledby="connect-heading">
-        <div className="section-heading">
-          <p className="eyebrow">Let&apos;s Connect</p>
-          <h2 id="connect-heading">Follow Maya&apos;s latest stories</h2>
-        </div>
-        <div className="social-links">
-          {socialLinks.map((label) => (
-            <a href="#" key={label} aria-label={`${label} profile link`}>
-              {label}
-            </a>
-          ))}
+          <button className="connectBtn">◎ Instagram</button>
+          <button className="connectBtn">♪ TikTok</button>
+          <button className="connectBtn">▶ YouTube</button>
+          <button className="connectBtn">◎ My Blog</button>
         </div>
       </section>
 
-      <section className="upgrade-banner" aria-label="Upgrade profile">
+      <section className="upgradeBanner">
         <div>
-          <p>You&apos;re viewing a Free Creator Profile</p>
-          <span>
-            Upgrade to unlock advanced features, insights, and more ways to
-            collaborate.
-          </span>
+          <span>✦</span>
+          <div>
+            <strong>You’re viewing a Free Creator Profile</strong>
+            <p>
+              Upgrade to unlock advanced features, insights, and more ways to
+              collaborate.
+            </p>
+          </div>
         </div>
-        <a className="button button-primary" href="#">
-          Learn More
-        </a>
+
+        <button>Learn More</button>
       </section>
+
+      <style jsx>{`
+        .creatorPage {
+          min-height: 100vh;
+          background: #ffffff;
+          color: #11172f;
+          font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+            BlinkMacSystemFont, "Segoe UI", sans-serif;
+          padding: 0 42px 70px;
+        }
+
+        .nav {
+          max-width: 1240px;
+          margin: 0 auto;
+          height: 78px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .brand {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-size: 18px;
+        }
+
+        .brandMark {
+          width: 34px;
+          height: 34px;
+          border: 4px solid #16c7c9;
+          border-radius: 50%;
+          display: grid;
+          place-items: center;
+        }
+
+        .brandMark span {
+          width: 12px;
+          height: 12px;
+          border: 3px solid #16c7c9;
+          border-radius: 50%;
+          display: block;
+        }
+
+        .navLinks {
+          display: flex;
+          gap: 44px;
+          font-size: 14px;
+          font-weight: 700;
+        }
+
+        .navActions {
+          display: flex;
+          gap: 14px;
+        }
+
+        button {
+          font-family: inherit;
+          cursor: pointer;
+        }
+
+        .loginBtn,
+        .joinBtn {
+          border-radius: 999px;
+          padding: 12px 24px;
+          font-weight: 700;
+          font-size: 14px;
+        }
+
+        .loginBtn {
+          background: white;
+          border: 1px solid #9ca3af;
+          color: #10172f;
+        }
+
+        .joinBtn {
+          background: #006b78;
+          border: 1px solid #006b78;
+          color: white;
+        }
+
+        .hero {
+          max-width: 1240px;
+          margin: 0 auto;
+          min-height: 480px;
+          border-radius: 34px;
+          background:
+            linear-gradient(
+              90deg,
+              rgba(255, 246, 242, 0.98),
+              rgba(255, 232, 224, 0.88)
+            ),
+            radial-gradient(circle at 85% 10%, #ffd2c2 0%, transparent 42%);
+          display: grid;
+          grid-template-columns: 340px 1fr 240px;
+          align-items: center;
+          padding: 58px 76px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .photoWrap {
+          width: 286px;
+          height: 286px;
+          border-radius: 50%;
+          background: white;
+          padding: 8px;
+          box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+          position: relative;
+        }
+
+        .profilePhoto {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 50%;
+          display: block;
+        }
+
+        .socialBadge {
+          position: absolute;
+          right: -6px;
+          bottom: 30px;
+          width: 64px;
+          height: 64px;
+          background: #ff6a61;
+          border-radius: 50%;
+          border: 6px solid white;
+          color: white;
+          display: grid;
+          place-items: center;
+          font-size: 34px;
+          font-weight: 700;
+        }
+
+        .freeBadge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: #fff0e9;
+          padding: 11px 18px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 900;
+          margin-bottom: 22px;
+        }
+
+        .freeBadge span {
+          color: #ff9b63;
+          font-size: 18px;
+        }
+
+        h1 {
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 58px;
+          line-height: 1;
+          margin: 0 0 10px;
+          color: #10172f;
+          letter-spacing: -0.02em;
+        }
+
+        .niche {
+          font-family: "Brush Script MT", "Segoe Script", cursive;
+          font-size: 35px;
+          color: #ff6a61;
+          margin: 0 0 12px;
+        }
+
+        .location {
+          font-size: 15px;
+          font-weight: 700;
+          margin: 0 0 18px;
+        }
+
+        .intro {
+          max-width: 590px;
+          font-size: 16px;
+          line-height: 1.7;
+          margin: 0 0 24px;
+          color: #293044;
+        }
+
+        .heroButtons {
+          display: flex;
+          gap: 14px;
+        }
+
+        .primaryBtn,
+        .secondaryBtn {
+          border-radius: 18px;
+          height: 50px;
+          padding: 0 28px;
+          font-weight: 800;
+          font-size: 15px;
+        }
+
+        .primaryBtn {
+          background: #ff6a61;
+          border: 1px solid #ff6a61;
+          color: white;
+          box-shadow: 0 14px 25px rgba(255, 106, 97, 0.28);
+        }
+
+        .secondaryBtn {
+          background: white;
+          border: 1px solid #ff6a61;
+          color: #10172f;
+        }
+
+        .plantArea {
+          position: relative;
+          height: 360px;
+        }
+
+        .plantStem {
+          position: absolute;
+          right: 78px;
+          top: 42px;
+          width: 3px;
+          height: 190px;
+          background: #a1ad72;
+          transform: rotate(-15deg);
+        }
+
+        .leaf {
+          position: absolute;
+          width: 76px;
+          height: 18px;
+          border-radius: 100%;
+          border: 2px solid #a1ad72;
+          border-left: none;
+          border-bottom: none;
+          opacity: 0.8;
+        }
+
+        .leafOne {
+          right: 54px;
+          top: 76px;
+          transform: rotate(18deg);
+        }
+
+        .leafTwo {
+          right: 100px;
+          top: 112px;
+          transform: rotate(162deg);
+        }
+
+        .leafThree {
+          right: 44px;
+          top: 148px;
+          transform: rotate(20deg);
+        }
+
+        .leafFour {
+          right: 108px;
+          top: 188px;
+          transform: rotate(158deg);
+        }
+
+        .vase {
+          position: absolute;
+          bottom: -20px;
+          right: 38px;
+          width: 115px;
+          height: 165px;
+          border-radius: 58px 58px 28px 28px;
+          background:
+            linear-gradient(90deg, #fff, #f9e9df),
+            repeating-linear-gradient(
+              0deg,
+              rgba(0, 0, 0, 0.03),
+              rgba(0, 0, 0, 0.03) 1px,
+              transparent 2px,
+              transparent 8px
+            );
+        }
+
+        .mainCard {
+          max-width: 1060px;
+          margin-left: auto;
+          margin-right: auto;
+          background: white;
+          border-radius: 28px;
+          box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+          border: 1px solid rgba(17, 24, 39, 0.05);
+        }
+
+        .statsCard {
+          margin-top: -62px;
+          position: relative;
+          z-index: 5;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          padding: 30px 28px;
+        }
+
+        .stat {
+          display: flex;
+          align-items: center;
+          gap: 18px;
+          padding: 0 28px;
+          border-right: 1px solid #ece7e4;
+        }
+
+        .stat.last {
+          border-right: none;
+        }
+
+        .statIcon {
+          width: 58px;
+          height: 58px;
+          border-radius: 50%;
+          display: grid;
+          place-items: center;
+          font-size: 28px;
+          font-weight: 900;
+          background: #f8fafc;
+        }
+
+        .instagram {
+          color: #e647b0;
+        }
+
+        .tiktok {
+          color: #111827;
+        }
+
+        .youtube {
+          color: #ff4f5c;
+        }
+
+        .web {
+          color: #11c5c8;
+        }
+
+        .stat span,
+        .stat small {
+          display: block;
+          color: #4b5563;
+          font-size: 13px;
+        }
+
+        .stat strong {
+          display: block;
+          font-size: 18px;
+          color: #111827;
+          margin: 4px 0;
+        }
+
+        .featuredCard {
+          padding: 34px 40px 38px;
+          border-radius: 0 0 28px 28px;
+        }
+
+        .sectionHeader {
+          border-top: 1px solid #ece7e4;
+          padding-top: 26px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+        }
+
+        .sectionHeader h2,
+        .infoCol h2,
+        .postcardIntro h2 {
+          font-family: Georgia, "Times New Roman", serif;
+          color: #10172f;
+          font-size: 26px;
+          margin: 0;
+        }
+
+        .sectionHeader a {
+          color: #ff6a61;
+          font-weight: 800;
+          font-size: 14px;
+        }
+
+        .workGrid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 26px;
+        }
+
+        .workItem {
+          border: 1px solid #ece7e4;
+          border-radius: 12px;
+          overflow: hidden;
+          background: white;
+        }
+
+        .workItem img {
+          width: 100%;
+          height: 170px;
+          object-fit: cover;
+          display: block;
+        }
+
+        .workItem div {
+          padding: 16px;
+        }
+
+        .workItem h3 {
+          margin: 0 0 5px;
+          font-size: 19px;
+          color: #10172f;
+        }
+
+        .workItem p {
+          margin: 0 0 14px;
+          color: #4b5563;
+          font-size: 14px;
+        }
+
+        .workItem span {
+          background: #f6ebe8;
+          border-radius: 999px;
+          padding: 6px 12px;
+          font-size: 12px;
+          color: #3f4655;
+          font-weight: 700;
+        }
+
+        .postcardSection {
+          max-width: 1060px;
+          margin: 34px auto 24px;
+        }
+
+        .postcardIntro {
+          margin-bottom: 16px;
+        }
+
+        .postcardIntro p {
+          margin: 0 0 6px;
+          text-transform: uppercase;
+          letter-spacing: 0.18em;
+          font-size: 12px;
+          color: #ff6a61;
+          font-weight: 900;
+        }
+
+        .postcard {
+          height: 560px;
+          background:
+            radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.45), transparent 32%),
+            linear-gradient(135deg, #f4dfbd 0%, #efd3aa 100%);
+          border: 1px solid #cfaf7f;
+          box-shadow: 0 18px 38px rgba(74, 52, 24, 0.18);
+          position: relative;
+          overflow: hidden;
+          padding: 54px 58px;
+          color: #252018;
+        }
+
+        .postcard::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background-image:
+            radial-gradient(rgba(83, 54, 27, 0.12) 1px, transparent 1px);
+          background-size: 9px 9px;
+          opacity: 0.2;
+          pointer-events: none;
+        }
+
+        .postTopLeft {
+          position: absolute;
+          top: 48px;
+          left: 58px;
+          font-family: Georgia, serif;
+          letter-spacing: 0.05em;
+          font-size: 14px;
+          z-index: 1;
+        }
+
+        .postTopLeft strong,
+        .postTopLeft span {
+          display: block;
+        }
+
+        .postTopLeft span {
+          margin-top: 4px;
+          font-size: 13px;
+        }
+
+        .postTitle {
+          position: absolute;
+          top: 54px;
+          left: 50%;
+          transform: translateX(-50%);
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 46px;
+          letter-spacing: 0.13em;
+          z-index: 1;
+        }
+
+        .postmark {
+          position: absolute;
+          top: 82px;
+          right: 210px;
+          width: 112px;
+          height: 112px;
+          border: 3px solid rgba(40, 35, 28, 0.75);
+          border-radius: 50%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          font-family: "Courier New", monospace;
+          font-size: 14px;
+          transform: rotate(-12deg);
+          z-index: 1;
+        }
+
+        .postmark strong {
+          font-size: 20px;
+          margin: 3px 0;
+        }
+
+        .stamp {
+          position: absolute;
+          top: 48px;
+          right: 58px;
+          width: 105px;
+          height: 122px;
+          border: 3px dashed rgba(40, 35, 28, 0.65);
+          background: linear-gradient(135deg, #294f76, #10243f);
+          color: white;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          font-family: Georgia, serif;
+          z-index: 1;
+        }
+
+        .stamp span {
+          font-size: 28px;
+          letter-spacing: 0.08em;
+        }
+
+        .stamp small {
+          font-size: 24px;
+          margin-top: 10px;
+        }
+
+        .postDivider {
+          position: absolute;
+          top: 185px;
+          bottom: 58px;
+          left: 59%;
+          width: 2px;
+          background: rgba(34, 30, 25, 0.78);
+          z-index: 1;
+        }
+
+        .postMessage {
+          position: absolute;
+          left: 58px;
+          top: 178px;
+          width: 50%;
+          z-index: 1;
+          font-family: "Segoe Script", "Brush Script MT", cursive;
+          font-size: 30px;
+          line-height: 1.55;
+          color: #173b78;
+        }
+
+        .postMessage p {
+          margin: 0 0 14px;
+        }
+
+        .postMessage p:first-child {
+          font-size: 36px;
+        }
+
+        .signature {
+          text-align: right;
+          padding-right: 40px;
+        }
+
+        .postContact {
+          position: absolute;
+          left: 63%;
+          top: 242px;
+          width: 30%;
+          z-index: 1;
+          font-family: "Segoe Script", "Brush Script MT", cursive;
+          color: #173b78;
+        }
+
+        .postContact h3 {
+          font-size: 34px;
+          margin: 0 0 14px;
+          font-weight: 400;
+        }
+
+        .postContact p {
+          font-size: 26px;
+          margin: 0 0 12px;
+          line-height: 1.2;
+        }
+
+        .infoCard {
+          margin-top: 24px;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          overflow: hidden;
+        }
+
+        .infoCol {
+          padding: 36px 40px;
+        }
+
+        .infoCol.middle {
+          border-left: 1px solid #ece7e4;
+          border-right: 1px solid #ece7e4;
+        }
+
+        .underline {
+          width: 35px;
+          height: 3px;
+          background: #ff6a61;
+          margin: 14px 0 24px;
+        }
+
+        .infoCol p {
+          color: #344054;
+          font-size: 15px;
+          line-height: 1.7;
+        }
+
+        .miniLine {
+          color: #344054;
+          font-size: 14px;
+          margin-top: 14px;
+        }
+
+        .service {
+          display: flex;
+          gap: 16px;
+          margin-bottom: 22px;
+        }
+
+        .service span {
+          color: #ff6a61;
+          font-size: 24px;
+          width: 26px;
+        }
+
+        .service strong {
+          display: block;
+          font-size: 15px;
+          margin-bottom: 2px;
+        }
+
+        .service p {
+          margin: 0;
+          font-size: 13px;
+          color: #4b5563;
+        }
+
+        .freeNote {
+          background: #fff0ed;
+          border-radius: 14px;
+          padding: 18px;
+          font-size: 15px;
+          color: #344054;
+          margin-top: 18px;
+        }
+
+        .connectBtn {
+          width: 100%;
+          height: 42px;
+          border: 1px solid #e5e7eb;
+          background: white;
+          border-radius: 999px;
+          text-align: left;
+          padding: 0 18px;
+          margin-bottom: 12px;
+          font-weight: 800;
+          color: #111827;
+        }
+
+        .upgradeBanner {
+          max-width: 1060px;
+          margin: 28px auto 0;
+          background: #fff0ed;
+          border-radius: 22px;
+          padding: 26px 38px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .upgradeBanner > div {
+          display: flex;
+          align-items: center;
+          gap: 22px;
+        }
+
+        .upgradeBanner span {
+          font-size: 34px;
+          color: #ff9b63;
+        }
+
+        .upgradeBanner strong {
+          display: block;
+          font-size: 17px;
+          margin-bottom: 4px;
+        }
+
+        .upgradeBanner p {
+          margin: 0;
+          color: #4b5563;
+          font-size: 14px;
+        }
+
+        .upgradeBanner button {
+          background: white;
+          color: #ff6a61;
+          border: 1px solid #ff6a61;
+          border-radius: 999px;
+          height: 46px;
+          padding: 0 44px;
+          font-weight: 800;
+        }
+
+        @media (max-width: 1000px) {
+          .creatorPage {
+            padding: 0 20px 50px;
+          }
+
+          .navLinks {
+            display: none;
+          }
+
+          .hero {
+            grid-template-columns: 1fr;
+            text-align: center;
+            padding: 42px 24px 90px;
+          }
+
+          .photoWrap {
+            margin: 0 auto 30px;
+          }
+
+          .heroButtons {
+            justify-content: center;
+          }
+
+          .plantArea {
+            display: none;
+          }
+
+          .statsCard {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          .stat {
+            border-right: none;
+            padding: 18px;
+          }
+
+          .workGrid,
+          .infoCard {
+            grid-template-columns: 1fr;
+          }
+
+          .infoCol.middle {
+            border-left: none;
+            border-right: none;
+            border-top: 1px solid #ece7e4;
+            border-bottom: 1px solid #ece7e4;
+          }
+
+          .postcard {
+            height: auto;
+            padding: 40px 28px;
+          }
+
+          .postTopLeft,
+          .postTitle,
+          .postmark,
+          .stamp,
+          .postDivider,
+          .postMessage,
+          .postContact {
+            position: relative;
+            inset: auto;
+            left: auto;
+            right: auto;
+            top: auto;
+            bottom: auto;
+            transform: none;
+            width: auto;
+          }
+
+          .postTitle {
+            text-align: center;
+            margin: 28px 0;
+          }
+
+          .postmark,
+          .stamp {
+            margin: 18px auto;
+          }
+
+          .postDivider {
+            width: 100%;
+            height: 2px;
+            margin: 30px 0;
+          }
+
+          .postMessage,
+          .postContact {
+            font-size: 24px;
+          }
+
+          .postContact p {
+            font-size: 22px;
+          }
+
+          .upgradeBanner {
+            flex-direction: column;
+            gap: 22px;
+            text-align: center;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .navActions {
+            display: none;
+          }
+
+          .hero h1 {
+            font-size: 42px;
+          }
+
+          .statsCard {
+            grid-template-columns: 1fr;
+          }
+
+          .featuredCard,
+          .infoCol {
+            padding: 28px 22px;
+          }
+        }
+      `}</style>
     </main>
   );
 }
