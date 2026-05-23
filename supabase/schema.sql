@@ -33,6 +33,9 @@ create table if not exists public.creator_profiles (
   profile_image_url text,
   cover_image_url text,
   impact_statement text,
+  profile_badge text not null default 'Free creator profile',
+  content_focus text,
+  collaboration_note text,
   audience_size integer not null default 0 check (audience_size >= 0),
   rate_card_url text,
   is_published boolean not null default false,
@@ -40,12 +43,41 @@ create table if not exists public.creator_profiles (
   updated_at timestamptz not null default now()
 );
 
+alter table public.creator_profiles
+add column if not exists profile_badge text not null default 'Free creator profile',
+add column if not exists content_focus text,
+add column if not exists collaboration_note text;
+
 create table if not exists public.creator_social_links (
   id uuid primary key default gen_random_uuid(),
   creator_profile_id uuid not null references public.creator_profiles(id) on delete cascade,
   platform text not null,
   url text not null,
   follower_count integer not null default 0 check (follower_count >= 0),
+  sort_order integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.creator_featured_work (
+  id uuid primary key default gen_random_uuid(),
+  creator_profile_id uuid not null references public.creator_profiles(id) on delete cascade,
+  title text not null,
+  description text,
+  category text,
+  image_url text,
+  project_url text,
+  sort_order integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.creator_collaboration_options (
+  id uuid primary key default gen_random_uuid(),
+  creator_profile_id uuid not null references public.creator_profiles(id) on delete cascade,
+  title text not null,
+  description text,
+  deliverables text,
   sort_order integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -68,6 +100,8 @@ create table if not exists public.brand_inquiries (
 create index if not exists creator_profiles_slug_idx on public.creator_profiles(slug);
 create index if not exists creator_profiles_published_idx on public.creator_profiles(is_published);
 create index if not exists creator_social_links_profile_idx on public.creator_social_links(creator_profile_id);
+create index if not exists creator_featured_work_profile_idx on public.creator_featured_work(creator_profile_id);
+create index if not exists creator_collaboration_options_profile_idx on public.creator_collaboration_options(creator_profile_id);
 create index if not exists brand_inquiries_profile_idx on public.brand_inquiries(creator_profile_id);
 
 drop trigger if exists set_profiles_updated_at on public.profiles;
@@ -85,6 +119,16 @@ create trigger set_creator_social_links_updated_at
 before update on public.creator_social_links
 for each row execute function public.set_updated_at();
 
+drop trigger if exists set_creator_featured_work_updated_at on public.creator_featured_work;
+create trigger set_creator_featured_work_updated_at
+before update on public.creator_featured_work
+for each row execute function public.set_updated_at();
+
+drop trigger if exists set_creator_collaboration_options_updated_at on public.creator_collaboration_options;
+create trigger set_creator_collaboration_options_updated_at
+before update on public.creator_collaboration_options
+for each row execute function public.set_updated_at();
+
 drop trigger if exists set_brand_inquiries_updated_at on public.brand_inquiries;
 create trigger set_brand_inquiries_updated_at
 before update on public.brand_inquiries
@@ -93,6 +137,8 @@ for each row execute function public.set_updated_at();
 alter table public.profiles enable row level security;
 alter table public.creator_profiles enable row level security;
 alter table public.creator_social_links enable row level security;
+alter table public.creator_featured_work enable row level security;
+alter table public.creator_collaboration_options enable row level security;
 alter table public.brand_inquiries enable row level security;
 
 drop policy if exists "Users can read their own profile" on public.profiles;
@@ -205,6 +251,126 @@ using (
   )
 );
 
+drop policy if exists "Published creator featured work is public" on public.creator_featured_work;
+create policy "Published creator featured work is public"
+on public.creator_featured_work for select
+to public
+using (
+  exists (
+    select 1
+    from public.creator_profiles
+    where creator_profiles.id = creator_featured_work.creator_profile_id
+      and (creator_profiles.is_published = true or creator_profiles.user_id = auth.uid())
+  )
+);
+
+drop policy if exists "Creators can create their own featured work" on public.creator_featured_work;
+create policy "Creators can create their own featured work"
+on public.creator_featured_work for insert
+to authenticated
+with check (
+  exists (
+    select 1
+    from public.creator_profiles
+    where creator_profiles.id = creator_featured_work.creator_profile_id
+      and creator_profiles.user_id = auth.uid()
+  )
+);
+
+drop policy if exists "Creators can update their own featured work" on public.creator_featured_work;
+create policy "Creators can update their own featured work"
+on public.creator_featured_work for update
+to authenticated
+using (
+  exists (
+    select 1
+    from public.creator_profiles
+    where creator_profiles.id = creator_featured_work.creator_profile_id
+      and creator_profiles.user_id = auth.uid()
+  )
+)
+with check (
+  exists (
+    select 1
+    from public.creator_profiles
+    where creator_profiles.id = creator_featured_work.creator_profile_id
+      and creator_profiles.user_id = auth.uid()
+  )
+);
+
+drop policy if exists "Creators can delete their own featured work" on public.creator_featured_work;
+create policy "Creators can delete their own featured work"
+on public.creator_featured_work for delete
+to authenticated
+using (
+  exists (
+    select 1
+    from public.creator_profiles
+    where creator_profiles.id = creator_featured_work.creator_profile_id
+      and creator_profiles.user_id = auth.uid()
+  )
+);
+
+drop policy if exists "Published collaboration options are public" on public.creator_collaboration_options;
+create policy "Published collaboration options are public"
+on public.creator_collaboration_options for select
+to public
+using (
+  exists (
+    select 1
+    from public.creator_profiles
+    where creator_profiles.id = creator_collaboration_options.creator_profile_id
+      and (creator_profiles.is_published = true or creator_profiles.user_id = auth.uid())
+  )
+);
+
+drop policy if exists "Creators can create their own collaboration options" on public.creator_collaboration_options;
+create policy "Creators can create their own collaboration options"
+on public.creator_collaboration_options for insert
+to authenticated
+with check (
+  exists (
+    select 1
+    from public.creator_profiles
+    where creator_profiles.id = creator_collaboration_options.creator_profile_id
+      and creator_profiles.user_id = auth.uid()
+  )
+);
+
+drop policy if exists "Creators can update their own collaboration options" on public.creator_collaboration_options;
+create policy "Creators can update their own collaboration options"
+on public.creator_collaboration_options for update
+to authenticated
+using (
+  exists (
+    select 1
+    from public.creator_profiles
+    where creator_profiles.id = creator_collaboration_options.creator_profile_id
+      and creator_profiles.user_id = auth.uid()
+  )
+)
+with check (
+  exists (
+    select 1
+    from public.creator_profiles
+    where creator_profiles.id = creator_collaboration_options.creator_profile_id
+      and creator_profiles.user_id = auth.uid()
+  )
+);
+
+drop policy if exists "Creators can delete their own collaboration options" on public.creator_collaboration_options;
+create policy "Creators can delete their own collaboration options"
+on public.creator_collaboration_options for delete
+to authenticated
+using (
+  exists (
+    select 1
+    from public.creator_profiles
+    where creator_profiles.id = creator_collaboration_options.creator_profile_id
+      and creator_profiles.user_id = auth.uid()
+  )
+);
+
 drop policy if exists "Anyone can submit inquiries for published creators" on public.brand_inquiries;
 create policy "Anyone can submit inquiries for published creators"
 on public.brand_inquiries for insert
@@ -258,5 +424,9 @@ grant select on public.creator_profiles to anon, authenticated;
 grant insert, update, delete on public.creator_profiles to authenticated;
 grant select on public.creator_social_links to anon, authenticated;
 grant insert, update, delete on public.creator_social_links to authenticated;
+grant select on public.creator_featured_work to anon, authenticated;
+grant insert, update, delete on public.creator_featured_work to authenticated;
+grant select on public.creator_collaboration_options to anon, authenticated;
+grant insert, update, delete on public.creator_collaboration_options to authenticated;
 grant insert on public.brand_inquiries to anon, authenticated;
 grant select, update on public.brand_inquiries to authenticated;
