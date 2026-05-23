@@ -120,13 +120,37 @@ const photoPlacements = [
   },
 ];
 
+const fontChoices = [
+  {
+    name: "Editorial Serif",
+    value: "editorialSerif",
+    description: "Classic, premium, magazine-style headings.",
+    sample: "Maya Rivera",
+  },
+  {
+    name: "Modern Sans",
+    value: "modernSans",
+    description: "Clean, simple, and easy to read for any niche.",
+    sample: "Maya Rivera",
+  },
+  {
+    name: "Friendly Script",
+    value: "friendlyScript",
+    description: "Warm, personal, and creator-led for lifestyle brands.",
+    sample: "Maya Rivera",
+  },
+];
+
 export default function FreeCreatorProfileSetupPage() {
   const [selectedDesign, setSelectedDesign] = useState(designChoices[0].title);
   const [selectedLogoColor, setSelectedLogoColor] = useState(logoColors[0].name);
   const [photoPlacement, setPhotoPlacement] = useState(photoPlacements[1].value);
+  const [selectedFont, setSelectedFont] = useState(fontChoices[0].value);
   const [photoPreview, setPhotoPreview] = useState("");
   const selectedLogo =
     logoColors.find((logo) => logo.name === selectedLogoColor) ?? logoColors[0];
+  const selectedFontChoice =
+    fontChoices.find((font) => font.value === selectedFont) ?? fontChoices[0];
 
   function handleLogoImageError(event, logo) {
     const fallbackIndex = Number(event.currentTarget.dataset.fallbackIndex ?? 0);
@@ -278,7 +302,7 @@ export default function FreeCreatorProfileSetupPage() {
           </div>
 
           <div className="photoBuilder">
-            <div className={`bannerPreview ${photoPlacement}`}>
+            <div className={`bannerPreview ${photoPlacement} ${selectedFont}`}>
               <div className="bannerGlow"></div>
               <div className="photoCircle">
                 {photoPreview ? (
@@ -317,10 +341,45 @@ export default function FreeCreatorProfileSetupPage() {
           </div>
         </section>
 
+        <section className="choiceSection fontChoiceSection" aria-labelledby="font-heading">
+          <div className="sectionHeader">
+            <p className="eyebrow">Step 4</p>
+            <h2 id="font-heading">Choose a profile font style</h2>
+            <span>
+              Pick the typography direction for your free profile. This affects
+              the overall feel of the page, especially your name and section
+              headings.
+            </span>
+          </div>
+
+          <div className="fontGrid">
+            {fontChoices.map((font) => (
+              <button
+                className={`fontOption ${font.value} ${
+                  selectedFont === font.value ? "selected" : ""
+                }`}
+                type="button"
+                aria-pressed={selectedFont === font.value}
+                onClick={() => setSelectedFont(font.value)}
+                key={font.value}
+              >
+                <strong>{font.sample}</strong>
+                <span>{font.name}</span>
+                <p>{font.description}</p>
+              </button>
+            ))}
+          </div>
+        </section>
+
         <section className="choiceSummary" aria-label="Selected free profile choices">
           <div>
-            <p className="eyebrow">Your free profile draft</p>
+            <p className="eyebrow">Choices summary</p>
             <h2>{selectedDesign}</h2>
+            <p className="summaryExplainer">
+              This box summarizes the choices you have made so far. It is not
+              the full profile preview yet; use Preview Free Profile to see the
+              sample page layout.
+            </p>
             <span>
               Logo color: <strong>{selectedLogoColor}</strong>
             </span>
@@ -329,6 +388,9 @@ export default function FreeCreatorProfileSetupPage() {
               <strong>
                 {photoPlacements.find((placement) => placement.value === photoPlacement)?.label}
               </strong>
+            </span>
+            <span>
+              Font style: <strong>{selectedFontChoice.name}</strong>
             </span>
           </div>
           <div className="summaryLogo" style={{ "--logo-color": selectedLogo.color }}>
@@ -674,6 +736,12 @@ export default function FreeCreatorProfileSetupPage() {
             rgba(255, 255, 255, 0.06);
         }
 
+        .fontChoiceSection {
+          background:
+            radial-gradient(circle at 82% 18%, rgba(242, 140, 130, 0.14), transparent 26%),
+            rgba(255, 255, 255, 0.06);
+        }
+
         .logoGrid {
           display: grid;
           grid-template-columns: repeat(6, 1fr);
@@ -750,11 +818,20 @@ export default function FreeCreatorProfileSetupPage() {
         }
 
         .choiceSummary span {
+          display: block;
+          margin-top: 8px;
           color: #596273;
         }
 
         .choiceSummary strong {
           color: #10172f;
+        }
+
+        .summaryExplainer {
+          max-width: 650px;
+          margin: 0 0 14px;
+          color: #596273;
+          line-height: 1.6;
         }
 
         .summaryLogo {
@@ -785,7 +862,7 @@ export default function FreeCreatorProfileSetupPage() {
         }
 
         .bannerPreview {
-          min-height: 250px;
+          min-height: 300px;
           position: relative;
           overflow: hidden;
           border: 1px solid rgba(255, 255, 255, 0.12);
@@ -808,9 +885,9 @@ export default function FreeCreatorProfileSetupPage() {
 
         .photoCircle {
           position: absolute;
-          top: 28px;
-          width: 132px;
-          height: 132px;
+          top: 24px;
+          width: 164px;
+          height: 164px;
           display: grid;
           place-items: center;
           overflow: hidden;
@@ -860,6 +937,19 @@ export default function FreeCreatorProfileSetupPage() {
           font-family: Georgia, "Times New Roman", serif;
           font-size: clamp(1.8rem, 4vw, 3rem);
           letter-spacing: -0.05em;
+        }
+
+        .bannerPreview.modernSans .bannerText strong {
+          font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+            BlinkMacSystemFont, "Segoe UI", sans-serif;
+          letter-spacing: -0.04em;
+        }
+
+        .bannerPreview.friendlyScript .bannerText strong {
+          font-family: "Brush Script MT", "Segoe Script", cursive;
+          color: #ff6a61;
+          font-weight: 400;
+          letter-spacing: 0;
         }
 
         .bannerText span {
@@ -930,6 +1020,76 @@ export default function FreeCreatorProfileSetupPage() {
           box-shadow: 0 0 24px rgba(0, 232, 240, 0.22);
         }
 
+        .fontGrid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 14px;
+        }
+
+        .fontOption {
+          min-height: 170px;
+          display: grid;
+          align-content: center;
+          gap: 10px;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 20px;
+          background: rgba(255, 255, 255, 0.07);
+          color: #ffffff;
+          cursor: pointer;
+          font: inherit;
+          padding: 20px;
+          text-align: left;
+          transition:
+            border-color 160ms ease,
+            box-shadow 160ms ease,
+            transform 160ms ease;
+        }
+
+        .fontOption strong {
+          display: block;
+          font-size: 2rem;
+          line-height: 1;
+        }
+
+        .fontOption.editorialSerif strong {
+          font-family: Georgia, "Times New Roman", serif;
+          letter-spacing: -0.05em;
+        }
+
+        .fontOption.modernSans strong {
+          font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+            BlinkMacSystemFont, "Segoe UI", sans-serif;
+          letter-spacing: -0.04em;
+        }
+
+        .fontOption.friendlyScript strong {
+          font-family: "Brush Script MT", "Segoe Script", cursive;
+          color: #ff8a80;
+          font-weight: 400;
+        }
+
+        .fontOption span {
+          color: #00e8f0;
+          font-size: 0.78rem;
+          font-weight: 900;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+        }
+
+        .fontOption p {
+          margin: 0;
+          color: rgba(255, 255, 255, 0.66);
+          line-height: 1.5;
+        }
+
+        .fontOption.selected {
+          border-color: #00e8f0;
+          box-shadow:
+            0 0 0 2px rgba(0, 232, 240, 0.18),
+            0 22px 50px rgba(0, 232, 240, 0.12);
+          transform: translateY(-3px);
+        }
+
         .nextStepBanner {
           margin-top: 24px;
           display: flex;
@@ -974,7 +1134,8 @@ export default function FreeCreatorProfileSetupPage() {
         @media (max-width: 1060px) {
           .designGrid,
           .logoGrid,
-          .photoBuilder {
+          .photoBuilder,
+          .fontGrid {
             grid-template-columns: repeat(2, 1fr);
           }
         }
@@ -999,6 +1160,7 @@ export default function FreeCreatorProfileSetupPage() {
           .designGrid,
           .logoGrid,
           .photoBuilder,
+          .fontGrid,
           .placementOptions {
             grid-template-columns: 1fr;
           }
