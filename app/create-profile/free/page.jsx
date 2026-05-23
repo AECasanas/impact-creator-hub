@@ -70,16 +70,6 @@ const logoColors = [
     image: "/logo-colors/impact-logo-red.png",
   },
   {
-    name: "Electric Red",
-    color: "#ff1b1c",
-    image: "/logo-colors/impact-logo-electricred.png",
-  },
-  {
-    name: "Coral",
-    color: "#ff6f61",
-    image: "/logo-colors/impact-logo-coral.png",
-  },
-  {
     name: "White",
     color: "#ffffff",
     image: "/logo-colors/impact-logo-white.png",
@@ -98,11 +88,20 @@ const logoColors = [
     name: "Green",
     color: "#00e95d",
     image: "/logo-colors/impact-logo-green.png",
+    fallbacks: [
+      "/logo-colors/impact-logo-emerald-green.png",
+      "/logo-colors/impact-logo-emeraldgreen.png",
+    ],
   },
   {
     name: "Yellow",
     color: "#ffd91f",
     image: "/logo-colors/impact-logo-yellow.png",
+    fallbacks: [
+      "/logo-colors/impact-logo-gold.png",
+      "/logo-colors/impact-logo-golden-yellow.png",
+      "/logo-colors/impact-logo-gold-yellow.png",
+    ],
   },
 ];
 
@@ -111,6 +110,18 @@ export default function FreeCreatorProfileSetupPage() {
   const [selectedLogoColor, setSelectedLogoColor] = useState(logoColors[0].name);
   const selectedLogo =
     logoColors.find((logo) => logo.name === selectedLogoColor) ?? logoColors[0];
+
+  function handleLogoImageError(event, logo) {
+    const fallbackIndex = Number(event.currentTarget.dataset.fallbackIndex ?? 0);
+    const fallback = logo.fallbacks?.[fallbackIndex];
+
+    if (!fallback) {
+      return;
+    }
+
+    event.currentTarget.dataset.fallbackIndex = String(fallbackIndex + 1);
+    event.currentTarget.src = fallback;
+  }
 
   return (
     <main className="freeSetupPage">
@@ -216,7 +227,12 @@ export default function FreeCreatorProfileSetupPage() {
                 key={logo.name}
               >
                 <span className="logoTile">
-                  <img className="logoImage" src={logo.image} alt={`${logo.name} Impact logo`} />
+                  <img
+                    className="logoImage"
+                    src={logo.image}
+                    alt={`${logo.name} Impact logo`}
+                    onError={(event) => handleLogoImageError(event, logo)}
+                  />
                 </span>
                 <strong>{logo.name}</strong>
               </button>
@@ -233,7 +249,11 @@ export default function FreeCreatorProfileSetupPage() {
             </span>
           </div>
           <div className="summaryLogo" style={{ "--logo-color": selectedLogo.color }}>
-            <img src={selectedLogo.image} alt={`${selectedLogo.name} Impact logo preview`} />
+            <img
+              src={selectedLogo.image}
+              alt={`${selectedLogo.name} Impact logo preview`}
+              onError={(event) => handleLogoImageError(event, selectedLogo)}
+            />
           </div>
         </section>
 
