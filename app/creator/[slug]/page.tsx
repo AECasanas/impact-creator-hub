@@ -50,6 +50,7 @@ type CreatorProfile = {
   collaboration_note: string | null;
   audience_size: number | null;
   rate_card_url: string | null;
+  is_published: boolean | null;
   creator_social_links?: SocialLink[];
   creator_featured_work?: FeaturedWork[];
   creator_collaboration_options?: CollaborationOption[];
@@ -115,7 +116,6 @@ export default async function CreatorProfilePage({
     .from("creator_profiles")
     .select("*, creator_social_links(*), creator_featured_work(*), creator_collaboration_options(*)")
     .eq("slug", slug)
-    .eq("is_published", true)
     .maybeSingle();
 
   if (!data) {
@@ -137,6 +137,7 @@ export default async function CreatorProfilePage({
       ? `url(${creatorProfile.cover_image_url})`
       : "none"
   } as CSSProperties;
+  const isPublished = creatorProfile.is_published === true;
 
   return (
     <main className="stack">
@@ -151,6 +152,7 @@ export default async function CreatorProfilePage({
         <div className="stack">
           <p className="eyebrow">{creatorProfile.profile_badge ?? "Impact creator"}</p>
           <h1 className="page-title">{creatorProfile.display_name}</h1>
+          {!isPublished ? <p className="status-pill">Draft preview</p> : null}
           {creatorProfile.content_focus ? (
             <p className="script-line">{creatorProfile.content_focus}</p>
           ) : null}
@@ -296,60 +298,74 @@ export default async function CreatorProfilePage({
         </article>
       </section>
 
-      <section className="card stack">
-        <div>
-          <p className="eyebrow">Brand inquiry</p>
-          <h2>Pitch a mission-aligned collaboration</h2>
+      {isPublished ? (
+        <section className="card stack">
+          <div>
+            <p className="eyebrow">Brand inquiry</p>
+            <h2>Pitch a mission-aligned collaboration</h2>
+            <p className="muted">
+              Anyone can submit this form while the creator profile is published.
+            </p>
+          </div>
+          {inquiry === "sent" ? (
+            <p className="status-pill">Inquiry sent. The creator can review it in their dashboard.</p>
+          ) : null}
+          <form action={submitBrandInquiry} className="form-grid">
+            <input name="creator_profile_id" type="hidden" value={creatorProfile.id} />
+            <input name="creator_slug" type="hidden" value={creatorProfile.slug ?? slug} />
+            <div className="field">
+              <label htmlFor="brand_name">Brand name</label>
+              <input id="brand_name" name="brand_name" required placeholder="Purpose Co." />
+            </div>
+            <div className="field">
+              <label htmlFor="contact_name">Contact name</label>
+              <input id="contact_name" name="contact_name" required placeholder="Jordan Lee" />
+            </div>
+            <div className="field">
+              <label htmlFor="email">Email</label>
+              <input id="email" name="email" required type="email" placeholder="jordan@example.com" />
+            </div>
+            <div className="field">
+              <label htmlFor="budget_range">Budget range</label>
+              <input id="budget_range" name="budget_range" placeholder="$5k - $10k" />
+            </div>
+            <div className="field full">
+              <label htmlFor="campaign_goal">Campaign goal</label>
+              <input
+                id="campaign_goal"
+                name="campaign_goal"
+                placeholder="Launch an ethical product with creator-led storytelling"
+              />
+            </div>
+            <div className="field full">
+              <label htmlFor="message">Message</label>
+              <textarea
+                id="message"
+                name="message"
+                required
+                placeholder="Share timing, deliverables, impact goals, and why this creator is a fit."
+              />
+            </div>
+            <div className="actions">
+              <button className="button" type="submit">
+                Send inquiry
+              </button>
+            </div>
+          </form>
+        </section>
+      ) : (
+        <section className="card stack">
+          <p className="eyebrow">Private preview</p>
+          <h2>This is your actual saved profile draft.</h2>
           <p className="muted">
-            Anyone can submit this form while the creator profile is published.
+            Publish it from the create-profile page when you are ready for public views
+            and brand inquiries.
           </p>
-        </div>
-        {inquiry === "sent" ? (
-          <p className="status-pill">Inquiry sent. The creator can review it in their dashboard.</p>
-        ) : null}
-        <form action={submitBrandInquiry} className="form-grid">
-          <input name="creator_profile_id" type="hidden" value={creatorProfile.id} />
-          <input name="creator_slug" type="hidden" value={creatorProfile.slug ?? slug} />
-          <div className="field">
-            <label htmlFor="brand_name">Brand name</label>
-            <input id="brand_name" name="brand_name" required placeholder="Purpose Co." />
-          </div>
-          <div className="field">
-            <label htmlFor="contact_name">Contact name</label>
-            <input id="contact_name" name="contact_name" required placeholder="Jordan Lee" />
-          </div>
-          <div className="field">
-            <label htmlFor="email">Email</label>
-            <input id="email" name="email" required type="email" placeholder="jordan@example.com" />
-          </div>
-          <div className="field">
-            <label htmlFor="budget_range">Budget range</label>
-            <input id="budget_range" name="budget_range" placeholder="$5k - $10k" />
-          </div>
-          <div className="field full">
-            <label htmlFor="campaign_goal">Campaign goal</label>
-            <input
-              id="campaign_goal"
-              name="campaign_goal"
-              placeholder="Launch an ethical product with creator-led storytelling"
-            />
-          </div>
-          <div className="field full">
-            <label htmlFor="message">Message</label>
-            <textarea
-              id="message"
-              name="message"
-              required
-              placeholder="Share timing, deliverables, impact goals, and why this creator is a fit."
-            />
-          </div>
-          <div className="actions">
-            <button className="button" type="submit">
-              Send inquiry
-            </button>
-          </div>
-        </form>
-      </section>
+          <Link className="button" href="/create-profile">
+            Back to create profile
+          </Link>
+        </section>
+      )}
     </main>
   );
 }

@@ -100,7 +100,7 @@ export default async function DashboardPage({
             Start with the onboarding form to create a private draft, then
             publish it when your profile is ready for brands.
           </p>
-          <Link className="button" href="/onboarding/creator">
+          <Link className="button" href="/create-profile">
             Start onboarding
           </Link>
         </section>
@@ -135,12 +135,12 @@ export default async function DashboardPage({
               <p className="muted">Public slug: /creator/{creatorProfile.slug}</p>
             </div>
             <div className="actions">
-              <Link className="button" href="/onboarding/creator">
+              <Link className="button" href="/create-profile">
                 Edit creator profile
               </Link>
-              {published && creatorProfile.slug ? (
+              {creatorProfile.slug ? (
                 <Link className="secondary-button" href={`/creator/${creatorProfile.slug}`}>
-                  View public profile
+                  Preview profile
                 </Link>
               ) : null}
             </div>

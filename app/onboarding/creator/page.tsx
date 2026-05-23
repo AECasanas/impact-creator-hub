@@ -78,7 +78,7 @@ async function saveCreatorProfile(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/onboarding/creator?auth=required");
+    redirect("/create-profile?auth=required");
   }
 
   const displayName = text(formData, "display_name") ?? "Impact Creator";
@@ -226,11 +226,7 @@ async function saveCreatorProfile(formData: FormData) {
 
   revalidatePath("/dashboard");
   revalidatePath(`/creator/${creatorProfile.slug}`);
-  redirect(
-    formData.get("is_published") === "on"
-      ? `/creator/${creatorProfile.slug}`
-      : `/dashboard?saved=${creatorProfile.slug}`
-  );
+  redirect(`/creator/${creatorProfile.slug}`);
 }
 
 export default async function CreatorOnboardingPage({
@@ -602,7 +598,7 @@ export default async function CreatorOnboardingPage({
           </button>
           {creatorProfile?.slug ? (
             <Link className="secondary-button" href={`/creator/${creatorProfile.slug}`}>
-              View public profile
+              Preview profile
             </Link>
           ) : null}
         </div>

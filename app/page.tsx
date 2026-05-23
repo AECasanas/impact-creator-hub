@@ -10,7 +10,7 @@ export default function HomePage() {
         share proof of audience trust, and receive qualified brand inquiries.
       </p>
       <div className="actions">
-        <Link className="button" href="/onboarding/creator">
+        <Link className="button" href="/create-profile">
           Build your creator profile
         </Link>
         <Link className="secondary-button" href="/dashboard">

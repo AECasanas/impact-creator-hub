@@ -22,7 +22,7 @@ export default function RootLayout({
               <span>Impact Creator Hub</span>
             </Link>
             <nav className="nav-links" aria-label="Main navigation">
-              <Link href="/onboarding/creator">Creator onboarding</Link>
+              <Link href="/create-profile">Create profile</Link>
               <Link href="/dashboard">Dashboard</Link>
             </nav>
           </header>
