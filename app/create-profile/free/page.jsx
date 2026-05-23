@@ -85,12 +85,12 @@ const logoColors = [
     image: "/logo-colors/impact-logo-pink.png",
   },
   {
-    name: "Green",
+    name: "Emerald Green",
     color: "#00e95d",
-    image: "/logo-colors/impact-logo-green.png",
+    image: "/logo-colors/impact-logo-emerald-green.png",
     fallbacks: [
-      "/logo-colors/impact-logo-emerald-green.png",
       "/logo-colors/impact-logo-emeraldgreen.png",
+      "/logo-colors/impact-logo-green.png",
     ],
   },
   {
@@ -105,9 +105,26 @@ const logoColors = [
   },
 ];
 
+const photoPlacements = [
+  {
+    label: "Top Left",
+    value: "topLeft",
+  },
+  {
+    label: "Middle",
+    value: "middle",
+  },
+  {
+    label: "Top Right",
+    value: "topRight",
+  },
+];
+
 export default function FreeCreatorProfileSetupPage() {
   const [selectedDesign, setSelectedDesign] = useState(designChoices[0].title);
   const [selectedLogoColor, setSelectedLogoColor] = useState(logoColors[0].name);
+  const [photoPlacement, setPhotoPlacement] = useState(photoPlacements[1].value);
+  const [photoPreview, setPhotoPreview] = useState("");
   const selectedLogo =
     logoColors.find((logo) => logo.name === selectedLogoColor) ?? logoColors[0];
 
@@ -121,6 +138,16 @@ export default function FreeCreatorProfileSetupPage() {
 
     event.currentTarget.dataset.fallbackIndex = String(fallbackIndex + 1);
     event.currentTarget.src = fallback;
+  }
+
+  function handlePhotoUpload(event) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setPhotoPreview(URL.createObjectURL(file));
   }
 
   return (
@@ -240,12 +267,68 @@ export default function FreeCreatorProfileSetupPage() {
           </div>
         </section>
 
+        <section className="choiceSection photoChoiceSection" aria-labelledby="photo-heading">
+          <div className="sectionHeader">
+            <p className="eyebrow">Step 3</p>
+            <h2 id="photo-heading">Upload your profile photo</h2>
+            <span>
+              Your free profile uses a circular creator photo over the banner.
+              Choose whether it sits top left, centered, or top right.
+            </span>
+          </div>
+
+          <div className="photoBuilder">
+            <div className={`bannerPreview ${photoPlacement}`}>
+              <div className="bannerGlow"></div>
+              <div className="photoCircle">
+                {photoPreview ? (
+                  <img src={photoPreview} alt="Creator profile preview" />
+                ) : (
+                  <span>Upload Photo</span>
+                )}
+              </div>
+              <div className="bannerText">
+                <strong>Your Name</strong>
+                <span>Food. Travel. Lifestyle.</span>
+              </div>
+            </div>
+
+            <div className="photoControls">
+              <label className="uploadBox">
+                <span>Choose image</span>
+                <strong>PNG or JPG, square photo recommended</strong>
+                <input type="file" accept="image/png,image/jpeg" onChange={handlePhotoUpload} />
+              </label>
+
+              <div className="placementOptions" aria-label="Photo placement options">
+                {photoPlacements.map((placement) => (
+                  <button
+                    className={photoPlacement === placement.value ? "selected" : ""}
+                    type="button"
+                    aria-pressed={photoPlacement === placement.value}
+                    onClick={() => setPhotoPlacement(placement.value)}
+                    key={placement.value}
+                  >
+                    {placement.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="choiceSummary" aria-label="Selected free profile choices">
           <div>
             <p className="eyebrow">Your free profile draft</p>
             <h2>{selectedDesign}</h2>
             <span>
               Logo color: <strong>{selectedLogoColor}</strong>
+            </span>
+            <span>
+              Photo placement:{" "}
+              <strong>
+                {photoPlacements.find((placement) => placement.value === photoPlacement)?.label}
+              </strong>
             </span>
           </div>
           <div className="summaryLogo" style={{ "--logo-color": selectedLogo.color }}>
@@ -585,6 +668,12 @@ export default function FreeCreatorProfileSetupPage() {
           background: rgba(0, 0, 0, 0.28);
         }
 
+        .photoChoiceSection {
+          background:
+            radial-gradient(circle at 18% 16%, rgba(0, 232, 240, 0.12), transparent 28%),
+            rgba(255, 255, 255, 0.06);
+        }
+
         .logoGrid {
           display: grid;
           grid-template-columns: repeat(6, 1fr);
@@ -688,6 +777,159 @@ export default function FreeCreatorProfileSetupPage() {
           object-fit: cover;
         }
 
+        .photoBuilder {
+          display: grid;
+          grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+          gap: 18px;
+          align-items: stretch;
+        }
+
+        .bannerPreview {
+          min-height: 250px;
+          position: relative;
+          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 24px;
+          background:
+            linear-gradient(135deg, rgba(255, 246, 242, 0.96), rgba(255, 218, 207, 0.9)),
+            #fff0ed;
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.26);
+        }
+
+        .bannerGlow {
+          position: absolute;
+          inset: auto -80px -100px auto;
+          width: 260px;
+          height: 260px;
+          border-radius: 50%;
+          background: rgba(0, 232, 240, 0.16);
+          filter: blur(8px);
+        }
+
+        .photoCircle {
+          position: absolute;
+          top: 28px;
+          width: 132px;
+          height: 132px;
+          display: grid;
+          place-items: center;
+          overflow: hidden;
+          border: 7px solid #ffffff;
+          border-radius: 50%;
+          background:
+            radial-gradient(circle at 30% 25%, rgba(0, 232, 240, 0.22), transparent 30%),
+            #10172f;
+          color: rgba(255, 255, 255, 0.78);
+          font-size: 0.78rem;
+          font-weight: 900;
+          text-align: center;
+          box-shadow: 0 18px 38px rgba(16, 23, 47, 0.2);
+        }
+
+        .photoCircle img {
+          width: 100%;
+          height: 100%;
+          display: block;
+          object-fit: cover;
+        }
+
+        .bannerPreview.topLeft .photoCircle {
+          left: 34px;
+        }
+
+        .bannerPreview.middle .photoCircle {
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        .bannerPreview.topRight .photoCircle {
+          right: 34px;
+        }
+
+        .bannerText {
+          position: absolute;
+          left: 34px;
+          right: 34px;
+          bottom: 26px;
+          display: grid;
+          gap: 6px;
+          color: #10172f;
+        }
+
+        .bannerText strong {
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: clamp(1.8rem, 4vw, 3rem);
+          letter-spacing: -0.05em;
+        }
+
+        .bannerText span {
+          color: #ff6a61;
+          font-weight: 900;
+        }
+
+        .photoControls {
+          display: grid;
+          gap: 14px;
+        }
+
+        .uploadBox {
+          min-height: 150px;
+          display: grid;
+          align-content: center;
+          gap: 8px;
+          border: 1px dashed rgba(0, 232, 240, 0.52);
+          border-radius: 22px;
+          background: rgba(255, 255, 255, 0.07);
+          color: #ffffff;
+          cursor: pointer;
+          padding: 20px;
+        }
+
+        .uploadBox span {
+          font-size: 1.2rem;
+          font-weight: 900;
+        }
+
+        .uploadBox strong {
+          color: rgba(255, 255, 255, 0.64);
+          font-size: 0.9rem;
+          line-height: 1.5;
+        }
+
+        .uploadBox input {
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          opacity: 0;
+          position: absolute;
+          pointer-events: none;
+        }
+
+        .placementOptions {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+        }
+
+        .placementOptions button {
+          min-height: 46px;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 14px;
+          background: rgba(255, 255, 255, 0.08);
+          color: rgba(255, 255, 255, 0.78);
+          cursor: pointer;
+          font: inherit;
+          font-size: 0.85rem;
+          font-weight: 900;
+        }
+
+        .placementOptions button.selected {
+          border-color: #00e8f0;
+          background: #00e8f0;
+          color: #020617;
+          box-shadow: 0 0 24px rgba(0, 232, 240, 0.22);
+        }
+
         .nextStepBanner {
           margin-top: 24px;
           display: flex;
@@ -731,7 +973,8 @@ export default function FreeCreatorProfileSetupPage() {
 
         @media (max-width: 1060px) {
           .designGrid,
-          .logoGrid {
+          .logoGrid,
+          .photoBuilder {
             grid-template-columns: repeat(2, 1fr);
           }
         }
@@ -754,7 +997,9 @@ export default function FreeCreatorProfileSetupPage() {
           }
 
           .designGrid,
-          .logoGrid {
+          .logoGrid,
+          .photoBuilder,
+          .placementOptions {
             grid-template-columns: 1fr;
           }
 
