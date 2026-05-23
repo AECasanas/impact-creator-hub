@@ -70,6 +70,16 @@ const logoColors = [
     image: "/logo-colors/impact-logo-red.png",
   },
   {
+    name: "Electric Red",
+    color: "#ff1b1c",
+    image: "/logo-colors/impact-logo-electricred.png",
+  },
+  {
+    name: "Coral",
+    color: "#ff6f61",
+    image: "/logo-colors/impact-logo-coral.png",
+  },
+  {
     name: "White",
     color: "#ffffff",
     image: "/logo-colors/impact-logo-white.png",
