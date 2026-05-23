@@ -393,12 +393,28 @@ export default function FreeCreatorProfileSetupPage() {
               Font style: <strong>{selectedFontChoice.name}</strong>
             </span>
           </div>
-          <div className="summaryLogo" style={{ "--logo-color": selectedLogo.color }}>
-            <img
-              src={selectedLogo.image}
-              alt={`${selectedLogo.name} Impact logo preview`}
-              onError={(event) => handleLogoImageError(event, selectedLogo)}
-            />
+          <div className="summaryPreview" style={{ "--logo-color": selectedLogo.color }}>
+            <p>Small preview of your choices</p>
+            <div className={`summaryMiniBanner ${photoPlacement} ${selectedFont}`}>
+              <div className="summaryPhotoCircle">
+                {photoPreview ? (
+                  <img src={photoPreview} alt="Uploaded creator photo preview" />
+                ) : (
+                  <span>Photo</span>
+                )}
+              </div>
+              <div className="summaryMiniText">
+                <strong>Your Name</strong>
+                <span>{selectedDesign}</span>
+              </div>
+            </div>
+            <div className="summaryLogo">
+              <img
+                src={selectedLogo.image}
+                alt={`${selectedLogo.name} Impact logo preview`}
+                onError={(event) => handleLogoImageError(event, selectedLogo)}
+              />
+            </div>
           </div>
         </section>
 
@@ -795,9 +811,9 @@ export default function FreeCreatorProfileSetupPage() {
 
         .choiceSummary {
           margin-top: 24px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
+          align-items: stretch;
           gap: 22px;
           padding: 28px 34px;
           border: 1px solid rgba(255, 255, 255, 0.12);
@@ -814,7 +830,8 @@ export default function FreeCreatorProfileSetupPage() {
         .choiceSummary h2 {
           margin: 10px 0;
           color: #10172f;
-          font-size: clamp(2rem, 4vw, 3rem);
+          font-size: clamp(1.45rem, 2.5vw, 2.1rem);
+          line-height: 1.05;
         }
 
         .choiceSummary span {
@@ -834,14 +851,116 @@ export default function FreeCreatorProfileSetupPage() {
           line-height: 1.6;
         }
 
-        .summaryLogo {
+        .summaryPreview {
           --logo-color: #00e8f0;
-          width: 88px;
-          height: 88px;
-          flex: 0 0 auto;
+          display: grid;
+          grid-template-columns: 1fr auto;
+          gap: 12px;
+          align-items: end;
+          padding: 14px;
+          border: 1px solid #e5e8ef;
+          border-radius: 22px;
+          background: #ffffff;
+        }
+
+        .summaryPreview > p {
+          grid-column: 1 / -1;
+          margin: 0;
+          color: #596273;
+          font-size: 0.78rem;
+          font-weight: 900;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
+
+        .summaryMiniBanner {
+          min-height: 170px;
+          position: relative;
+          overflow: hidden;
+          border-radius: 18px;
+          background:
+            linear-gradient(135deg, rgba(255, 246, 242, 0.96), rgba(255, 218, 207, 0.9)),
+            #fff0ed;
+        }
+
+        .summaryPhotoCircle {
+          position: absolute;
+          top: 16px;
+          width: 118px;
+          height: 118px;
           display: grid;
           place-items: center;
-          border-radius: 18px;
+          overflow: hidden;
+          border: 6px solid #ffffff;
+          border-radius: 50%;
+          background: #10172f;
+          color: rgba(255, 255, 255, 0.72);
+          font-size: 0.72rem;
+          font-weight: 900;
+          box-shadow: 0 14px 28px rgba(16, 23, 47, 0.18);
+        }
+
+        .summaryPhotoCircle img {
+          width: 100%;
+          height: 100%;
+          display: block;
+          object-fit: cover;
+        }
+
+        .summaryMiniBanner.topLeft .summaryPhotoCircle {
+          left: 18px;
+        }
+
+        .summaryMiniBanner.middle .summaryPhotoCircle {
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        .summaryMiniBanner.topRight .summaryPhotoCircle {
+          right: 18px;
+        }
+
+        .summaryMiniText {
+          position: absolute;
+          left: 18px;
+          right: 18px;
+          bottom: 16px;
+          display: grid;
+          gap: 4px;
+        }
+
+        .summaryMiniText strong {
+          color: #10172f;
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 1.45rem;
+          letter-spacing: -0.05em;
+        }
+
+        .summaryMiniBanner.modernSans .summaryMiniText strong {
+          font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+            BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .summaryMiniBanner.friendlyScript .summaryMiniText strong {
+          font-family: "Brush Script MT", "Segoe Script", cursive;
+          color: #ff6a61;
+          font-weight: 400;
+          letter-spacing: 0;
+        }
+
+        .summaryMiniText span {
+          margin: 0;
+          color: #596273;
+          font-size: 0.78rem;
+          font-weight: 800;
+        }
+
+        .summaryLogo {
+          width: 78px;
+          height: 78px;
+          display: grid;
+          place-items: center;
+          border-radius: 16px;
           background: #020202;
           box-shadow: 0 0 28px color-mix(in srgb, var(--logo-color) 22%, transparent);
           overflow: hidden;
@@ -862,7 +981,7 @@ export default function FreeCreatorProfileSetupPage() {
         }
 
         .bannerPreview {
-          min-height: 300px;
+          min-height: 335px;
           position: relative;
           overflow: hidden;
           border: 1px solid rgba(255, 255, 255, 0.12);
@@ -886,8 +1005,8 @@ export default function FreeCreatorProfileSetupPage() {
         .photoCircle {
           position: absolute;
           top: 24px;
-          width: 164px;
-          height: 164px;
+          width: 190px;
+          height: 190px;
           display: grid;
           place-items: center;
           overflow: hidden;
@@ -1149,7 +1268,6 @@ export default function FreeCreatorProfileSetupPage() {
           .choiceSummary,
           .nextStepBanner {
             align-items: flex-start;
-            flex-direction: column;
           }
 
           .navLinks {
@@ -1161,6 +1279,8 @@ export default function FreeCreatorProfileSetupPage() {
           .logoGrid,
           .photoBuilder,
           .fontGrid,
+          .choiceSummary,
+          .summaryPreview,
           .placementOptions {
             grid-template-columns: 1fr;
           }
