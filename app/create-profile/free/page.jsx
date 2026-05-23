@@ -35,29 +35,64 @@ const designChoices = [
 
 const logoColors = [
   {
+    name: "Electric Cyan",
+    color: "#00e8f0",
+    image: "/logo-colors/impact-logo-electric-cyan.png",
+  },
+  {
+    name: "Cobalt Blue",
+    color: "#1677ff",
+    image: "/logo-colors/impact-logo-cobalt-blue.png",
+  },
+  {
+    name: "Royal Blue",
+    color: "#144cff",
+    image: "/logo-colors/impact-logo-royal-blue.png",
+  },
+  {
+    name: "Teal Blue",
+    color: "#13cfd2",
+    image: "/logo-colors/impact-logo-teal-blue.png",
+  },
+  {
     name: "Orange",
     color: "#ff6a00",
-    image: "/logo-colors/impact-logo-orange.svg",
+    image: "/logo-colors/impact-logo-orange.png",
   },
   {
     name: "Gray",
     color: "#9a9a9a",
-    image: "/logo-colors/impact-logo-gray.svg",
+    image: "/logo-colors/impact-logo-gray.png",
   },
   {
     name: "Red",
     color: "#e00016",
-    image: "/logo-colors/impact-logo-red.svg",
+    image: "/logo-colors/impact-logo-red.png",
   },
   {
     name: "White",
     color: "#ffffff",
-    image: "/logo-colors/impact-logo-white.svg",
+    image: "/logo-colors/impact-logo-white.png",
   },
   {
     name: "Purple",
     color: "#8a3ffc",
-    image: "/logo-colors/impact-logo-purple.svg",
+    image: "/logo-colors/impact-logo-purple.png",
+  },
+  {
+    name: "Pink",
+    color: "#ff2f95",
+    image: "/logo-colors/impact-logo-pink.png",
+  },
+  {
+    name: "Green",
+    color: "#00e95d",
+    image: "/logo-colors/impact-logo-green.png",
+  },
+  {
+    name: "Yellow",
+    color: "#ffd91f",
+    image: "/logo-colors/impact-logo-yellow.png",
   },
 ];
 
@@ -328,9 +363,9 @@ export default function FreeCreatorProfileSetupPage() {
 
         .choiceSection {
           margin-top: 24px;
-          padding: clamp(24px, 4vw, 34px);
+          padding: clamp(18px, 3vw, 26px);
           border: 1px solid rgba(255, 255, 255, 0.12);
-          border-radius: 34px;
+          border-radius: 28px;
           background: rgba(255, 255, 255, 0.06);
           box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
           backdrop-filter: blur(18px);
@@ -354,17 +389,17 @@ export default function FreeCreatorProfileSetupPage() {
         .designGrid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 16px;
+          gap: 12px;
         }
 
         .designCard {
-          min-height: 430px;
+          min-height: 315px;
           display: flex;
           flex-direction: column;
-          gap: 16px;
-          padding: 18px;
+          gap: 11px;
+          padding: 14px;
           border: 1px solid rgba(255, 255, 255, 0.13);
-          border-radius: 26px;
+          border-radius: 20px;
           background: rgba(255, 255, 255, 0.08);
           transition:
             border-color 160ms ease,
@@ -400,9 +435,9 @@ export default function FreeCreatorProfileSetupPage() {
         }
 
         .miniPreview {
-          min-height: 170px;
-          border-radius: 18px;
-          padding: 14px;
+          min-height: 112px;
+          border-radius: 14px;
+          padding: 10px;
           background: rgba(255, 255, 255, 0.86);
         }
 
@@ -433,63 +468,64 @@ export default function FreeCreatorProfileSetupPage() {
 
         .miniNav {
           width: 64%;
-          height: 8px;
-          margin-bottom: 18px;
+          height: 6px;
+          margin-bottom: 12px;
         }
 
         .miniHero {
           display: grid;
-          grid-template-columns: 54px 1fr;
-          gap: 12px;
+          grid-template-columns: 38px 1fr;
+          gap: 9px;
           align-items: center;
         }
 
         .miniHero > span {
-          width: 54px;
-          height: 54px;
-          border: 5px solid #ffffff;
+          width: 38px;
+          height: 38px;
+          border: 4px solid #ffffff;
           border-radius: 50%;
           background: linear-gradient(135deg, #ffb8aa, #ff6a61);
         }
 
         .miniHero strong {
           width: 70%;
-          height: 14px;
+          height: 10px;
         }
 
         .miniHero p {
           width: 88%;
-          height: 8px;
-          margin: 9px 0 0;
+          height: 6px;
+          margin: 7px 0 0;
         }
 
         .miniRows {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 8px;
-          margin-top: 20px;
+          gap: 6px;
+          margin-top: 14px;
         }
 
         .miniRows span {
-          height: 34px;
+          height: 22px;
         }
 
         .designCard > p {
           margin: 0;
           color: #f28c82;
-          font-size: 0.72rem;
+          font-size: 0.66rem;
           font-weight: 900;
           letter-spacing: 0.14em;
           text-transform: uppercase;
         }
 
         .designCard h3 {
-          font-size: 1.7rem;
+          font-size: 1.35rem;
         }
 
         .designCard > span {
           color: rgba(255, 255, 255, 0.68);
-          line-height: 1.6;
+          font-size: 0.88rem;
+          line-height: 1.45;
         }
 
         .light > span,
@@ -498,14 +534,15 @@ export default function FreeCreatorProfileSetupPage() {
         }
 
         .designCard button {
-          min-height: 46px;
+          min-height: 40px;
           margin-top: auto;
           border: 0;
-          border-radius: 14px;
+          border-radius: 12px;
           background: #00e8f0;
           color: #020617;
           cursor: pointer;
           font: inherit;
+          font-size: 0.88rem;
           font-weight: 900;
         }
 
@@ -520,22 +557,23 @@ export default function FreeCreatorProfileSetupPage() {
 
         .logoGrid {
           display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          gap: 14px;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 12px;
         }
 
         .logoOption {
           display: grid;
-          gap: 10px;
+          gap: 8px;
           justify-items: center;
           border: 1px solid rgba(255, 255, 255, 0.12);
-          border-radius: 20px;
+          border-radius: 16px;
           background: rgba(255, 255, 255, 0.06);
           color: var(--logo-color);
           cursor: pointer;
           font: inherit;
+          font-size: 0.82rem;
           font-weight: 900;
-          padding: 14px;
+          padding: 10px;
           transition:
             border-color 160ms ease,
             box-shadow 160ms ease,
@@ -551,11 +589,11 @@ export default function FreeCreatorProfileSetupPage() {
         }
 
         .logoTile {
-          width: 108px;
-          height: 90px;
+          width: 82px;
+          height: 70px;
           display: grid;
           place-items: center;
-          border-radius: 14px;
+          border-radius: 11px;
           background: #020202;
           box-shadow: inset 0 0 28px rgba(255, 255, 255, 0.03);
           overflow: hidden;
@@ -602,12 +640,12 @@ export default function FreeCreatorProfileSetupPage() {
 
         .summaryLogo {
           --logo-color: #00e8f0;
-          width: 112px;
-          height: 112px;
+          width: 88px;
+          height: 88px;
           flex: 0 0 auto;
           display: grid;
           place-items: center;
-          border-radius: 24px;
+          border-radius: 18px;
           background: #020202;
           box-shadow: 0 0 28px color-mix(in srgb, var(--logo-color) 22%, transparent);
           overflow: hidden;
