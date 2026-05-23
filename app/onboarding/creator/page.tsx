@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -143,6 +144,19 @@ export default async function CreatorOnboardingPage({
   searchParams: Promise<{ saved?: string; auth?: string }>;
 }) {
   const { auth } = await searchParams;
+  if (!isSupabaseConfigured()) {
+    return (
+      <main className="hero">
+        <p className="eyebrow">Creator onboarding</p>
+        <h1 className="page-title">Connect Supabase to start onboarding.</h1>
+        <p className="lede">
+          Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your
+          environment, then apply supabase/schema.sql before creators save data.
+        </p>
+      </main>
+    );
+  }
+
   const supabase = await createClient();
   const {
     data: { user }

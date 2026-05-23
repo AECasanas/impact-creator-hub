@@ -1,6 +1,8 @@
+/* eslint-disable @next/next/no-img-element -- Creator-provided URLs stay unoptimized until uploads are added. */
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -72,6 +74,19 @@ export default async function CreatorProfilePage({
 }) {
   const { slug } = await params;
   const { inquiry } = await searchParams;
+  if (!isSupabaseConfigured()) {
+    return (
+      <main className="hero">
+        <p className="eyebrow">Creator profile</p>
+        <h1 className="page-title">Supabase is required for public profiles.</h1>
+        <p className="lede">
+          Configure the Supabase environment variables and apply the schema
+          before viewing published creator pages.
+        </p>
+      </main>
+    );
+  }
+
   const supabase = await createClient();
   const { data } = await supabase
     .from("creator_profiles")

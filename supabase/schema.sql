@@ -95,48 +95,57 @@ alter table public.creator_profiles enable row level security;
 alter table public.creator_social_links enable row level security;
 alter table public.brand_inquiries enable row level security;
 
+drop policy if exists "Users can read their own profile" on public.profiles;
 create policy "Users can read their own profile"
 on public.profiles for select
 to authenticated
 using (auth.uid() = id);
 
+drop policy if exists "Users can create their own profile" on public.profiles;
 create policy "Users can create their own profile"
 on public.profiles for insert
 to authenticated
 with check (auth.uid() = id);
 
+drop policy if exists "Users can update their own profile" on public.profiles;
 create policy "Users can update their own profile"
 on public.profiles for update
 to authenticated
 using (auth.uid() = id)
 with check (auth.uid() = id);
 
+drop policy if exists "Users can delete their own profile" on public.profiles;
 create policy "Users can delete their own profile"
 on public.profiles for delete
 to authenticated
 using (auth.uid() = id);
 
+drop policy if exists "Published creator profiles are public" on public.creator_profiles;
 create policy "Published creator profiles are public"
 on public.creator_profiles for select
 to public
 using (is_published = true or auth.uid() = user_id);
 
+drop policy if exists "Creators can create their own creator profile" on public.creator_profiles;
 create policy "Creators can create their own creator profile"
 on public.creator_profiles for insert
 to authenticated
 with check (auth.uid() = user_id);
 
+drop policy if exists "Creators can update their own creator profile" on public.creator_profiles;
 create policy "Creators can update their own creator profile"
 on public.creator_profiles for update
 to authenticated
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
+drop policy if exists "Creators can delete their own creator profile" on public.creator_profiles;
 create policy "Creators can delete their own creator profile"
 on public.creator_profiles for delete
 to authenticated
 using (auth.uid() = user_id);
 
+drop policy if exists "Published creator social links are public" on public.creator_social_links;
 create policy "Published creator social links are public"
 on public.creator_social_links for select
 to public
@@ -149,6 +158,7 @@ using (
   )
 );
 
+drop policy if exists "Creators can create their own social links" on public.creator_social_links;
 create policy "Creators can create their own social links"
 on public.creator_social_links for insert
 to authenticated
@@ -161,6 +171,7 @@ with check (
   )
 );
 
+drop policy if exists "Creators can update their own social links" on public.creator_social_links;
 create policy "Creators can update their own social links"
 on public.creator_social_links for update
 to authenticated
@@ -181,6 +192,7 @@ with check (
   )
 );
 
+drop policy if exists "Creators can delete their own social links" on public.creator_social_links;
 create policy "Creators can delete their own social links"
 on public.creator_social_links for delete
 to authenticated
@@ -193,6 +205,7 @@ using (
   )
 );
 
+drop policy if exists "Anyone can submit inquiries for published creators" on public.brand_inquiries;
 create policy "Anyone can submit inquiries for published creators"
 on public.brand_inquiries for insert
 to public
@@ -205,6 +218,7 @@ with check (
   )
 );
 
+drop policy if exists "Creators can read their own brand inquiries" on public.brand_inquiries;
 create policy "Creators can read their own brand inquiries"
 on public.brand_inquiries for select
 to authenticated
@@ -217,6 +231,7 @@ using (
   )
 );
 
+drop policy if exists "Creators can update their own brand inquiries" on public.brand_inquiries;
 create policy "Creators can update their own brand inquiries"
 on public.brand_inquiries for update
 to authenticated

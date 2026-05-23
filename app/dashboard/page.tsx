@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -34,6 +35,19 @@ export default async function DashboardPage({
   searchParams: Promise<{ saved?: string }>;
 }) {
   const { saved } = await searchParams;
+  if (!isSupabaseConfigured()) {
+    return (
+      <main className="hero">
+        <p className="eyebrow">Creator dashboard</p>
+        <h1 className="page-title">Supabase is not connected yet.</h1>
+        <p className="lede">
+          Configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          then apply the SQL schema so creators can manage profiles securely.
+        </p>
+      </main>
+    );
+  }
+
   const supabase = await createClient();
   const {
     data: { user }
