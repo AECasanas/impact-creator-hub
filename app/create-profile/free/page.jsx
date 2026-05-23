@@ -141,16 +141,46 @@ const fontChoices = [
   },
 ];
 
+const regularFontColors = {
+  light: [
+    { name: "Black", value: "black", color: "#10172f" },
+    { name: "Gray", value: "grayLight", color: "#596273" },
+  ],
+  dark: [
+    { name: "White", value: "white", color: "#ffffff" },
+    { name: "Gray", value: "grayDark", color: "#cbd5e1" },
+  ],
+};
+
+const scriptFontColors = [
+  { name: "Coral", value: "scriptCoral", color: "#ff6a61" },
+  { name: "Electric Cyan", value: "scriptCyan", color: "#00e8f0" },
+  { name: "Pink", value: "scriptPink", color: "#ff2f95" },
+  { name: "Purple", value: "scriptPurple", color: "#8a3ffc" },
+];
+
 export default function FreeCreatorProfileSetupPage() {
   const [selectedDesign, setSelectedDesign] = useState(designChoices[0].title);
   const [selectedLogoColor, setSelectedLogoColor] = useState(logoColors[0].name);
   const [photoPlacement, setPhotoPlacement] = useState(photoPlacements[1].value);
   const [selectedFont, setSelectedFont] = useState(fontChoices[0].value);
+  const [selectedFontColor, setSelectedFontColor] = useState("black");
   const [photoPreview, setPhotoPreview] = useState("");
   const selectedLogo =
     logoColors.find((logo) => logo.name === selectedLogoColor) ?? logoColors[0];
   const selectedFontChoice =
     fontChoices.find((font) => font.value === selectedFont) ?? fontChoices[0];
+  const usesDarkProfileBackground =
+    selectedDesign === "Dark Profile" || selectedDesign === "Portfolio Template";
+  const availableFontColors =
+    selectedFont === "friendlyScript"
+      ? scriptFontColors
+      : usesDarkProfileBackground
+        ? regularFontColors.dark
+        : regularFontColors.light;
+  const selectedFontColorChoice =
+    availableFontColors.find((color) => color.value === selectedFontColor) ??
+    availableFontColors[0];
 
   function handleLogoImageError(event, logo) {
     const fallbackIndex = Number(event.currentTarget.dataset.fallbackIndex ?? 0);
@@ -302,18 +332,23 @@ export default function FreeCreatorProfileSetupPage() {
           </div>
 
           <div className="photoBuilder">
-            <div className={`bannerPreview ${photoPlacement} ${selectedFont}`}>
+            <div
+              className={`bannerPreview ${photoPlacement} ${selectedFont}`}
+              style={{ "--font-color": selectedFontColorChoice.color }}
+            >
               <div className="bannerGlow"></div>
-              <div className="photoCircle">
-                {photoPreview ? (
-                  <img src={photoPreview} alt="Creator profile preview" />
-                ) : (
-                  <span>Upload Photo</span>
-                )}
-              </div>
-              <div className="bannerText">
-                <strong>Your Name</strong>
-                <span>Food. Travel. Lifestyle.</span>
+              <div className="photoPlacementGroup">
+                <div className="photoCircle">
+                  {photoPreview ? (
+                    <img src={photoPreview} alt="Creator profile preview" />
+                  ) : (
+                    <span>Upload Photo</span>
+                  )}
+                </div>
+                <div className="bannerText">
+                  <strong>Your Name</strong>
+                  <span>Food. Travel. Lifestyle.</span>
+                </div>
               </div>
             </div>
 
@@ -369,6 +404,35 @@ export default function FreeCreatorProfileSetupPage() {
               </button>
             ))}
           </div>
+
+          <div className="fontColorPanel">
+            <div>
+              <p className="eyebrow">Font color</p>
+              <span>
+                {selectedFont === "friendlyScript"
+                  ? "Script fonts can use a brand accent color."
+                  : usesDarkProfileBackground
+                    ? "Dark backgrounds use white or gray text."
+                    : "Light backgrounds use black or gray text."}
+              </span>
+            </div>
+
+            <div className="fontColorGrid">
+              {availableFontColors.map((color) => (
+                <button
+                  className={selectedFontColorChoice.value === color.value ? "selected" : ""}
+                  style={{ "--font-color": color.color }}
+                  type="button"
+                  aria-pressed={selectedFontColorChoice.value === color.value}
+                  onClick={() => setSelectedFontColor(color.value)}
+                  key={color.value}
+                >
+                  <span></span>
+                  {color.name}
+                </button>
+              ))}
+            </div>
+          </div>
         </section>
 
         <section className="choiceSummary" aria-label="Selected free profile choices">
@@ -392,20 +456,28 @@ export default function FreeCreatorProfileSetupPage() {
             <span>
               Font style: <strong>{selectedFontChoice.name}</strong>
             </span>
+            <span>
+              Font color: <strong>{selectedFontColorChoice.name}</strong>
+            </span>
           </div>
           <div className="summaryPreview" style={{ "--logo-color": selectedLogo.color }}>
             <p>Small preview of your choices</p>
-            <div className={`summaryMiniBanner ${photoPlacement} ${selectedFont}`}>
-              <div className="summaryPhotoCircle">
-                {photoPreview ? (
-                  <img src={photoPreview} alt="Uploaded creator photo preview" />
-                ) : (
-                  <span>Photo</span>
-                )}
-              </div>
-              <div className="summaryMiniText">
-                <strong>Your Name</strong>
-                <span>{selectedDesign}</span>
+            <div
+              className={`summaryMiniBanner ${photoPlacement} ${selectedFont}`}
+              style={{ "--font-color": selectedFontColorChoice.color }}
+            >
+              <div className="summaryPlacementGroup">
+                <div className="summaryPhotoCircle">
+                  {photoPreview ? (
+                    <img src={photoPreview} alt="Uploaded creator photo preview" />
+                  ) : (
+                    <span>Photo</span>
+                  )}
+                </div>
+                <div className="summaryMiniText">
+                  <strong>Your Name</strong>
+                  <span>{selectedDesign}</span>
+                </div>
               </div>
             </div>
             <div className="summaryLogo">
@@ -874,7 +946,7 @@ export default function FreeCreatorProfileSetupPage() {
         }
 
         .summaryMiniBanner {
-          min-height: 170px;
+          min-height: 240px;
           position: relative;
           overflow: hidden;
           border-radius: 18px;
@@ -883,11 +955,18 @@ export default function FreeCreatorProfileSetupPage() {
             #fff0ed;
         }
 
-        .summaryPhotoCircle {
+        .summaryPlacementGroup {
           position: absolute;
-          top: 16px;
-          width: 118px;
-          height: 118px;
+          top: 14px;
+          width: 160px;
+          display: grid;
+          justify-items: center;
+          gap: 8px;
+        }
+
+        .summaryPhotoCircle {
+          width: 132px;
+          height: 132px;
           display: grid;
           place-items: center;
           overflow: hidden;
@@ -907,30 +986,27 @@ export default function FreeCreatorProfileSetupPage() {
           object-fit: cover;
         }
 
-        .summaryMiniBanner.topLeft .summaryPhotoCircle {
+        .summaryMiniBanner.topLeft .summaryPlacementGroup {
           left: 18px;
         }
 
-        .summaryMiniBanner.middle .summaryPhotoCircle {
+        .summaryMiniBanner.middle .summaryPlacementGroup {
           left: 50%;
           transform: translateX(-50%);
         }
 
-        .summaryMiniBanner.topRight .summaryPhotoCircle {
+        .summaryMiniBanner.topRight .summaryPlacementGroup {
           right: 18px;
         }
 
         .summaryMiniText {
-          position: absolute;
-          left: 18px;
-          right: 18px;
-          bottom: 16px;
           display: grid;
           gap: 4px;
+          text-align: center;
         }
 
         .summaryMiniText strong {
-          color: #10172f;
+          color: var(--font-color, #10172f);
           font-family: Georgia, "Times New Roman", serif;
           font-size: 1.45rem;
           letter-spacing: -0.05em;
@@ -943,7 +1019,6 @@ export default function FreeCreatorProfileSetupPage() {
 
         .summaryMiniBanner.friendlyScript .summaryMiniText strong {
           font-family: "Brush Script MT", "Segoe Script", cursive;
-          color: #ff6a61;
           font-weight: 400;
           letter-spacing: 0;
         }
@@ -981,7 +1056,7 @@ export default function FreeCreatorProfileSetupPage() {
         }
 
         .bannerPreview {
-          min-height: 335px;
+          min-height: 370px;
           position: relative;
           overflow: hidden;
           border: 1px solid rgba(255, 255, 255, 0.12);
@@ -1002,9 +1077,16 @@ export default function FreeCreatorProfileSetupPage() {
           filter: blur(8px);
         }
 
-        .photoCircle {
+        .photoPlacementGroup {
           position: absolute;
           top: 24px;
+          width: 245px;
+          display: grid;
+          justify-items: center;
+          gap: 12px;
+        }
+
+        .photoCircle {
           width: 190px;
           height: 190px;
           display: grid;
@@ -1029,30 +1111,27 @@ export default function FreeCreatorProfileSetupPage() {
           object-fit: cover;
         }
 
-        .bannerPreview.topLeft .photoCircle {
+        .bannerPreview.topLeft .photoPlacementGroup {
           left: 34px;
         }
 
-        .bannerPreview.middle .photoCircle {
+        .bannerPreview.middle .photoPlacementGroup {
           left: 50%;
           transform: translateX(-50%);
         }
 
-        .bannerPreview.topRight .photoCircle {
+        .bannerPreview.topRight .photoPlacementGroup {
           right: 34px;
         }
 
         .bannerText {
-          position: absolute;
-          left: 34px;
-          right: 34px;
-          bottom: 26px;
           display: grid;
           gap: 6px;
-          color: #10172f;
+          text-align: center;
         }
 
         .bannerText strong {
+          color: var(--font-color, #10172f);
           font-family: Georgia, "Times New Roman", serif;
           font-size: clamp(1.8rem, 4vw, 3rem);
           letter-spacing: -0.05em;
@@ -1066,7 +1145,6 @@ export default function FreeCreatorProfileSetupPage() {
 
         .bannerPreview.friendlyScript .bannerText strong {
           font-family: "Brush Script MT", "Segoe Script", cursive;
-          color: #ff6a61;
           font-weight: 400;
           letter-spacing: 0;
         }
@@ -1209,6 +1287,59 @@ export default function FreeCreatorProfileSetupPage() {
           transform: translateY(-3px);
         }
 
+        .fontColorPanel {
+          margin-top: 18px;
+          display: grid;
+          grid-template-columns: minmax(0, 0.8fr) minmax(260px, 1fr);
+          gap: 18px;
+          align-items: center;
+          padding: 18px;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 20px;
+          background: rgba(0, 0, 0, 0.22);
+        }
+
+        .fontColorPanel span {
+          color: rgba(255, 255, 255, 0.66);
+          line-height: 1.5;
+        }
+
+        .fontColorGrid {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+          gap: 10px;
+        }
+
+        .fontColorGrid button {
+          min-height: 42px;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.08);
+          color: rgba(255, 255, 255, 0.82);
+          cursor: pointer;
+          font: inherit;
+          font-size: 0.86rem;
+          font-weight: 900;
+          padding: 0 14px;
+        }
+
+        .fontColorGrid button span {
+          width: 18px;
+          height: 18px;
+          border: 2px solid rgba(255, 255, 255, 0.68);
+          border-radius: 50%;
+          background: var(--font-color);
+        }
+
+        .fontColorGrid button.selected {
+          border-color: #00e8f0;
+          box-shadow: 0 0 20px rgba(0, 232, 240, 0.18);
+        }
+
         .nextStepBanner {
           margin-top: 24px;
           display: flex;
@@ -1279,6 +1410,7 @@ export default function FreeCreatorProfileSetupPage() {
           .logoGrid,
           .photoBuilder,
           .fontGrid,
+          .fontColorPanel,
           .choiceSummary,
           .summaryPreview,
           .placementOptions {
