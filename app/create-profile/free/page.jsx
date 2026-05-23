@@ -344,6 +344,12 @@ export default function FreeCreatorProfileSetupPage() {
                   ) : (
                     <span>Upload Photo</span>
                   )}
+                  <img
+                    className="photoLogoBadge"
+                    src={selectedLogo.image}
+                    alt=""
+                    onError={(event) => handleLogoImageError(event, selectedLogo)}
+                  />
                 </div>
                 <div className="bannerText">
                   <strong>Your Name</strong>
@@ -408,13 +414,13 @@ export default function FreeCreatorProfileSetupPage() {
           <div className="fontColorPanel">
             <div>
               <p className="eyebrow">Font color</p>
-              <span>
-                {selectedFont === "friendlyScript"
-                  ? "Script fonts can use a brand accent color."
-                  : usesDarkProfileBackground
-                    ? "Dark backgrounds use white or gray text."
-                    : "Light backgrounds use black or gray text."}
-              </span>
+              {(selectedFont === "friendlyScript" || usesDarkProfileBackground) && (
+                <span>
+                  {selectedFont === "friendlyScript"
+                    ? "Script fonts can use a brand accent color."
+                    : "Dark backgrounds use white or gray text."}
+                </span>
+              )}
             </div>
 
             <div className="fontColorGrid">
@@ -473,6 +479,12 @@ export default function FreeCreatorProfileSetupPage() {
                   ) : (
                     <span>Photo</span>
                   )}
+                  <img
+                    className="summaryPhotoLogoBadge"
+                    src={selectedLogo.image}
+                    alt=""
+                    onError={(event) => handleLogoImageError(event, selectedLogo)}
+                  />
                 </div>
                 <div className="summaryMiniText">
                   <strong>Your Name</strong>
@@ -958,15 +970,16 @@ export default function FreeCreatorProfileSetupPage() {
         .summaryPlacementGroup {
           position: absolute;
           top: 14px;
-          width: 160px;
+          width: min(240px, calc(100% - 36px));
           display: grid;
           justify-items: center;
           gap: 8px;
         }
 
         .summaryPhotoCircle {
-          width: 132px;
-          height: 132px;
+          position: relative;
+          width: 155px;
+          height: 155px;
           display: grid;
           place-items: center;
           overflow: hidden;
@@ -984,6 +997,18 @@ export default function FreeCreatorProfileSetupPage() {
           height: 100%;
           display: block;
           object-fit: cover;
+        }
+
+        .summaryPhotoLogoBadge {
+          position: absolute;
+          right: -4px;
+          bottom: -4px;
+          width: 42px !important;
+          height: 42px !important;
+          border: 4px solid #ffffff;
+          border-radius: 50%;
+          background: #000000;
+          box-shadow: 0 8px 18px rgba(16, 23, 47, 0.22);
         }
 
         .summaryMiniBanner.topLeft .summaryPlacementGroup {
@@ -1010,6 +1035,8 @@ export default function FreeCreatorProfileSetupPage() {
           font-family: Georgia, "Times New Roman", serif;
           font-size: 1.45rem;
           letter-spacing: -0.05em;
+          line-height: 1;
+          white-space: nowrap;
         }
 
         .summaryMiniBanner.modernSans .summaryMiniText strong {
@@ -1019,7 +1046,9 @@ export default function FreeCreatorProfileSetupPage() {
 
         .summaryMiniBanner.friendlyScript .summaryMiniText strong {
           font-family: "Brush Script MT", "Segoe Script", cursive;
+          font-size: 2.55rem;
           font-weight: 400;
+          line-height: 0.86;
           letter-spacing: 0;
         }
 
@@ -1056,7 +1085,7 @@ export default function FreeCreatorProfileSetupPage() {
         }
 
         .bannerPreview {
-          min-height: 370px;
+          min-height: 460px;
           position: relative;
           overflow: hidden;
           border: 1px solid rgba(255, 255, 255, 0.12);
@@ -1080,15 +1109,16 @@ export default function FreeCreatorProfileSetupPage() {
         .photoPlacementGroup {
           position: absolute;
           top: 24px;
-          width: 245px;
+          width: min(410px, calc(100% - 68px));
           display: grid;
           justify-items: center;
           gap: 12px;
         }
 
         .photoCircle {
-          width: 190px;
-          height: 190px;
+          position: relative;
+          width: 230px;
+          height: 230px;
           display: grid;
           place-items: center;
           overflow: hidden;
@@ -1109,6 +1139,18 @@ export default function FreeCreatorProfileSetupPage() {
           height: 100%;
           display: block;
           object-fit: cover;
+        }
+
+        .photoLogoBadge {
+          position: absolute;
+          right: -6px;
+          bottom: -6px;
+          width: 54px !important;
+          height: 54px !important;
+          border: 5px solid #ffffff;
+          border-radius: 50%;
+          background: #000000;
+          box-shadow: 0 10px 22px rgba(16, 23, 47, 0.24);
         }
 
         .bannerPreview.topLeft .photoPlacementGroup {
@@ -1133,8 +1175,10 @@ export default function FreeCreatorProfileSetupPage() {
         .bannerText strong {
           color: var(--font-color, #10172f);
           font-family: Georgia, "Times New Roman", serif;
-          font-size: clamp(1.8rem, 4vw, 3rem);
+          font-size: clamp(1.9rem, 3vw, 3rem);
           letter-spacing: -0.05em;
+          line-height: 1;
+          white-space: nowrap;
         }
 
         .bannerPreview.modernSans .bannerText strong {
@@ -1145,7 +1189,9 @@ export default function FreeCreatorProfileSetupPage() {
 
         .bannerPreview.friendlyScript .bannerText strong {
           font-family: "Brush Script MT", "Segoe Script", cursive;
+          font-size: clamp(3.4rem, 7vw, 5.6rem);
           font-weight: 400;
+          line-height: 0.82;
           letter-spacing: 0;
         }
 
