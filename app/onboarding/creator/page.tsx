@@ -199,13 +199,32 @@ async function saveCreatorProfile(formData: FormData) {
   const workCategories = formData.getAll("work_category");
   const workImageUrls = formData.getAll("work_image_url");
   const workProjectUrls = formData.getAll("work_project_url");
+  const photoTitles = formData.getAll("photo_title");
+  const photoDescriptions = formData.getAll("photo_description");
+  const photoCategories = formData.getAll("photo_category");
+  const photoImageUrls = formData.getAll("photo_image_url");
+  const photoProjectUrls = formData.getAll("photo_project_url");
 
   await supabase
     .from("creator_featured_work")
     .delete()
     .eq("creator_profile_id", creatorProfile.id);
 
-  const featuredWork = workTitles
+  const photoWork = photoImageUrls
+    .map((imageUrl, index) => ({
+      creator_profile_id: creatorProfile.id,
+      title:
+        entryText(photoTitles, index) ||
+        (entryText(photoImageUrls, index) ? `Profile photo ${index + 1}` : ""),
+      description: entryText(photoDescriptions, index) || null,
+      category: entryText(photoCategories, index) || "Photo",
+      image_url: typeof imageUrl === "string" ? imageUrl.trim() || null : null,
+      project_url: entryText(photoProjectUrls, index) || null,
+      sort_order: index
+    }))
+    .filter((work) => work.title && work.image_url);
+
+  const projectWork = workTitles
     .map((title, index) => ({
       creator_profile_id: creatorProfile.id,
       title: typeof title === "string" ? title.trim() : "",
@@ -213,9 +232,10 @@ async function saveCreatorProfile(formData: FormData) {
       category: entryText(workCategories, index) || null,
       image_url: entryText(workImageUrls, index) || null,
       project_url: entryText(workProjectUrls, index) || null,
-      sort_order: index
+      sort_order: photoWork.length + index
     }))
     .filter((work) => work.title);
+  const featuredWork = [...photoWork, ...projectWork];
 
   if (featuredWork.length > 0) {
     const { error: featuredWorkError } = await supabase
@@ -296,6 +316,10 @@ export async function CreatorProfileFormPage({
   const collaborationOptions = creatorProfile?.creator_collaboration_options ?? [];
   const linkRows = Array.from({ length: 8 }, (_, index) => links[index] ?? null);
   const workRows = Array.from({ length: 6 }, (_, index) => featuredWork[index] ?? null);
+  const photoRows = Array.from(
+    { length: 4 },
+    (_, index) => featuredWork.filter((work) => work.image_url)[index] ?? null
+  );
   const collaborationRows = Array.from(
     { length: 4 },
     (_, index) => collaborationOptions[index] ?? null
@@ -587,6 +611,69 @@ export async function CreatorProfileFormPage({
                     type="number"
                     min="0"
                     defaultValue={link?.follower_count ?? 0}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="stack" aria-label="Additional photos">
+          <div>
+            <p className="eyebrow">Additional photos</p>
+            <h2>Other photos for your profile</h2>
+            <p className="muted">
+              Add extra image URLs for portfolio photos, brand shots, or lifestyle images.
+            </p>
+          </div>
+          <div className="grid">
+            {photoRows.map((photo, index) => (
+              <div className="card" key={`photo-${index}`}>
+                <div className="field">
+                  <label htmlFor={`photo_title_${index}`}>Photo title</label>
+                  <input
+                    id={`photo_title_${index}`}
+                    name="photo_title"
+                    defaultValue={photo?.title ?? ""}
+                    placeholder={`Profile photo ${index + 1}`}
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor={`photo_category_${index}`}>Photo category</label>
+                  <input
+                    id={`photo_category_${index}`}
+                    name="photo_category"
+                    defaultValue={photo?.category ?? ""}
+                    placeholder="Lifestyle"
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor={`photo_image_url_${index}`}>Photo image URL</label>
+                  <input
+                    id={`photo_image_url_${index}`}
+                    name="photo_image_url"
+                    type="url"
+                    defaultValue={photo?.image_url ?? ""}
+                    placeholder="https://example.com/photo.jpg"
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor={`photo_project_url_${index}`}>Optional link URL</label>
+                  <input
+                    id={`photo_project_url_${index}`}
+                    name="photo_project_url"
+                    type="url"
+                    defaultValue={photo?.project_url ?? ""}
+                    placeholder="https://example.com/post"
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor={`photo_description_${index}`}>Photo description</label>
+                  <textarea
+                    id={`photo_description_${index}`}
+                    name="photo_description"
+                    defaultValue={photo?.description ?? ""}
+                    placeholder="Describe where this photo should appear or what it shows."
                   />
                 </div>
               </div>
