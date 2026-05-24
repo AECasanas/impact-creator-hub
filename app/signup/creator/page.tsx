@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -70,6 +71,20 @@ export default async function CreatorSignupPage({
 
   return (
     <main className="stack">
+      <section className="card actions" aria-label="Impact Creator Hub signup header">
+        <Image
+          src="/logo-ripple.png"
+          alt="Impact Creator Hub"
+          width={44}
+          height={44}
+          priority
+        />
+        <div>
+          <p className="eyebrow">Impact Creator Hub</p>
+          <p className="muted">Build your brand. Grow your impact.</p>
+        </div>
+      </section>
+
       <section className="hero">
         <p className="eyebrow">Creator signup</p>
         <h1 className="page-title">Create your creator account.</h1>
