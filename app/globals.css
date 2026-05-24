@@ -267,15 +267,27 @@ textarea:focus {
   width: 100%;
   border: 1px solid rgba(15, 23, 42, 0.25);
   border-radius: 12px;
-  background: #ffffff;
+  background: #ffffff !important;
   color: #0f172a !important;
   caret-color: #0f172a;
-  -webkit-text-fill-color: #0f172a;
+  -webkit-text-fill-color: #0f172a !important;
+  color-scheme: light;
+  opacity: 1;
   padding: 14px;
 }
 
+.signup-form input[type="text"],
+.signup-form input[type="email"],
+.signup-form input[type="password"],
+.signup-input {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
 .signup-form input::placeholder {
-  color: #475569;
+  color: #475569 !important;
+  -webkit-text-fill-color: #475569 !important;
 }
 
 .signup-form input:-webkit-autofill,

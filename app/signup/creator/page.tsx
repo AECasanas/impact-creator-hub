@@ -11,6 +11,7 @@ const signupInputStyle: CSSProperties = {
   color: "#0f172a",
   WebkitTextFillColor: "#0f172a",
   caretColor: "#0f172a",
+  colorScheme: "light",
   padding: "14px"
 };
 
@@ -48,6 +49,7 @@ export default function CreatorSignupPage() {
               name="full_name"
               required
               placeholder="Avery Impact"
+              className="signup-input"
               style={signupInputStyle}
             />
           </div>
@@ -59,6 +61,7 @@ export default function CreatorSignupPage() {
               required
               type="email"
               placeholder="you@example.com"
+              className="signup-input"
               style={signupInputStyle}
             />
           </div>
@@ -70,6 +73,7 @@ export default function CreatorSignupPage() {
               required
               minLength={6}
               type="password"
+              className="signup-input"
               style={signupInputStyle}
             />
           </div>
@@ -81,6 +85,7 @@ export default function CreatorSignupPage() {
               required
               minLength={6}
               type="password"
+              className="signup-input"
               style={signupInputStyle}
             />
           </div>
