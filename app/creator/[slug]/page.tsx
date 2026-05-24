@@ -61,6 +61,131 @@ function text(formData: FormData, key: string) {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 }
 
+function MayaRiveraSampleProfile() {
+  const featuredWork = [
+    {
+      title: "Fresh Market Miami",
+      description: "Instagram reel + stories",
+      category: "Food & Grocery"
+    },
+    {
+      title: "Visit Florida",
+      description: "Travel guide series",
+      category: "Travel & Tourism"
+    },
+    {
+      title: "Sunrise Coffee Co.",
+      description: "TikTok video campaign",
+      category: "Beverage"
+    }
+  ];
+  const collaborationOptions = [
+    {
+      title: "Sponsored Content",
+      deliverables: "Reels, Stories, Posts",
+      description: "Story-first content for values-led launches."
+    },
+    {
+      title: "Product Features",
+      deliverables: "Unboxing, Reviews, Demonstrations",
+      description: "Warm product education with everyday lifestyle context."
+    },
+    {
+      title: "Brand Collaborations",
+      deliverables: "Creative Campaigns",
+      description: "Multi-touch campaigns built around food, travel, and lifestyle."
+    }
+  ];
+  const socialLinks = [
+    "Instagram - 25K - 50K",
+    "TikTok - 50K - 100K",
+    "YouTube - 5K - 10K",
+    "Blog / Website - 10K+"
+  ];
+
+  return (
+    <main className="stack">
+      <section className="profile-cover stack" style={{ "--cover-image": "none" } as CSSProperties}>
+        <div className="stack">
+          <p className="eyebrow">Free creator profile</p>
+          <h1 className="page-title">Maya Rivera</h1>
+          <p className="script-line">Food. Travel. Lifestyle.</p>
+          <p className="lede">
+            Miami-based creator sharing local eats, travel spots, and everyday
+            moments that make life beautiful.
+          </p>
+          <div className="actions">
+            <Link className="button" href="/create-profile/free">
+              Start your free profile
+            </Link>
+            <Link className="secondary-button" href="/create-profile">
+              Back to choices
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid">
+        {socialLinks.map((metric) => (
+          <article className="card metric" key={metric}>
+            <span className="muted">{metric.split(" - ")[0]}</span>
+            <strong>{metric.split(" - ")[1]}</strong>
+            <p className="muted">{metric.split(" - ")[2] ?? "Followers"}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="card stack">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Featured work</p>
+            <h2>Selected campaigns and projects</h2>
+          </div>
+        </div>
+        <div className="grid">
+          {featuredWork.map((work) => (
+            <article className="work-card" key={work.title}>
+              <div className="work-card-body">
+                <h3>{work.title}</h3>
+                <p className="muted">{work.description}</p>
+                <span className="tag">{work.category}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="grid">
+        <article className="card stack">
+          <div>
+            <p className="eyebrow">About me</p>
+            <h2>Creator story</h2>
+          </div>
+          <p className="muted">
+            I love exploring new places, trying local restaurants, and capturing
+            the little moments that make life special.
+          </p>
+          <p>Miami, Florida - Dog mom and coffee lover</p>
+        </article>
+
+        <article className="card stack">
+          <div>
+            <p className="eyebrow">Ways to work together</p>
+            <h2>Collaboration options</h2>
+          </div>
+          {collaborationOptions.map((option) => (
+            <div className="option-row" key={option.title}>
+              <h3>{option.title}</h3>
+              <p className="muted">{option.deliverables}</p>
+              <p className="muted">{option.description}</p>
+            </div>
+          ))}
+        </article>
+      </section>
+    </main>
+  );
+}
+
 async function submitBrandInquiry(formData: FormData) {
   "use server";
 
@@ -98,6 +223,11 @@ export default async function CreatorProfilePage({
 }) {
   const { slug } = await params;
   const { inquiry } = await searchParams;
+
+  if (slug === "maya-rivera") {
+    return <MayaRiveraSampleProfile />;
+  }
+
   if (!isSupabaseConfigured()) {
     return (
       <main className="hero">
