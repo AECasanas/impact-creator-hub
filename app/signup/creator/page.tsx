@@ -111,7 +111,7 @@ export default function CreatorSignupPage() {
             Create account
           </button>
           <Link className="secondary-button" href="/login">
-            Already have an account?
+            Log in
           </Link>
         </div>
       </form>
