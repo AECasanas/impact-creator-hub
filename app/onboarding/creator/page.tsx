@@ -373,14 +373,14 @@ export async function CreatorProfileFormPage({
             ? "Add audience stats, rate card details, featured collaborations, and partnership options for brands."
             : "Add the story, proof points, and URLs brands need. Images stay as URL fields for now."}
         </p>
-        {!isConfigured || config === "required" ? (
-          <p className="status-pill">
-            Add Supabase environment variables before saving this form.
-          </p>
-        ) : null}
-        {isConfigured && !user ? (
-          <div className="actions">
-            <p className="status-pill">Create an account or log in before saving this form.</p>
+        {!isConfigured || config === "required" || !user ? (
+          <div className="card stack">
+            {!isConfigured || config === "required" ? (
+              <p className="status-pill">Add Supabase environment variables before saving this form.</p>
+            ) : null}
+            {!user ? (
+              <p className="status-pill">Create an account or log in before saving this form.</p>
+            ) : null}
             <Link className="button" href={`/login?redirect=${encodeURIComponent(returnTo)}`}>
               Create account or log in
             </Link>
