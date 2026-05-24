@@ -69,6 +69,17 @@ const socialPlatformSuggestions = [
   "X / Twitter"
 ];
 
+const socialUrlPlaceholders = [
+  "https://instagram.com/creator",
+  "https://tiktok.com/@creator",
+  "https://youtube.com/@creator",
+  "https://example.com",
+  "https://facebook.com/creator",
+  "https://pinterest.com/creator",
+  "https://linkedin.com/in/creator",
+  "https://x.com/creator"
+];
+
 function text(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
@@ -600,7 +611,7 @@ export async function CreatorProfileFormPage({
                     name="social_url"
                     type="url"
                     defaultValue={link?.url ?? ""}
-                    placeholder="https://instagram.com/creator"
+                    placeholder={socialUrlPlaceholders[index] ?? "https://example.com"}
                   />
                 </div>
                 <div className="field">
