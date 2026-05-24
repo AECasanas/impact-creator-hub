@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 export default async function FreeCreatorProfilePage({
   searchParams
 }: {
-  searchParams: Promise<{ saved?: string; auth?: string }>;
+  searchParams: Promise<{ saved?: string; auth?: string; config?: string }>;
 }) {
   return CreatorProfileFormPage({ searchParams, variant: "free" });
 }

@@ -79,6 +79,10 @@ async function saveCreatorProfile(formData: FormData) {
   "use server";
 
   const returnTo = safeReturnTo(text(formData, "return_to"));
+  if (!isSupabaseConfigured()) {
+    redirect(`${returnTo}?config=required`);
+  }
+
   const supabase = await createClient();
   const {
     data: { user }
@@ -240,53 +244,30 @@ export async function CreatorProfileFormPage({
   searchParams,
   variant = "free"
 }: {
-  searchParams: Promise<{ saved?: string; auth?: string }>;
+  searchParams: Promise<{ saved?: string; auth?: string; config?: string }>;
   variant?: FormVariant;
 }) {
-  const { auth } = await searchParams;
+  const { auth, config } = await searchParams;
   const isImpactKit = variant === "impact-kit";
   const returnTo = isImpactKit ? "/create-profile/impact-kit" : "/create-profile/free";
   const profileBadge = isImpactKit ? "Impact Kit" : "Free creator profile";
+  const isConfigured = isSupabaseConfigured();
 
-  if (!isSupabaseConfigured()) {
-    return (
-      <main className="hero">
-        <p className="eyebrow">{isImpactKit ? "Impact Kit" : "Free creator profile"}</p>
-        <h1 className="page-title">Connect Supabase to start this profile.</h1>
-        <p className="lede">
-          Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your
-          environment, then apply supabase/schema.sql before creators save data.
-        </p>
-      </main>
-    );
-  }
-
-  const supabase = await createClient();
+  const supabase = isConfigured ? await createClient() : null;
   const {
     data: { user }
-  } = await supabase.auth.getUser();
+  } = supabase
+    ? await supabase.auth.getUser()
+    : { data: { user: null } };
 
-  if (!user) {
-    return (
-      <main className="hero">
-        <p className="eyebrow">{isImpactKit ? "Impact Kit" : "Free creator profile"}</p>
-        <h1 className="page-title">Sign in before saving your profile.</h1>
-        <p className="lede">
-          Supabase Auth should be connected to your preferred sign-in flow. Once
-          signed in, creators can manage only their own profile data.
-        </p>
-        {auth === "required" ? (
-          <p className="status-pill">Authentication is required to save.</p>
-        ) : null}
-      </main>
-    );
-  }
-
-  const { data } = await supabase
-    .from("creator_profiles")
-    .select("*, creator_social_links(*), creator_featured_work(*), creator_collaboration_options(*)")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const { data } =
+    supabase && user
+      ? await supabase
+          .from("creator_profiles")
+          .select("*, creator_social_links(*), creator_featured_work(*), creator_collaboration_options(*)")
+          .eq("user_id", user.id)
+          .maybeSingle()
+      : { data: null };
 
   const creatorProfile = data as CreatorProfile | null;
   const links = creatorProfile?.creator_social_links ?? [];
@@ -303,6 +284,7 @@ export async function CreatorProfileFormPage({
     <main className="stack">
       <section className="hero">
         <p className="eyebrow">{isImpactKit ? "Impact Kit" : "Free creator profile"}</p>
+        {!isImpactKit ? <h2>FREE CREATOR PROFILE FORM</h2> : null}
         <h1 className="page-title">
           {isImpactKit ? "Build your creator Impact Kit." : "Build your free creator profile."}
         </h1>
@@ -311,6 +293,17 @@ export async function CreatorProfileFormPage({
             ? "Add audience stats, rate card details, featured collaborations, and partnership options for brands."
             : "Add the story, proof points, and URLs brands need. Images stay as URL fields for now."}
         </p>
+        {!isConfigured || config === "required" ? (
+          <p className="status-pill">
+            Add Supabase environment variables before saving this form.
+          </p>
+        ) : null}
+        {isConfigured && !user ? (
+          <p className="status-pill">Sign-in is required before saving this form.</p>
+        ) : null}
+        {auth === "required" ? (
+          <p className="status-pill">Authentication is required to save.</p>
+        ) : null}
       </section>
 
       <form action={saveCreatorProfile} className="card stack">
@@ -626,7 +619,7 @@ export async function CreatorProfileFormPage({
 export default async function CreatorOnboardingPage({
   searchParams
 }: {
-  searchParams: Promise<{ saved?: string; auth?: string }>;
+  searchParams: Promise<{ saved?: string; auth?: string; config?: string }>;
 }) {
   return CreatorProfileFormPage({ searchParams, variant: "free" });
 }
