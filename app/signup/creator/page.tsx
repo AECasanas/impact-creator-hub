@@ -27,7 +27,7 @@ export default function CreatorSignupPage() {
         </p>
       </section>
 
-      <form action={signUpCreator} className="card stack">
+      <form action={signUpCreator} className="card stack signup-form">
         <div className="form-grid">
           <div className="field full">
             <label htmlFor="full_name">Full name</label>

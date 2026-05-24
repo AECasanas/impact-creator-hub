@@ -263,6 +263,33 @@ textarea:focus {
   box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.12);
 }
 
+.signup-form input {
+  border-color: rgba(248, 250, 252, 0.28);
+  background: rgba(248, 250, 252, 0.96);
+  color: #020617;
+}
+
+.signup-form input::placeholder {
+  color: #64748b;
+}
+
+.signup-form input:-webkit-autofill,
+.signup-form input:-webkit-autofill:hover,
+.signup-form input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #020617;
+  box-shadow: 0 0 0 1000px rgba(248, 250, 252, 0.96) inset;
+}
+
+.signup-form .actions {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.signup-form .button {
+  background: #8be8f7;
+  color: #020617;
+}
+
 .status-pill {
   display: inline-flex;
   width: fit-content;
