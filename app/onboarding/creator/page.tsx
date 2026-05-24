@@ -80,6 +80,29 @@ const socialUrlPlaceholders = [
   "https://x.com/creator"
 ];
 
+const profileTemplates = [
+  {
+    value: "light_profile",
+    title: "Light Profile",
+    description: "Clean starter profile for creators who want a simple public page."
+  },
+  {
+    value: "editorial_profile",
+    title: "Editorial Profile",
+    description: "Magazine-style profile for food, travel, lifestyle, and culture creators."
+  },
+  {
+    value: "impact_story",
+    title: "Impact Story",
+    description: "Mission-led profile focused on proof, outcomes, and community trust."
+  },
+  {
+    value: "media_kit",
+    title: "Media Kit",
+    description: "Brand-ready profile with audience proof, packages, and partnership details."
+  }
+];
+
 function text(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
@@ -322,6 +345,7 @@ export async function CreatorProfileFormPage({
       : { data: null };
 
   const creatorProfile = data as CreatorProfile | null;
+  const selectedTemplate = creatorProfile?.profile_template ?? "light_profile";
   const links = creatorProfile?.creator_social_links ?? [];
   const featuredWork = creatorProfile?.creator_featured_work ?? [];
   const collaborationOptions = creatorProfile?.creator_collaboration_options ?? [];
@@ -373,18 +397,23 @@ export async function CreatorProfileFormPage({
             </p>
           </div>
           <div className="form-grid">
-            <div className="field">
-              <label htmlFor="profile_template">Profile template</label>
-              <select
-                id="profile_template"
-                name="profile_template"
-                defaultValue={creatorProfile?.profile_template ?? "light_profile"}
-              >
-                <option value="light_profile">Light Profile</option>
-                <option value="impact_profile">Impact Profile</option>
-                <option value="media_kit">Media Kit</option>
-              </select>
-            </div>
+            <fieldset className="field full">
+              <legend>Profile template</legend>
+              <div className="stack">
+                {profileTemplates.map((template) => (
+                  <label className="card stack" key={template.value}>
+                    <input
+                      name="profile_template"
+                      type="radio"
+                      value={template.value}
+                      defaultChecked={selectedTemplate === template.value}
+                    />
+                    <strong>{template.title}</strong>
+                    <span className="muted">{template.description}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
             <div className="field">
               <label htmlFor="logo_color">Logo color</label>
               <select
