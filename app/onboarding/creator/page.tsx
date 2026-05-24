@@ -139,7 +139,7 @@ async function saveCreatorProfile(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect(`${returnTo}?auth=required`);
+    redirect(`/login?redirect=${encodeURIComponent(returnTo)}&auth=required`);
   }
 
   const displayName = text(formData, "display_name") ?? "Impact Creator";
@@ -379,7 +379,12 @@ export async function CreatorProfileFormPage({
           </p>
         ) : null}
         {isConfigured && !user ? (
-          <p className="status-pill">Sign-in is required before saving this form.</p>
+          <div className="actions">
+            <p className="status-pill">Create an account or log in before saving this form.</p>
+            <Link className="button" href={`/login?redirect=${encodeURIComponent(returnTo)}`}>
+              Create account or log in
+            </Link>
+          </div>
         ) : null}
         {auth === "required" ? (
           <p className="status-pill">Authentication is required to save.</p>

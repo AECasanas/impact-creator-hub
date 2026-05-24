@@ -24,6 +24,7 @@ export default function RootLayout({
             <nav className="nav-links" aria-label="Main navigation">
               <Link href="/create-profile">Create profile</Link>
               <Link href="/dashboard">Dashboard</Link>
+              <Link href="/login">Log in</Link>
             </nav>
           </header>
           {children}
