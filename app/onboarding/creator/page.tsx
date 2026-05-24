@@ -58,6 +58,17 @@ type CreatorProfile = {
 
 type FormVariant = "free" | "impact-kit";
 
+const socialPlatformSuggestions = [
+  "Instagram",
+  "TikTok",
+  "YouTube",
+  "Blog / Website",
+  "Facebook",
+  "Pinterest",
+  "LinkedIn",
+  "X / Twitter"
+];
+
 function text(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
@@ -283,10 +294,10 @@ export async function CreatorProfileFormPage({
   const links = creatorProfile?.creator_social_links ?? [];
   const featuredWork = creatorProfile?.creator_featured_work ?? [];
   const collaborationOptions = creatorProfile?.creator_collaboration_options ?? [];
-  const linkRows = Array.from({ length: 3 }, (_, index) => links[index] ?? null);
-  const workRows = Array.from({ length: 3 }, (_, index) => featuredWork[index] ?? null);
+  const linkRows = Array.from({ length: 8 }, (_, index) => links[index] ?? null);
+  const workRows = Array.from({ length: 6 }, (_, index) => featuredWork[index] ?? null);
   const collaborationRows = Array.from(
-    { length: 3 },
+    { length: 4 },
     (_, index) => collaborationOptions[index] ?? null
   );
 
@@ -318,31 +329,78 @@ export async function CreatorProfileFormPage({
 
       <form action={saveCreatorProfile} className="card stack">
         <input name="return_to" type="hidden" value={returnTo} />
-        <input
-          name="profile_template"
-          type="hidden"
-          value={creatorProfile?.profile_template ?? "light_profile"}
-        />
-        <input
-          name="logo_color"
-          type="hidden"
-          value={creatorProfile?.logo_color ?? "electric_cyan"}
-        />
-        <input
-          name="photo_placement"
-          type="hidden"
-          value={creatorProfile?.photo_placement ?? "middle"}
-        />
-        <input
-          name="font_style"
-          type="hidden"
-          value={creatorProfile?.font_style ?? "editorial_serif"}
-        />
-        <input
-          name="font_color"
-          type="hidden"
-          value={creatorProfile?.font_color ?? "black"}
-        />
+        <section className="stack" aria-label="Profile page choices">
+          <div>
+            <p className="eyebrow">Profile page options</p>
+            <h2>Style and layout choices</h2>
+            <p className="muted">
+              These choices save to your creator profile and control the profile template metadata.
+            </p>
+          </div>
+          <div className="form-grid">
+            <div className="field">
+              <label htmlFor="profile_template">Profile template</label>
+              <select
+                id="profile_template"
+                name="profile_template"
+                defaultValue={creatorProfile?.profile_template ?? "light_profile"}
+              >
+                <option value="light_profile">Light Profile</option>
+                <option value="impact_profile">Impact Profile</option>
+                <option value="media_kit">Media Kit</option>
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="logo_color">Logo color</label>
+              <select
+                id="logo_color"
+                name="logo_color"
+                defaultValue={creatorProfile?.logo_color ?? "electric_cyan"}
+              >
+                <option value="electric_cyan">Electric Cyan</option>
+                <option value="cobalt_blue">Cobalt Blue</option>
+                <option value="royal_blue">Royal Blue</option>
+                <option value="teal_blue">Teal Blue</option>
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="photo_placement">Photo placement</label>
+              <select
+                id="photo_placement"
+                name="photo_placement"
+                defaultValue={creatorProfile?.photo_placement ?? "middle"}
+              >
+                <option value="left">Left</option>
+                <option value="middle">Middle</option>
+                <option value="right">Right</option>
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="font_style">Font style</label>
+              <select
+                id="font_style"
+                name="font_style"
+                defaultValue={creatorProfile?.font_style ?? "editorial_serif"}
+              >
+                <option value="editorial_serif">Editorial Serif</option>
+                <option value="modern_sans">Modern Sans</option>
+                <option value="friendly_script">Friendly Script</option>
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="font_color">Font color</label>
+              <select
+                id="font_color"
+                name="font_color"
+                defaultValue={creatorProfile?.font_color ?? "black"}
+              >
+                <option value="black">Black</option>
+                <option value="gray">Gray</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
         <div className="form-grid">
           <div className="field">
             <label htmlFor="display_name">Display name</label>
@@ -489,7 +547,15 @@ export async function CreatorProfileFormPage({
           <div>
             <p className="eyebrow">Social proof</p>
             <h2>Creator social links</h2>
+            <p className="muted">
+              Add any platform your audience uses. Leave unused rows blank.
+            </p>
           </div>
+          <datalist id="social-platforms">
+            {socialPlatformSuggestions.map((platform) => (
+              <option key={platform} value={platform} />
+            ))}
+          </datalist>
           <div className="grid">
             {linkRows.map((link, index) => (
               <div className="card" key={`social-${index}`}>
@@ -498,8 +564,9 @@ export async function CreatorProfileFormPage({
                   <input
                     id={`social_platform_${index}`}
                     name="social_platform"
+                    list="social-platforms"
                     defaultValue={link?.platform ?? ""}
-                    placeholder="Instagram"
+                    placeholder={socialPlatformSuggestions[index] ?? "Other platform"}
                   />
                 </div>
                 <div className="field">
@@ -530,7 +597,10 @@ export async function CreatorProfileFormPage({
         <section className="stack" aria-label="Featured work">
           <div>
             <p className="eyebrow">Featured work</p>
-            <h2>Projects to show on your public profile</h2>
+            <h2>Projects and photos to show on your public profile</h2>
+            <p className="muted">
+              Use these rows for campaign photos, travel images, product shots, or other portfolio images.
+            </p>
           </div>
           <div className="grid">
             {workRows.map((work, index) => (
