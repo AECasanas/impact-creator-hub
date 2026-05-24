@@ -381,8 +381,11 @@ export async function CreatorProfileFormPage({
             {!user ? (
               <p className="status-pill">Create an account or log in before saving this form.</p>
             ) : null}
-            <Link className="button" href={`/login?redirect=${encodeURIComponent(returnTo)}`}>
-              Create account or log in
+            <Link className="button" href="/signup/creator">
+              Create creator account
+            </Link>
+            <Link className="secondary-button" href={`/login?redirect=${encodeURIComponent(returnTo)}`}>
+              Log in
             </Link>
           </div>
         ) : null}

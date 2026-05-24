@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -23,10 +24,17 @@ type CreatorProfile = {
   slug: string | null;
   headline: string | null;
   niche: string | null;
+  profile_template: string | null;
   audience_size: number | null;
   is_published: boolean | null;
   creator_social_links?: SocialLink[];
   brand_inquiries?: BrandInquiry[];
+};
+
+type Profile = {
+  full_name: string | null;
+  email: string | null;
+  role: string | null;
 };
 
 export default async function DashboardPage({
@@ -54,17 +62,14 @@ export default async function DashboardPage({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return (
-      <main className="hero">
-        <p className="eyebrow">Creator dashboard</p>
-        <h1 className="page-title">Sign in to manage your creator hub.</h1>
-        <p className="lede">
-          The dashboard reads only the authenticated creator&apos;s rows through
-          Supabase Row Level Security.
-        </p>
-      </main>
-    );
+    redirect("/login?auth=required");
   }
+
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("full_name, email, role")
+    .eq("id", user.id)
+    .maybeSingle();
 
   const { data } = await supabase
     .from("creator_profiles")
@@ -72,6 +77,7 @@ export default async function DashboardPage({
     .eq("user_id", user.id)
     .maybeSingle();
 
+  const profile = profileData as Profile | null;
   const creatorProfile = data as CreatorProfile | null;
   const socialLinks = creatorProfile?.creator_social_links ?? [];
   const inquiries = creatorProfile?.brand_inquiries ?? [];
@@ -84,12 +90,13 @@ export default async function DashboardPage({
         <h1 className="page-title">
           {creatorProfile?.display_name
             ? `Welcome back, ${creatorProfile.display_name}.`
-            : "Create your first impact profile."}
+            : `Welcome${profile?.full_name ? `, ${profile.full_name}` : ""}.`}
         </h1>
         <p className="lede">
           Manage the profile, social proof, and inbound brand interest attached
           to your creator account.
         </p>
+        {profile?.email ? <p className="status-pill">{profile.email}</p> : null}
         {saved ? <p className="status-pill">Profile saved: /creator/{saved}</p> : null}
       </section>
 
@@ -100,8 +107,11 @@ export default async function DashboardPage({
             Start with the onboarding form to create a private draft, then
             publish it when your profile is ready for brands.
           </p>
-          <Link className="button" href="/create-profile">
+          <Link className="button" href="/create-profile/free">
             Start onboarding
+          </Link>
+          <Link className="secondary-button" href="/logout">
+            Log out
           </Link>
         </section>
       ) : (
@@ -126,6 +136,11 @@ export default async function DashboardPage({
               <strong>{inquiries.length}</strong>
               <p className="muted">Visible only to this creator account.</p>
             </article>
+            <article className="card metric">
+              <span className="muted">Template</span>
+              <strong>{creatorProfile.profile_template ?? "Not set"}</strong>
+              <p className="muted">Saved to your creator profile.</p>
+            </article>
           </section>
 
           <section className="card stack">
@@ -135,7 +150,7 @@ export default async function DashboardPage({
               <p className="muted">Public slug: /creator/{creatorProfile.slug}</p>
             </div>
             <div className="actions">
-              <Link className="button" href="/create-profile">
+              <Link className="button" href="/create-profile/free">
                 Edit creator profile
               </Link>
               {creatorProfile.slug ? (
@@ -143,6 +158,9 @@ export default async function DashboardPage({
                   Preview profile
                 </Link>
               ) : null}
+              <Link className="secondary-button" href="/logout">
+                Log out
+              </Link>
             </div>
           </section>
 

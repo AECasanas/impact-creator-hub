@@ -8,17 +8,11 @@ function text(formData: FormData, key: string) {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : "";
 }
 
-function safeRedirectPath(value: string) {
-  return value.startsWith("/") && !value.startsWith("//") ? value : "/create-profile/free";
-}
-
 async function signIn(formData: FormData) {
   "use server";
 
-  const redirectTo = safeRedirectPath(text(formData, "redirect_to"));
-
   if (!isSupabaseConfigured()) {
-    redirect(`/login?redirect=${encodeURIComponent(redirectTo)}&config=required`);
+    redirect("/login?config=required");
   }
 
   const supabase = await createClient();
@@ -28,58 +22,35 @@ async function signIn(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/login?redirect=${encodeURIComponent(redirectTo)}&error=${encodeURIComponent(error.message)}`);
+    redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
 
-  redirect(redirectTo);
-}
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  const { data: creatorProfile } = await supabase
+    .from("creator_profiles")
+    .select("id")
+    .eq("user_id", user?.id)
+    .maybeSingle();
 
-async function signUp(formData: FormData) {
-  "use server";
-
-  const redirectTo = safeRedirectPath(text(formData, "redirect_to"));
-  const email = text(formData, "email");
-  const password = text(formData, "password");
-  const fullName = text(formData, "full_name");
-
-  if (!isSupabaseConfigured()) {
-    redirect(`/login?redirect=${encodeURIComponent(redirectTo)}&config=required`);
-  }
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName
-      }
-    }
-  });
-
-  if (error) {
-    redirect(`/login?redirect=${encodeURIComponent(redirectTo)}&error=${encodeURIComponent(error.message)}`);
-  }
-
-  redirect(redirectTo);
+  redirect(creatorProfile ? "/dashboard" : "/create-profile/free");
 }
 
 export default async function LoginPage({
   searchParams
 }: {
-  searchParams: Promise<{ redirect?: string; auth?: string; config?: string; error?: string }>;
+  searchParams: Promise<{ auth?: string; config?: string; error?: string; notice?: string }>;
 }) {
-  const { redirect: redirectParam, auth, config, error } = await searchParams;
-  const redirectTo = safeRedirectPath(redirectParam ?? "/create-profile/free");
+  const { auth, config, error, notice } = await searchParams;
 
   return (
     <main className="stack">
       <section className="hero">
         <p className="eyebrow">Creator account</p>
-        <h1 className="page-title">Log in or create your creator account.</h1>
+        <h1 className="page-title">Log in to Impact Creator Hub.</h1>
         <p className="lede">
-          Your profile choices, social links, photos, and public page are saved
-          to your signed-in Supabase user account.
+          Access your saved profile choices, social links, photos, and dashboard.
         </p>
         {auth === "required" ? (
           <p className="status-pill">Create an account or log in before saving your profile.</p>
@@ -88,40 +59,16 @@ export default async function LoginPage({
           <p className="status-pill">Add Supabase environment variables before using auth.</p>
         ) : null}
         {error ? <p className="status-pill">{error}</p> : null}
+        {notice ? <p className="status-pill">{notice}</p> : null}
       </section>
 
       <section className="grid">
-        <form action={signUp} className="card stack">
-          <div>
-            <p className="eyebrow">New creator</p>
-            <h2>Create account</h2>
-            <p className="muted">Start saving your creator profile choices.</p>
-          </div>
-          <input name="redirect_to" type="hidden" value={redirectTo} />
-          <div className="field">
-            <label htmlFor="signup_full_name">Full name</label>
-            <input id="signup_full_name" name="full_name" required placeholder="Avery Impact" />
-          </div>
-          <div className="field">
-            <label htmlFor="signup_email">Email</label>
-            <input id="signup_email" name="email" required type="email" placeholder="you@example.com" />
-          </div>
-          <div className="field">
-            <label htmlFor="signup_password">Password</label>
-            <input id="signup_password" name="password" required minLength={6} type="password" />
-          </div>
-          <button className="button" type="submit">
-            Create account
-          </button>
-        </form>
-
         <form action={signIn} className="card stack">
           <div>
-            <p className="eyebrow">Returning creator</p>
+            <p className="eyebrow">Returning user</p>
             <h2>Log in</h2>
             <p className="muted">Continue editing your saved creator profile.</p>
           </div>
-          <input name="redirect_to" type="hidden" value={redirectTo} />
           <div className="field">
             <label htmlFor="login_email">Email</label>
             <input id="login_email" name="email" required type="email" placeholder="you@example.com" />
@@ -134,6 +81,17 @@ export default async function LoginPage({
             Log in
           </button>
         </form>
+
+        <section className="card stack">
+          <p className="eyebrow">New creator</p>
+          <h2>Need an account?</h2>
+          <p className="muted">
+            Create a creator account first, then build and maintain your public profile.
+          </p>
+          <Link className="button" href="/signup/creator">
+            Create creator account
+          </Link>
+        </section>
       </section>
 
       <Link className="secondary-button" href="/create-profile/free">
