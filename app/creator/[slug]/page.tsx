@@ -46,6 +46,11 @@ type CreatorProfile = {
   cover_image_url: string | null;
   impact_statement: string | null;
   profile_badge: string | null;
+  profile_template: string | null;
+  logo_color: string | null;
+  photo_placement: string | null;
+  font_style: string | null;
+  font_color: string | null;
   content_focus: string | null;
   collaboration_note: string | null;
   audience_size: number | null;

@@ -34,6 +34,11 @@ create table if not exists public.creator_profiles (
   cover_image_url text,
   impact_statement text,
   profile_badge text not null default 'Free creator profile',
+  profile_template text not null default 'light_profile',
+  logo_color text not null default 'electric_cyan',
+  photo_placement text not null default 'middle',
+  font_style text not null default 'editorial_serif',
+  font_color text not null default 'black',
   content_focus text,
   collaboration_note text,
   audience_size integer not null default 0 check (audience_size >= 0),
@@ -45,6 +50,11 @@ create table if not exists public.creator_profiles (
 
 alter table public.creator_profiles
 add column if not exists profile_badge text not null default 'Free creator profile',
+add column if not exists profile_template text not null default 'light_profile',
+add column if not exists logo_color text not null default 'electric_cyan',
+add column if not exists photo_placement text not null default 'middle',
+add column if not exists font_style text not null default 'editorial_serif',
+add column if not exists font_color text not null default 'black',
 add column if not exists content_focus text,
 add column if not exists collaboration_note text;
 

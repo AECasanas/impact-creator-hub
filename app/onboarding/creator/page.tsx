@@ -41,6 +41,11 @@ type CreatorProfile = {
   cover_image_url: string | null;
   impact_statement: string | null;
   profile_badge: string | null;
+  profile_template: string | null;
+  logo_color: string | null;
+  photo_placement: string | null;
+  font_style: string | null;
+  font_color: string | null;
   content_focus: string | null;
   collaboration_note: string | null;
   audience_size: number | null;
@@ -126,6 +131,11 @@ async function saveCreatorProfile(formData: FormData) {
         cover_image_url: text(formData, "cover_image_url"),
         impact_statement: text(formData, "impact_statement"),
         profile_badge: text(formData, "profile_badge") ?? "Free creator profile",
+        profile_template: text(formData, "profile_template") ?? "light_profile",
+        logo_color: text(formData, "logo_color") ?? "electric_cyan",
+        photo_placement: text(formData, "photo_placement") ?? "middle",
+        font_style: text(formData, "font_style") ?? "editorial_serif",
+        font_color: text(formData, "font_color") ?? "black",
         content_focus: text(formData, "content_focus"),
         collaboration_note: text(formData, "collaboration_note"),
         audience_size: Number(text(formData, "audience_size") ?? 0),
@@ -308,6 +318,31 @@ export async function CreatorProfileFormPage({
 
       <form action={saveCreatorProfile} className="card stack">
         <input name="return_to" type="hidden" value={returnTo} />
+        <input
+          name="profile_template"
+          type="hidden"
+          value={creatorProfile?.profile_template ?? "light_profile"}
+        />
+        <input
+          name="logo_color"
+          type="hidden"
+          value={creatorProfile?.logo_color ?? "electric_cyan"}
+        />
+        <input
+          name="photo_placement"
+          type="hidden"
+          value={creatorProfile?.photo_placement ?? "middle"}
+        />
+        <input
+          name="font_style"
+          type="hidden"
+          value={creatorProfile?.font_style ?? "editorial_serif"}
+        />
+        <input
+          name="font_color"
+          type="hidden"
+          value={creatorProfile?.font_color ?? "black"}
+        />
         <div className="form-grid">
           <div className="field">
             <label htmlFor="display_name">Display name</label>
