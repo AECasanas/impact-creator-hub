@@ -246,6 +246,7 @@ textarea {
 }
 
 input[type="checkbox"],
+input[type="radio"],
 input[type="hidden"] {
   width: auto;
 }
