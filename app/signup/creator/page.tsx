@@ -62,13 +62,7 @@ async function signUpCreator(formData: FormData) {
   redirect("/create-profile/free");
 }
 
-export default async function CreatorSignupPage({
-  searchParams
-}: {
-  searchParams: Promise<{ config?: string; error?: string }>;
-}) {
-  const { config, error } = await searchParams;
-
+export default function CreatorSignupPage() {
   return (
     <main className="stack">
       <section className="card actions" aria-label="Impact Creator Hub signup header">
@@ -91,10 +85,6 @@ export default async function CreatorSignupPage({
         <p className="lede">
           Sign up to save your profile choices, links, photos, and public creator page.
         </p>
-        {config === "required" ? (
-          <p className="status-pill">Add Supabase environment variables before signing up.</p>
-        ) : null}
-        {error ? <p className="status-pill">{error}</p> : null}
       </section>
 
       <form action={signUpCreator} className="card stack">
