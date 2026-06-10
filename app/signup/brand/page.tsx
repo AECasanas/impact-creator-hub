@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -166,8 +167,6 @@ export default function BrandSignupPage() {
         </div>
 
         <div className="brandCard">
-         
-
           <p className="cardLabel">Brand Account</p>
           <h2>Join as a Brand</h2>
           <p className="cardSubhead">
@@ -266,22 +265,22 @@ export default function BrandSignupPage() {
 
             <p className="terms">
               By continuing, you agree to Impact Creator Hub’s{" "}
-              <a href="/terms">Terms of Service</a> and{" "}
-              <a href="/privacy">Privacy Policy</a>.
+              <Link href="/terms">Terms of Service</Link> and{" "}
+              <Link href="/privacy">Privacy Policy</Link>.
             </p>
 
             <p className="creatorLink">
               Are you a creator?{" "}
-              <a href="/signup">Create a creator profile</a>
+              <Link href="/signup">Create a creator profile</Link>
             </p>
 
             <p className="creatorLink">
               Already have a brand account?{" "}
-              <a href="/login?redirect=/create-brand">Log in</a>
+              <Link href="/login?redirect=/create-brand">Log in</Link>
             </p>
 
             <p className="creatorLink smallHomeLink">
-              <a href="/">Home</a>
+              <Link href="/">Home</Link>
             </p>
           </form>
         </div>
@@ -392,7 +391,6 @@ export default function BrandSignupPage() {
           overflow: hidden;
           padding: 30px 38px 28px;
         }
-
 
         .cardLabel {
           display: inline-flex;

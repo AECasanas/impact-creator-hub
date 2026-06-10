@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Suspense, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
@@ -384,7 +385,7 @@ function CreatorSignupContent() {
           }}
         >
           Creating a brand account?{" "}
-          <a
+          <Link
             href="/signup/brand"
             style={{
               color: "#67e8f9",
@@ -393,7 +394,53 @@ function CreatorSignupContent() {
             }}
           >
             Join as a Brand
-          </a>
+          </Link>
+        </p>
+
+        <p
+          style={{
+            marginTop: "14px",
+            textAlign: "center",
+            color: "rgba(255,255,255,0.65)",
+            fontSize: "13px",
+          }}
+        >
+          <Link
+            href="/"
+            style={{
+              color: "#67e8f9",
+              fontWeight: 800,
+              textDecoration: "none",
+            }}
+          >
+            Home
+          </Link>
+        </p>
+
+        <p
+          style={{
+            marginTop: "14px",
+            textAlign: "center",
+            color: "rgba(255,255,255,0.5)",
+            fontSize: "12px",
+            lineHeight: 1.5,
+          }}
+        >
+          By continuing, you agree to Impact Creator Hub’s{" "}
+          <Link
+            href="/terms"
+            style={{ color: "#67e8f9", fontWeight: 800 }}
+          >
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/privacy"
+            style={{ color: "#67e8f9", fontWeight: 800 }}
+          >
+            Privacy Policy
+          </Link>
+          .
         </p>
       </section>
 
