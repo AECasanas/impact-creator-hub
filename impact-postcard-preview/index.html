@@ -1,0 +1,510 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+const notes = [
+  "Creators need one simple place to show their work.",
+  "Profiles should feel personal, useful, and easy to share.",
+  "Creative discovery should feel warmer, simpler, and more human.",
+];
+
+const slides = [
+  {
+    image: "/images/retro_art_landing_nyc_small_bw.jpg",
+    caption: "A visual space for creative discovery.",
+  },
+  {
+    image: "/images/banner_art_nyc_softlab_nova.jpg",
+    caption: "Built for creators who want to be seen clearly.",
+  },
+  {
+    image: "/images/banner_art_nyc_lisa_project_statue_liberty.jpg",
+    caption: "Helping brands discover people, stories, and work that fit.",
+  },
+];
+
+export default function AboutUsPage() {
+  const [noteIndex, setNoteIndex] = useState(0);
+  const [slideIndex, setSlideIndex] = useState(0);
+
+  useEffect(() => {
+    const noteTimer = setInterval(() => {
+      setNoteIndex((current) => (current + 1) % notes.length);
+    }, 3500);
+
+    const slideTimer = setInterval(() => {
+      setSlideIndex((current) => (current + 1) % slides.length);
+    }, 5000);
+
+    return () => {
+      clearInterval(noteTimer);
+      clearInterval(slideTimer);
+    };
+  }, []);
+
+  const currentSlide = slides[slideIndex];
+
+  return (
+    <main className="page">
+      <nav className="nav">
+        <a href="/">Home</a>
+        <a href="/about-us">About Us</a>
+        <a href="/signup">Creators</a>
+        <a href="/signup/brand">Brands</a>
+      </nav>
+
+      <section className="hero">
+        <div className="heroText">
+          <p className="eyebrow">Grow your impact.</p>
+
+          <h1>About Impact Creator Hub</h1>
+
+          <p className="intro">
+            Impact Creator Hub is a simple way for creators to show who they
+            are, what they make, and how brands can work with them.
+          </p>
+
+          <p>
+            We believe a creator profile should feel more personal than a
+            resume, more organized than social media, and easier to share than
+            scattered links.
+          </p>
+
+          <div className="actions">
+            <a className="primaryButton" href="/signup">
+              Create a Creator Profile
+            </a>
+            <a className="secondaryButton" href="/signup/brand">
+              Join as a Brand
+            </a>
+          </div>
+        </div>
+
+        <div className="visualCard">
+          <div className="slider">
+            <img src={currentSlide.image} alt="" />
+            <div className="caption">{currentSlide.caption}</div>
+          </div>
+
+          <div className="dots">
+            {slides.map((slide, index) => (
+              <button
+                key={slide.image}
+                onClick={() => setSlideIndex(index)}
+                className={index === slideIndex ? "active" : ""}
+                aria-label={`Show slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="impactNote">
+        <span>Impact Note</span>
+        <p>{notes[noteIndex]}</p>
+      </section>
+
+      <section className="storyGrid">
+        <div>
+          <h2>Why we are building this</h2>
+          <p>
+            Creators are doing real work across platforms, posts, projects, and
+            communities. But too often, their best work is scattered. Impact
+            Creator Hub brings the essentials together into one profile that is
+            easy to understand and easy to share.
+          </p>
+        </div>
+
+        <div>
+          <h2>Who it helps</h2>
+          <p>
+            Creators get a clearer way to present themselves. Brands get a
+            simpler way to discover people who fit their mission, campaign, or
+            audience.
+          </p>
+        </div>
+
+        <div>
+          <h2>What we care about</h2>
+          <p>
+            Simplicity, trust, creativity, and useful connection. The goal is
+            not to add more noise. The goal is to make the right information
+            easier to find.
+          </p>
+        </div>
+      </section>
+
+      <section className="trustStrip">
+        <div>
+          <strong>Simple profiles</strong>
+          <span>Clear creator pages that are easy to share.</span>
+        </div>
+
+        <div>
+          <strong>Human discovery</strong>
+          <span>Less scrolling, more meaningful connection.</span>
+        </div>
+
+        <div>
+          <strong>Brand-ready</strong>
+          <span>Built to help creators and brands work together.</span>
+        </div>
+      </section>
+
+      <section className="finalCTA">
+        <h2>Built for creators who want to be seen clearly.</h2>
+        <p>
+          Start with a simple profile. Add your story, your work, and the ways
+          brands can connect with you.
+        </p>
+
+        <a href="/signup">Get Started</a>
+      </section>
+
+      <footer className="footer">
+        © 2026 Impact Creator Hub. Grow your impact.
+      </footer>
+
+      <style jsx>{`
+        .page {
+          min-height: 100vh;
+          background:
+            radial-gradient(circle at top right, rgba(255, 127, 110, 0.16), transparent 34%),
+            #000;
+          color: #ffffff;
+          font-family: Arial, Helvetica, sans-serif;
+          padding: 34px 60px 70px;
+        }
+
+        .nav {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 26px;
+          margin-bottom: 76px;
+          text-transform: uppercase;
+          font-size: 13px;
+          letter-spacing: 0.9px;
+          font-weight: 700;
+        }
+
+        .nav a {
+          color: #ffffff;
+          text-decoration: none;
+        }
+
+        .nav a:hover {
+          color: #ff7f6e;
+        }
+
+        .hero {
+          display: grid;
+          grid-template-columns: minmax(300px, 570px) minmax(300px, 480px);
+          align-items: center;
+          gap: 72px;
+          max-width: 1180px;
+        }
+
+        .eyebrow {
+          color: #ff7f6e;
+          text-transform: uppercase;
+          letter-spacing: 1.4px;
+          font-size: 13px;
+          font-weight: 800;
+          margin: 0 0 18px;
+        }
+
+        .heroText h1 {
+          font-size: clamp(44px, 6vw, 76px);
+          line-height: 0.98;
+          margin: 0 0 28px;
+          letter-spacing: -2px;
+        }
+
+        .intro {
+          font-size: 21px;
+          line-height: 1.55;
+          color: #f2f2f2;
+          margin: 0 0 20px;
+          font-weight: 700;
+        }
+
+        .heroText p:not(.eyebrow):not(.intro) {
+          font-size: 17px;
+          line-height: 1.75;
+          color: #cfcfcf;
+          margin: 0;
+          max-width: 520px;
+          font-weight: 600;
+        }
+
+        .actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 14px;
+          margin-top: 34px;
+        }
+
+        .primaryButton,
+        .secondaryButton {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 46px;
+          padding: 0 20px;
+          border-radius: 999px;
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 800;
+        }
+
+        .primaryButton {
+          background: #ff7f6e;
+          color: #000;
+        }
+
+        .secondaryButton {
+          color: #ffffff;
+          border: 1px solid #333;
+          background: rgba(255, 255, 255, 0.04);
+        }
+
+        .visualCard {
+          position: relative;
+        }
+
+        .slider {
+          position: relative;
+          overflow: hidden;
+          border: 1px solid #222;
+          background: #080808;
+          box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        .slider img {
+          display: block;
+          width: 100%;
+          height: 420px;
+          object-fit: cover;
+        }
+
+        .caption {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          padding: 22px;
+          background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+          color: #ffffff;
+          font-size: 18px;
+          line-height: 1.35;
+          font-weight: 800;
+        }
+
+        .dots {
+          display: flex;
+          justify-content: center;
+          gap: 9px;
+          margin-top: 18px;
+        }
+
+        .dots button {
+          width: 9px;
+          height: 9px;
+          border-radius: 999px;
+          border: 0;
+          background: rgba(255, 255, 255, 0.32);
+          cursor: pointer;
+        }
+
+        .dots button.active {
+          background: #ff7f6e;
+        }
+
+        .impactNote {
+          max-width: 760px;
+          margin-top: 80px;
+          border-left: 3px solid #ff7f6e;
+          padding: 18px 0 18px 22px;
+          background: rgba(255, 255, 255, 0.025);
+        }
+
+        .impactNote span {
+          display: block;
+          color: #ff7f6e;
+          text-transform: uppercase;
+          font-size: 12px;
+          letter-spacing: 1.1px;
+          font-weight: 800;
+          margin-bottom: 8px;
+        }
+
+        .impactNote p {
+          margin: 0;
+          font-size: 21px;
+          line-height: 1.45;
+          font-weight: 800;
+        }
+
+        .storyGrid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 22px;
+          max-width: 1180px;
+          margin-top: 76px;
+        }
+
+        .storyGrid div {
+          border: 1px solid #202020;
+          background: rgba(255, 255, 255, 0.035);
+          padding: 28px;
+        }
+
+        .storyGrid h2 {
+          margin: 0 0 16px;
+          font-size: 23px;
+          line-height: 1.2;
+        }
+
+        .storyGrid p {
+          margin: 0;
+          color: #c8c8c8;
+          font-size: 16px;
+          line-height: 1.65;
+          font-weight: 600;
+        }
+
+        .trustStrip {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1px;
+          max-width: 1180px;
+          margin-top: 30px;
+          background: #242424;
+          border: 1px solid #242424;
+        }
+
+        .trustStrip div {
+          background: #050505;
+          padding: 24px;
+        }
+
+        .trustStrip strong {
+          display: block;
+          color: #ffffff;
+          font-size: 17px;
+          margin-bottom: 8px;
+        }
+
+        .trustStrip span {
+          display: block;
+          color: #aaa;
+          font-size: 14px;
+          line-height: 1.45;
+          font-weight: 600;
+        }
+
+        .finalCTA {
+          max-width: 820px;
+          margin-top: 82px;
+          padding: 42px;
+          background: #ff7f6e;
+          color: #000;
+        }
+
+        .finalCTA h2 {
+          margin: 0 0 14px;
+          font-size: clamp(30px, 4vw, 46px);
+          line-height: 1.05;
+          letter-spacing: -1px;
+        }
+
+        .finalCTA p {
+          max-width: 620px;
+          margin: 0 0 24px;
+          font-size: 17px;
+          line-height: 1.6;
+          font-weight: 700;
+        }
+
+        .finalCTA a {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 44px;
+          padding: 0 20px;
+          border-radius: 999px;
+          background: #000;
+          color: #fff;
+          text-decoration: none;
+          font-weight: 800;
+          font-size: 14px;
+        }
+
+        .footer {
+          margin-top: 60px;
+          color: #777;
+          font-size: 13px;
+        }
+
+        @media only screen and (max-width: 850px) {
+          .page {
+            padding: 28px 24px 56px;
+          }
+
+          .nav {
+            gap: 16px;
+            margin-bottom: 52px;
+            font-size: 12px;
+          }
+
+          .hero {
+            display: block;
+          }
+
+          .heroText h1 {
+            font-size: 42px;
+            letter-spacing: -1px;
+          }
+
+          .intro {
+            font-size: 18px;
+          }
+
+          .heroText p:not(.eyebrow):not(.intro) {
+            font-size: 16px;
+          }
+
+          .visualCard {
+            margin-top: 42px;
+          }
+
+          .slider img {
+            height: 290px;
+          }
+
+          .caption {
+            font-size: 15px;
+            padding: 18px;
+          }
+
+          .impactNote {
+            margin-top: 54px;
+          }
+
+          .impactNote p {
+            font-size: 18px;
+          }
+
+          .storyGrid,
+          .trustStrip {
+            grid-template-columns: 1fr;
+          }
+
+          .finalCTA {
+            padding: 30px 24px;
+          }
+        }
+      `}</style>
+    </main>
+  );
+}
