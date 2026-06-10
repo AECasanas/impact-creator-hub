@@ -131,24 +131,9 @@ export default function BrandSignupPage() {
       <div className="overlay"></div>
 
       <header className="signupHeader">
-        <a href="/" className="headerBrand" aria-label="Impact Creator Hub home">
-          <img
-            src="/logo-ripple.png"
-            alt="Impact Creator Hub logo"
-            className="headerLogo"
-          />
-          <div>
-            <strong>Impact Creator Hub</strong>
-            <p>
-              <span>Build your brand. </span>
-              <span>Grow your impact.</span>
-            </p>
-          </div>
-        </a>
-
         <nav className="signupNav" aria-label="Signup navigation">
-          <a href="/">Home</a>
           <a href="/login">Login</a>
+          <a href="/">Home</a>
         </nav>
       </header>
 
@@ -337,87 +322,40 @@ export default function BrandSignupPage() {
         }
 
         .signupHeader {
-          position: relative;
+          position: absolute;
+          top: 28px;
+          right: 8vw;
           z-index: 5;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 24px;
-          padding: 24px 8vw;
-        }
-
-        .headerBrand {
-          display: inline-flex;
-          align-items: center;
-          gap: 14px;
-          color: #ffffff;
-          text-decoration: none;
-        }
-
-        .headerLogo {
-          width: 54px;
-          height: 54px;
-          object-fit: contain;
-        }
-
-        .headerBrand strong {
-          display: block;
-          color: #ffffff;
-          font-size: 1.2rem;
-          line-height: 1;
-          letter-spacing: -0.03em;
-        }
-
-        .headerBrand p {
-          margin: 6px 0 0;
-          color: #f28c82;
-          font-size: 0.58rem;
-          font-weight: 900;
-          letter-spacing: 0.28em;
-          text-transform: uppercase;
-        }
-
-        .headerBrand p span:first-child {
-          color: rgba(255, 255, 255, 0.72);
         }
 
         .signupNav {
           display: flex;
           align-items: center;
-          gap: 14px;
+          gap: 18px;
         }
 
         .signupNav a {
-          color: rgba(255, 255, 255, 0.88);
+          color: rgba(255, 255, 255, 0.9);
           text-decoration: none;
           font-size: 0.95rem;
-          font-weight: 800;
-          padding: 10px 14px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          backdrop-filter: blur(8px);
-          transition:
-            background 160ms ease,
-            color 160ms ease,
-            border-color 160ms ease;
+          font-weight: 900;
+          letter-spacing: 0.01em;
+          text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
         }
 
         .signupNav a:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.14);
-          border-color: rgba(103, 232, 249, 0.55);
+          color: #67e8f9;
         }
 
         .brandContent {
           position: relative;
           z-index: 1;
-          min-height: calc(100vh - 102px);
+          min-height: 100vh;
           display: grid;
           grid-template-columns: 1fr 460px;
           align-items: center;
           gap: 70px;
-          padding: 34px 8vw 70px;
+          padding: 70px 8vw;
         }
 
         .brandText {
@@ -624,13 +562,9 @@ export default function BrandSignupPage() {
         }
 
         @media (max-width: 1000px) {
-          .signupHeader {
-            padding: 20px 22px;
-          }
-
           .brandContent {
             grid-template-columns: 1fr;
-            padding: 32px 22px 48px;
+            padding: 48px 22px;
             gap: 38px;
           }
 
@@ -652,30 +586,16 @@ export default function BrandSignupPage() {
 
         @media (max-width: 600px) {
           .signupHeader {
-            align-items: flex-start;
-            flex-direction: column;
+            top: 18px;
+            right: 22px;
           }
 
           .signupNav {
-            width: 100%;
+            gap: 14px;
           }
 
           .signupNav a {
-            flex: 1;
-            text-align: center;
-          }
-
-          .headerLogo {
-            width: 46px;
-            height: 46px;
-          }
-
-          .headerBrand strong {
-            font-size: 1rem;
-          }
-
-          .headerBrand p {
-            letter-spacing: 0.18em;
+            font-size: 0.9rem;
           }
 
           .brandText h1 {
