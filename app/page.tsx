@@ -1,11 +1,9 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#05090b] text-white">
       <section className="relative min-h-screen overflow-hidden">
         {/* Background image */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 top-[128px] bg-[url('/impact-hero-background.png')] bg-cover bg-center" />
+        <div className= "pointer-events-none absolute inset-x-0 bottom-0 top-[128px] bg-[url('/impact-hero-background.png')] bg-cover bg-center"/>
 
         {/* Dark overlay */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 top-[128px] bg-black/25" />
@@ -15,12 +13,9 @@ export default function Home() {
           {/* Header */}
           <header className="relative z-20 flex items-center justify-between border-b border-white/10 pb-6">
             <div className="flex items-center gap-4">
-              <Image
+              <img
                 src="/logo-ripple.png"
                 alt="Impact Creator Hub logo"
-                width={64}
-                height={64}
-                priority
                 className="h-16 w-16 object-contain"
               />
 
@@ -38,10 +33,10 @@ export default function Home() {
 
             <nav className="hidden items-center gap-10 text-base font-medium text-white/85 md:flex">
               <NavLink href="/features">Features</NavLink>
-              <NavLink href="/for-creators">For Creators</NavLink>
-              <NavLink href="/for-brands">For Brands</NavLink>
-              <NavLink href="/about-us">About Us</NavLink>
-              <NavLink href="/login">Login</NavLink>
+<NavLink href="/for-creators">For Creators</NavLink>
+<NavLink href="/for-brands">For Brands</NavLink>
+<NavLink href="/about-us">About Us</NavLink>
+<NavLink href="/login">Login</NavLink>
 
               <a
                 href="/signup"
@@ -76,17 +71,17 @@ export default function Home() {
 
               <div className="mt-10 flex flex-col gap-5 sm:flex-row">
                 <a
-                  href="/features"
-                  className="rounded-md border border-cyan-300 px-10 py-5 text-center text-lg font-semibold text-white transition hover:border-[#f28c82]"
-                >
-                  Explore the Hub
-                </a>
+  href="/features"
+  className="rounded-md border border-cyan-300 px-10 py-5 text-center text-lg font-semibold text-white transition hover:border-[#f28c82]"
+>
+  Explore the Hub
+</a>
 
                 <a
-                  href="/signup"
+                  href="/creator-profile"
                   className="rounded-md border border-cyan-300 px-10 py-5 text-center text-lg font-semibold text-white transition hover:border-[#f28c82]"
                 >
-                  Create Free Profile
+                  View Example Profile
                 </a>
               </div>
 
@@ -140,3 +135,6 @@ function ShieldIcon() {
     </svg>
   );
 }
+
+
+
