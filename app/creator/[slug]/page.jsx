@@ -482,14 +482,14 @@ export default async function CreatorPublicProfilePage({ params }) {
           opacity: 0.72;
         }
 
-        .avatarDock {
-          position: absolute;
-          left: clamp(38px, 11vw, 170px);
-          bottom: -18px;
-          width: clamp(230px, 22vw, 330px);
-          height: clamp(230px, 22vw, 330px);
-          z-index: 10;
-        }
+       .avatarDock {
+  position: absolute;
+  left: clamp(38px, 9vw, 150px);
+  bottom: -70px;
+  width: clamp(360px, 30vw, 500px);
+  height: clamp(360px, 30vw, 500px);
+  z-index: 10;
+}
 
         .profilePhoto {
           width: 100%;
@@ -514,22 +514,22 @@ export default async function CreatorPublicProfilePage({ params }) {
           object-position: center top;
         }
 
-        .logoBadge {
-          position: absolute;
-          right: 10px;
-          bottom: 54px;
-          width: 56px;
-          height: 56px;
-          border: 5px solid #ffffff;
-          border-radius: 50%;
-          background: #000000;
-          object-fit: cover;
-          z-index: 12;
-          box-shadow:
-            0 0 0 1px rgba(16, 23, 47, 0.12),
-            0 10px 22px rgba(0, 0, 0, 0.16),
-            0 0 24px color-mix(in srgb, var(--accent) 24%, transparent);
-        }
+       .logoBadge {
+  position: absolute;
+  right: 18px;
+  bottom: 76px;
+  width: 66px;
+  height: 66px;
+  border: 6px solid #ffffff;
+  border-radius: 50%;
+  background: #000000;
+  object-fit: cover;
+  z-index: 12;
+  box-shadow:
+    0 0 0 1px rgba(16, 23, 47, 0.12),
+    0 10px 22px rgba(0, 0, 0, 0.16),
+    0 0 24px color-mix(in srgb, var(--accent) 24%, transparent);
+}
 
         .identityBand {
           position: relative;
@@ -550,15 +550,15 @@ export default async function CreatorPublicProfilePage({ params }) {
             );
         }
 
-        .identityInner {
-          width: min(1180px, calc(100% - 44px));
-          display: grid;
-          grid-template-columns: minmax(250px, 330px) minmax(0, 1fr);
-          gap: 42px;
-          align-items: start;
-          margin: 0 auto;
-          padding: 22px 0 46px;
-        }
+      .identityInner {
+  width: min(1180px, calc(100% - 44px));
+  display: grid;
+  grid-template-columns: minmax(380px, 500px) minmax(0, 1fr);
+  gap: 42px;
+  align-items: start;
+  margin: 0 auto;
+  padding: 90px 0 46px;
+}
 
         .identitySpacer {
           min-height: 36px;
