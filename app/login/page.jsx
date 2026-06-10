@@ -197,7 +197,7 @@ function LoginContent() {
             </div>
 
             <p className="signupPrompt">
-              New to Impact Creator Hub? <a href="/signup">Create an account</a>
+              New to Impact Creator Hub? <a href="/signup/creator">Create an account</a>
             </p>
           </section>
         </div>

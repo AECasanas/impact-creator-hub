@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -114,12 +113,20 @@ export default function BrandSignupPage() {
       }
     }
 
+    /**
+     * If email confirmation is OFF, Supabase may return a session immediately.
+     * In that case, send the brand directly to brand profile setup.
+     */
     if (data?.session) {
       setLoading(false);
       window.location.href = "/create-brand";
       return;
     }
 
+    /**
+     * If email confirmation is ON, Supabase sends the verification email.
+     * User must click it before continuing.
+     */
     setMessage(
       "Verification email sent. Please check your inbox and spam folder. After verifying, you will continue to your brand profile setup."
     );
@@ -167,6 +174,12 @@ export default function BrandSignupPage() {
         </div>
 
         <div className="brandCard">
+          <img
+            src="/logo-white-background.png"
+            alt="Impact Creator Hub logo"
+            className="cardLogo"
+          />
+
           <p className="cardLabel">Brand Account</p>
           <h2>Join as a Brand</h2>
           <p className="cardSubhead">
@@ -265,22 +278,17 @@ export default function BrandSignupPage() {
 
             <p className="terms">
               By continuing, you agree to Impact Creator Hub’s{" "}
-              <Link href="/terms">Terms of Service</Link> and{" "}
-              <Link href="/privacy">Privacy Policy</Link>.
+              <a>Terms of Service</a> and <a>Privacy Policy</a>.
             </p>
 
             <p className="creatorLink">
               Are you a creator?{" "}
-              <Link href="/signup">Create a creator profile</Link>
+              <a href="/signup/creator">Create a creator profile</a>
             </p>
 
             <p className="creatorLink">
               Already have a brand account?{" "}
-              <Link href="/login?redirect=/create-brand">Log in</Link>
-            </p>
-
-            <p className="creatorLink smallHomeLink">
-              <Link href="/">Home</Link>
+              <a href="/login?redirect=/create-brand">Log in</a>
             </p>
           </form>
         </div>
@@ -318,10 +326,10 @@ export default function BrandSignupPage() {
           z-index: 1;
           min-height: 100vh;
           display: grid;
-          grid-template-columns: 1fr 440px;
+          grid-template-columns: 1fr 460px;
           align-items: center;
           gap: 70px;
-          padding: 56px 8vw;
+          padding: 70px 8vw;
         }
 
         .brandText {
@@ -389,12 +397,19 @@ export default function BrandSignupPage() {
           border-radius: 30px;
           box-shadow: 0 30px 70px rgba(0, 0, 0, 0.28);
           overflow: hidden;
-          padding: 30px 38px 28px;
+          padding: 38px 42px 34px;
+        }
+
+        .cardLogo {
+          display: block;
+          width: 52px;
+          height: auto;
+          margin: 0 auto 24px;
         }
 
         .cardLabel {
           display: inline-flex;
-          margin: 0 0 12px;
+          margin: 0 0 14px;
           padding: 8px 13px;
           border-radius: 999px;
           background: #fff4ef;
@@ -408,22 +423,22 @@ export default function BrandSignupPage() {
         .brandCard h2 {
           margin: 0;
           color: #0b1b2b;
-          font-size: 31px;
+          font-size: 34px;
           line-height: 1.1;
           letter-spacing: -0.04em;
         }
 
         .cardSubhead {
-          margin: 10px 0 22px;
-          font-size: 15px;
+          margin: 10px 0 24px;
+          font-size: 16px;
           line-height: 1.45;
           color: #4b5563;
         }
 
         label {
           display: block;
-          margin-bottom: 13px;
-          font-size: 13px;
+          margin-bottom: 15px;
+          font-size: 14px;
           font-weight: 800;
           color: #1f2937;
         }
@@ -431,12 +446,12 @@ export default function BrandSignupPage() {
         input,
         select {
           width: 100%;
-          height: 48px;
+          height: 52px;
           margin-top: 7px;
           border-radius: 15px;
           border: 1px solid #cfd6dd;
           padding: 0 16px;
-          font-size: 15px;
+          font-size: 16px;
           outline: none;
           background: #ffffff;
           color: #111827;
@@ -450,7 +465,7 @@ export default function BrandSignupPage() {
 
         .brandPrimary {
           width: 100%;
-          height: 54px;
+          height: 56px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -499,9 +514,9 @@ export default function BrandSignupPage() {
         }
 
         .terms {
-          margin: 16px auto 0;
+          margin: 18px auto 0;
           text-align: center;
-          font-size: 11.5px;
+          font-size: 12px;
           line-height: 1.45;
           color: #6b7280;
         }
@@ -514,15 +529,10 @@ export default function BrandSignupPage() {
         }
 
         .creatorLink {
-          margin: 15px 0 0;
+          margin: 18px 0 0;
           text-align: center;
           color: #374151;
-          font-size: 13px;
-        }
-
-        .smallHomeLink {
-          margin-top: 10px;
-          font-size: 12px;
+          font-size: 14px;
         }
 
         @media (max-width: 1000px) {
@@ -558,7 +568,7 @@ export default function BrandSignupPage() {
           }
 
           .brandCard {
-            padding: 28px 22px;
+            padding: 30px 24px;
           }
         }
       `}</style>

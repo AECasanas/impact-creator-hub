@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
-export default function CreatorSignupPage() {
+function CreatorSignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -407,5 +407,13 @@ export default function CreatorSignupPage() {
         }
       `}</style>
     </main>
+  );
+}
+
+export default function CreatorSignupPage() {
+  return (
+    <Suspense fallback={<main style={{ padding: 40 }}>Loading...</main>}>
+      <CreatorSignupContent />
+    </Suspense>
   );
 }

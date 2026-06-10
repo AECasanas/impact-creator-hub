@@ -56,7 +56,7 @@ export default function CreateProfilePage() {
           <nav className="navLinks" aria-label="Creator start navigation">
             <a href="/creator-profile">Example Profile</a>
             <a href="/login">Log In</a>
-            <a className="navButton" href="/signup">
+            <a className="navButton" href="/signup/creator">
               Join the Hub
             </a>
           </nav>
