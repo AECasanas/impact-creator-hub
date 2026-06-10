@@ -130,13 +130,6 @@ export default function BrandSignupPage() {
     <main className="brandPage">
       <div className="overlay"></div>
 
-      <header className="signupHeader">
-        <nav className="signupNav" aria-label="Signup navigation">
-          <a href="/login">Login</a>
-          <a href="/">Home</a>
-        </nav>
-      </header>
-
       <section className="brandContent">
         <div className="brandText">
           <p className="eyebrow">FOR BRANDS</p>
@@ -290,6 +283,10 @@ export default function BrandSignupPage() {
               Already have a brand account?{" "}
               <a href="/login?redirect=/create-brand">Log in</a>
             </p>
+
+            <p className="creatorLink smallHomeLink">
+              <a href="/">Home</a>
+            </p>
           </form>
         </div>
       </section>
@@ -321,41 +318,15 @@ export default function BrandSignupPage() {
           z-index: 0;
         }
 
-        .signupHeader {
-          position: absolute;
-          top: 28px;
-          right: 8vw;
-          z-index: 5;
-        }
-
-        .signupNav {
-          display: flex;
-          align-items: center;
-          gap: 18px;
-        }
-
-        .signupNav a {
-          color: rgba(255, 255, 255, 0.9);
-          text-decoration: none;
-          font-size: 0.95rem;
-          font-weight: 900;
-          letter-spacing: 0.01em;
-          text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
-        }
-
-        .signupNav a:hover {
-          color: #67e8f9;
-        }
-
         .brandContent {
           position: relative;
           z-index: 1;
           min-height: 100vh;
           display: grid;
-          grid-template-columns: 1fr 460px;
+          grid-template-columns: 1fr 440px;
           align-items: center;
           gap: 70px;
-          padding: 70px 8vw;
+          padding: 56px 8vw;
         }
 
         .brandText {
@@ -423,19 +394,19 @@ export default function BrandSignupPage() {
           border-radius: 30px;
           box-shadow: 0 30px 70px rgba(0, 0, 0, 0.28);
           overflow: hidden;
-          padding: 38px 42px 34px;
+          padding: 30px 38px 28px;
         }
 
         .cardLogo {
           display: block;
-          width: 52px;
+          width: 44px;
           height: auto;
-          margin: 0 auto 24px;
+          margin: 0 auto 18px;
         }
 
         .cardLabel {
           display: inline-flex;
-          margin: 0 0 14px;
+          margin: 0 0 12px;
           padding: 8px 13px;
           border-radius: 999px;
           background: #fff4ef;
@@ -449,22 +420,22 @@ export default function BrandSignupPage() {
         .brandCard h2 {
           margin: 0;
           color: #0b1b2b;
-          font-size: 34px;
+          font-size: 31px;
           line-height: 1.1;
           letter-spacing: -0.04em;
         }
 
         .cardSubhead {
-          margin: 10px 0 24px;
-          font-size: 16px;
+          margin: 10px 0 22px;
+          font-size: 15px;
           line-height: 1.45;
           color: #4b5563;
         }
 
         label {
           display: block;
-          margin-bottom: 15px;
-          font-size: 14px;
+          margin-bottom: 13px;
+          font-size: 13px;
           font-weight: 800;
           color: #1f2937;
         }
@@ -472,12 +443,12 @@ export default function BrandSignupPage() {
         input,
         select {
           width: 100%;
-          height: 52px;
+          height: 48px;
           margin-top: 7px;
           border-radius: 15px;
           border: 1px solid #cfd6dd;
           padding: 0 16px;
-          font-size: 16px;
+          font-size: 15px;
           outline: none;
           background: #ffffff;
           color: #111827;
@@ -491,7 +462,7 @@ export default function BrandSignupPage() {
 
         .brandPrimary {
           width: 100%;
-          height: 56px;
+          height: 54px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -540,9 +511,9 @@ export default function BrandSignupPage() {
         }
 
         .terms {
-          margin: 18px auto 0;
+          margin: 16px auto 0;
           text-align: center;
-          font-size: 12px;
+          font-size: 11.5px;
           line-height: 1.45;
           color: #6b7280;
         }
@@ -555,10 +526,15 @@ export default function BrandSignupPage() {
         }
 
         .creatorLink {
-          margin: 18px 0 0;
+          margin: 15px 0 0;
           text-align: center;
           color: #374151;
-          font-size: 14px;
+          font-size: 13px;
+        }
+
+        .smallHomeLink {
+          margin-top: 10px;
+          font-size: 12px;
         }
 
         @media (max-width: 1000px) {
@@ -585,19 +561,6 @@ export default function BrandSignupPage() {
         }
 
         @media (max-width: 600px) {
-          .signupHeader {
-            top: 18px;
-            right: 22px;
-          }
-
-          .signupNav {
-            gap: 14px;
-          }
-
-          .signupNav a {
-            font-size: 0.9rem;
-          }
-
           .brandText h1 {
             font-size: 44px;
           }
@@ -607,7 +570,7 @@ export default function BrandSignupPage() {
           }
 
           .brandCard {
-            padding: 30px 24px;
+            padding: 28px 22px;
           }
         }
       `}</style>
