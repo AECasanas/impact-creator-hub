@@ -113,20 +113,12 @@ export default function BrandSignupPage() {
       }
     }
 
-    /**
-     * If email confirmation is OFF, Supabase may return a session immediately.
-     * In that case, send the brand directly to brand profile setup.
-     */
     if (data?.session) {
       setLoading(false);
       window.location.href = "/create-brand";
       return;
     }
 
-    /**
-     * If email confirmation is ON, Supabase sends the verification email.
-     * User must click it before continuing.
-     */
     setMessage(
       "Verification email sent. Please check your inbox and spam folder. After verifying, you will continue to your brand profile setup."
     );
@@ -137,6 +129,28 @@ export default function BrandSignupPage() {
   return (
     <main className="brandPage">
       <div className="overlay"></div>
+
+      <header className="signupHeader">
+        <a href="/" className="headerBrand" aria-label="Impact Creator Hub home">
+          <img
+            src="/logo-ripple.png"
+            alt="Impact Creator Hub logo"
+            className="headerLogo"
+          />
+          <div>
+            <strong>Impact Creator Hub</strong>
+            <p>
+              <span>Build your brand. </span>
+              <span>Grow your impact.</span>
+            </p>
+          </div>
+        </a>
+
+        <nav className="signupNav" aria-label="Signup navigation">
+          <a href="/">Home</a>
+          <a href="/login">Login</a>
+        </nav>
+      </header>
 
       <section className="brandContent">
         <div className="brandText">
@@ -278,12 +292,13 @@ export default function BrandSignupPage() {
 
             <p className="terms">
               By continuing, you agree to Impact Creator Hub’s{" "}
-              <a>Terms of Service</a> and <a>Privacy Policy</a>.
+              <a href="/terms">Terms of Service</a> and{" "}
+              <a href="/privacy">Privacy Policy</a>.
             </p>
 
             <p className="creatorLink">
               Are you a creator?{" "}
-              <a href="/signup/creator">Create a creator profile</a>
+              <a href="/signup">Create a creator profile</a>
             </p>
 
             <p className="creatorLink">
@@ -321,15 +336,88 @@ export default function BrandSignupPage() {
           z-index: 0;
         }
 
+        .signupHeader {
+          position: relative;
+          z-index: 5;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 24px;
+          padding: 24px 8vw;
+        }
+
+        .headerBrand {
+          display: inline-flex;
+          align-items: center;
+          gap: 14px;
+          color: #ffffff;
+          text-decoration: none;
+        }
+
+        .headerLogo {
+          width: 54px;
+          height: 54px;
+          object-fit: contain;
+        }
+
+        .headerBrand strong {
+          display: block;
+          color: #ffffff;
+          font-size: 1.2rem;
+          line-height: 1;
+          letter-spacing: -0.03em;
+        }
+
+        .headerBrand p {
+          margin: 6px 0 0;
+          color: #f28c82;
+          font-size: 0.58rem;
+          font-weight: 900;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+        }
+
+        .headerBrand p span:first-child {
+          color: rgba(255, 255, 255, 0.72);
+        }
+
+        .signupNav {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .signupNav a {
+          color: rgba(255, 255, 255, 0.88);
+          text-decoration: none;
+          font-size: 0.95rem;
+          font-weight: 800;
+          padding: 10px 14px;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          backdrop-filter: blur(8px);
+          transition:
+            background 160ms ease,
+            color 160ms ease,
+            border-color 160ms ease;
+        }
+
+        .signupNav a:hover {
+          color: #ffffff;
+          background: rgba(255, 255, 255, 0.14);
+          border-color: rgba(103, 232, 249, 0.55);
+        }
+
         .brandContent {
           position: relative;
           z-index: 1;
-          min-height: 100vh;
+          min-height: calc(100vh - 102px);
           display: grid;
           grid-template-columns: 1fr 460px;
           align-items: center;
           gap: 70px;
-          padding: 70px 8vw;
+          padding: 34px 8vw 70px;
         }
 
         .brandText {
@@ -536,9 +624,13 @@ export default function BrandSignupPage() {
         }
 
         @media (max-width: 1000px) {
+          .signupHeader {
+            padding: 20px 22px;
+          }
+
           .brandContent {
             grid-template-columns: 1fr;
-            padding: 48px 22px;
+            padding: 32px 22px 48px;
             gap: 38px;
           }
 
@@ -559,6 +651,33 @@ export default function BrandSignupPage() {
         }
 
         @media (max-width: 600px) {
+          .signupHeader {
+            align-items: flex-start;
+            flex-direction: column;
+          }
+
+          .signupNav {
+            width: 100%;
+          }
+
+          .signupNav a {
+            flex: 1;
+            text-align: center;
+          }
+
+          .headerLogo {
+            width: 46px;
+            height: 46px;
+          }
+
+          .headerBrand strong {
+            font-size: 1rem;
+          }
+
+          .headerBrand p {
+            letter-spacing: 0.18em;
+          }
+
           .brandText h1 {
             font-size: 44px;
           }
