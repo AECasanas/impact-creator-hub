@@ -166,11 +166,7 @@ export default function BrandSignupPage() {
         </div>
 
         <div className="brandCard">
-          <img
-            src="/logo-white-background.png"
-            alt="Impact Creator Hub logo"
-            className="cardLogo"
-          />
+         
 
           <p className="cardLabel">Brand Account</p>
           <h2>Join as a Brand</h2>
@@ -397,12 +393,6 @@ export default function BrandSignupPage() {
           padding: 30px 38px 28px;
         }
 
-        .cardLogo {
-          display: block;
-          width: 44px;
-          height: auto;
-          margin: 0 auto 18px;
-        }
 
         .cardLabel {
           display: inline-flex;
