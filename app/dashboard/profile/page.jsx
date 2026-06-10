@@ -1008,6 +1008,30 @@ async function handleSaveBoardItem() {
           <p className="panelLabel">Profile highlights</p>
 
           <div className="formGrid">
+            // In your formGrid inside the "Profile highlights" panel, add:
+<label>
+  Follower count
+  <input value={profile.followerCount} placeholder="42000"
+    onChange={e => updateProfile("followerCount", e.target.value)} />
+</label>
+
+<label>
+  Engagement rate
+  <input value={profile.engagementRate} placeholder="4.8%"
+    onChange={e => updateProfile("engagementRate", e.target.value)} />
+</label>
+
+<label>
+  Rate range (min)
+  <input value={profile.rateMin} placeholder="$500"
+    onChange={e => updateProfile("rateMin", e.target.value)} />
+</label>
+
+<label>
+  Rate range (max)
+  <input value={profile.rateMax} placeholder="$2,400"
+    onChange={e => updateProfile("rateMax", e.target.value)} />
+</label>
             <label>
               Primary niche
               <input

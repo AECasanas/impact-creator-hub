@@ -39,7 +39,7 @@ export default function Home() {
 <NavLink href="/login">Login</NavLink>
 
               <a
-                href="/signup/creator"
+                href="/signup"
                 className="rounded-md bg-cyan-300 px-8 py-4 font-semibold text-black shadow-[0_0_24px_rgba(103,232,249,0.20)] transition hover:bg-cyan-200"
               >
                 Get Started
