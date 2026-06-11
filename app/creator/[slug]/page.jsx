@@ -47,6 +47,20 @@ function formatFollowers(value) {
   if (num >= 1_000) return `${(num / 1_000).toFixed(1).replace(/\.0$/, "")}K`;
   return String(num);
 }
+function getBioHeadline(style, name) {
+  const creatorName = name || "this creator";
+
+  const headlines = {
+    vibe: `The ${creatorName} vibe`,
+    meet: `Meet ${creatorName}`,
+    world: `${creatorName}'s world`,
+    brands: `Why brands love ${creatorName}`,
+    about: `A little about ${creatorName}`,
+    story: "Creator story",
+  };
+
+  return headlines[style] || headlines.vibe;
+}
 
 export default async function CreatorPublicProfilePage({ params }) {
   const { slug } = await params;
@@ -110,6 +124,7 @@ export default async function CreatorPublicProfilePage({ params }) {
 
   // NEW: derived display values
   const firstName      = (profile.display_name || "").split(" ")[0];
+  const bioHeadline = getBioHeadline(profile.bio_headline_style, firstName);
   const formattedFollowers = formatFollowers(profile.follower_count);
   const nicheTags      = profile.niche_tags || [];
   const hasStats       = formattedFollowers || profile.engagement_rate;
@@ -257,7 +272,7 @@ export default async function CreatorPublicProfilePage({ params }) {
         <section className="joyGrid">
           <article className="bioFeature">
             <p className="eyebrow">Creator Snapshot</p>
-            <h2>What {firstName} is about</h2>
+            <h2>{bioHeadline}</h2>
             {profile.short_bio
               ? <p className="bio">{profile.short_bio}</p>
               : <p className="bio">{firstName} is still building their story. Check back soon for more details, projects, and collaboration ideas.</p>

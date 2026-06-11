@@ -558,6 +558,27 @@ export default function DashboardProfilePage() {
               Short bio
               <textarea value={profile.shortBio} placeholder="Tell brands who you are, what you create, and why your work matters." onChange={(e) => updateProfile("shortBio", e.target.value)} />
             </label>
+
+            <label className="wide">
+  Profile headline
+  <select
+    value={profile.bioHeadlineStyle}
+    onChange={(e) => updateProfile("bioHeadlineStyle", e.target.value)}
+  >
+    {bioHeadlineOptions.map((option) => {
+      const creatorName = profile.displayName || "your name";
+
+      return (
+        <option key={option.value} value={option.value}>
+          {option.label.replace("{name}", creatorName)}
+        </option>
+      );
+    })}
+  </select>
+  <span className="fieldHint">
+    Choose the headline that introduces your public profile.
+  </span>
+</label>
           </div>
         </section>
 
