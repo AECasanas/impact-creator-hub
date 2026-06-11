@@ -64,6 +64,44 @@ const socialPlatforms = [
   "X / Twitter",
 ];
 
+const nicheOptions = [
+  "Food",
+  "Travel",
+  "Lifestyle",
+  "Fitness",
+  "Wellness",
+  "Beauty",
+  "Fashion",
+  "Parenting",
+  "Home",
+  "Design",
+  "Art",
+  "Music",
+  "Gaming",
+  "Tech",
+  "Business",
+  "Education",
+  "Books",
+  "Comedy",
+  "Sports",
+  "Outdoors",
+];
+
+const monthOptions = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 const exchangePostTypes = [
   "Collaboration",
   "Availability",
@@ -215,6 +253,24 @@ const [profile, setProfile] = useState({
     }));
   }
 
+  function toggleNicheTag(tag) {
+    setProfile((current) => {
+      const currentTags = current.nicheTags || [];
+
+      if (currentTags.includes(tag)) {
+        return {
+          ...current,
+          nicheTags: currentTags.filter((item) => item !== tag),
+        };
+      }
+
+      return {
+        ...current,
+        nicheTags: [...currentTags, tag],
+      };
+    });
+  }
+
   function updateBoardDraft(field, value) {
     setBoardDraft((current) => ({
       ...current,
@@ -278,8 +334,20 @@ const [profile, setProfile] = useState({
         longBio: data.long_bio || "",
         writingIntro: data.writing_intro || "",
         contactEmail: data.contact_email || "",
+
+        // New profile highlight fields
+        nicheTags: data.niche_tags || [],
+        followerCount: data.follower_count || "",
+        engagementRate: data.engagement_rate || "",
+        minRate: data.min_rate || "",
+        maxRate: data.max_rate || "",
+        availableForCollabs: data.available_for_collabs || false,
+        availableFromMonth: data.available_from_month || "",
+
+        // Keep old fields for now so nothing breaks
         primaryNiche: data.primary_niche || "",
         availableFor: data.available_for || "",
+
         featuredLinkTitle: data.featured_link_title || "",
         featuredLinkUrl: data.featured_link_url || "",
         profileStyle: data.profile_style || "Simple Light",
@@ -534,8 +602,20 @@ const [profile, setProfile] = useState({
         long_bio: profile.longBio,
         writing_intro: profile.writingIntro,
         contact_email: profile.contactEmail,
+
+        // New profile highlight fields
+        niche_tags: profile.nicheTags || [],
+        follower_count: profile.followerCount,
+        engagement_rate: profile.engagementRate,
+        min_rate: profile.minRate ? Number(profile.minRate) : null,
+        max_rate: profile.maxRate ? Number(profile.maxRate) : null,
+        available_for_collabs: profile.availableForCollabs,
+        available_from_month: profile.availableFromMonth,
+
+        // Keep old fields for now so nothing breaks
         primary_niche: profile.primaryNiche,
         available_for: profile.availableFor,
+
         featured_link_title: profile.featuredLinkTitle,
         featured_link_url: formatExternalUrl(profile.featuredLinkUrl),
         profile_style: profile.profileStyle,
@@ -1023,25 +1103,95 @@ async function handleSaveBoardItem() {
 
           <div className="formGrid">
             <label>
-              Primary niche
+              Follower count
               <input
-                value={profile.primaryNiche}
-                placeholder="Food, beauty, travel, wellness..."
+                value={profile.followerCount}
+                placeholder="25K, 125K, 1.2M..."
                 onChange={(event) =>
-                  updateProfile("primaryNiche", event.target.value)
+                  updateProfile("followerCount", event.target.value)
                 }
               />
             </label>
 
             <label>
-              Available for
+              Engagement rate
               <input
-                value={profile.availableFor}
-                placeholder="Brand partnerships, UGC, sponsored posts..."
+                value={profile.engagementRate}
+                placeholder="3.5%, 6%, 8.2%..."
                 onChange={(event) =>
-                  updateProfile("availableFor", event.target.value)
+                  updateProfile("engagementRate", event.target.value)
                 }
               />
+            </label>
+
+            <label>
+              Min rate
+              <input
+                type="number"
+                min="0"
+                value={profile.minRate}
+                placeholder="500"
+                onChange={(event) => updateProfile("minRate", event.target.value)}
+              />
+            </label>
+
+            <label>
+              Max rate
+              <input
+                type="number"
+                min="0"
+                value={profile.maxRate}
+                placeholder="2000"
+                onChange={(event) => updateProfile("maxRate", event.target.value)}
+              />
+            </label>
+
+            <label>
+              Available for collabs
+              <select
+                value={profile.availableForCollabs ? "yes" : "no"}
+                onChange={(event) =>
+                  updateProfile("availableForCollabs", event.target.value === "yes")
+                }
+              >
+                <option value="yes">Yes</option>
+                <option value="no">Not right now</option>
+              </select>
+            </label>
+
+            <label>
+              Available from
+              <select
+                value={profile.availableFromMonth}
+                onChange={(event) =>
+                  updateProfile("availableFromMonth", event.target.value)
+                }
+              >
+                <option value="">Select month</option>
+                {monthOptions.map((month) => (
+                  <option key={month}>{month}</option>
+                ))}
+              </select>
+            </label>
+
+            <label className="wide">
+              Niche tags
+              <div className="nicheTagGrid">
+                {nicheOptions.map((tag) => {
+                  const selected = profile.nicheTags?.includes(tag);
+
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      className={`nicheTag ${selected ? "selectedNicheTag" : ""}`}
+                      onClick={() => toggleNicheTag(tag)}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
             </label>
 
             <label>
@@ -1624,6 +1774,33 @@ const dashboardStyles = `
   select option {
     background: #101820;
     color: #ffffff;
+  }
+
+  .nicheTagGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .nicheTag {
+    min-height: 36px;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.82);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 950;
+    padding: 0 13px;
+  }
+
+  .selectedNicheTag {
+    border-color: var(--accent, #00e8f0);
+    background: color-mix(in srgb, var(--accent, #00e8f0) 18%, rgba(255,255,255,0.08));
+    color: #ffffff;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, #00e8f0) 16%, transparent);
   }
 
   .slugInputRow {
