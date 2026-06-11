@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 import { notFound } from "next/navigation";
+import CreatorInquiryModal from "@/components/CreatorInquiryModal";
 
 const accentLogoMap = {
   "Electric Cyan": "/logo-colors/impact-logo-electric-cyan.png",
@@ -244,10 +245,12 @@ export default async function CreatorPublicProfilePage({ params }) {
                   {!hasRates && !nicheTags.length && "Open to brand collaborations"}
                 </p>
               </div>
-              {profile.contact_email
-                ? <a className="workWithBtn" href={contactHref}>Contact</a>
-                : <span className="workWithBtn workWithBtnDisabled">Contact</span>
-              }
+              <CreatorInquiryModal
+  creatorProfileId={profile.id}
+  creatorSlug={profile.slug}
+  creatorName={profile.display_name}
+  creatorFirstName={firstName}
+/>
             </div>
 
             <div className="profileActions">
@@ -285,12 +288,9 @@ export default async function CreatorPublicProfilePage({ params }) {
               <div className="pillCard">
                 <span>Niches</span>
                 <div className="quickNichePills">
-                  {nicheTags.slice(0, 4).map((tag) => (
-                    <span key={tag} className="quickNichePill">{tag}</span>
-                  ))}
-                  {nicheTags.length > 4 && (
-                    <span className="quickNichePill">+{nicheTags.length - 4} more</span>
-                  )}
+                {nicheTags.map((tag) => (
+  <span key={tag} className="quickNichePill">{tag}</span>
+))}
                 </div>
               </div>
             ) : profile.primary_niche ? (
@@ -607,10 +607,13 @@ export default async function CreatorPublicProfilePage({ params }) {
         .quickFacts { display: grid; gap: 14px; padding: 18px; }
 
         .pillCard {
-          min-height: 112px; border-radius: 26px;
+          min-height: auto; border-radius: 26px;
           background: linear-gradient(135deg, rgba(255,255,255,0.82), color-mix(in srgb, var(--accent) 10%, #ffffff));
           padding: 18px;
         }
+          .quickFacts {
+  align-content: start;
+}
         .dark .pillCard { background: rgba(255,255,255,0.08); }
         .pillCard strong { display: block; margin-top: 10px; font-size: 1.05rem; line-height: 1.38; }
 
