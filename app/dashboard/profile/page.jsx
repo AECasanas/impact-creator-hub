@@ -22,6 +22,15 @@ const creatorTypes = [
 
 const socialPlatforms = ["Instagram","TikTok","YouTube","Facebook","LinkedIn","X / Twitter"];
 
+const bioHeadlineOptions = [
+  { value: "vibe", label: "The {name} vibe" },
+  { value: "meet", label: "Meet {name}" },
+  { value: "world", label: "{name}'s world" },
+  { value: "brands", label: "Why brands love {name}" },
+  { value: "about", label: "A little about {name}" },
+  { value: "story", label: "Creator story" },
+];
+
 const exchangePostTypes = [
   "Collaboration","Availability","Project Update","Creator Call","Event","Announcement",
 ];
@@ -90,6 +99,7 @@ export default function DashboardProfilePage() {
     shortBio:          "",
     longBio:           "",
     writingIntro:      "",
+    bioHeadlineStyle: "vibe",
     contactEmail:      "",
     primaryNiche:      "",
     availableFor:      "",
@@ -202,6 +212,7 @@ export default function DashboardProfilePage() {
         shortBio:          data.short_bio           || "",
         longBio:           data.long_bio            || "",
         writingIntro:      data.writing_intro       || "",
+ bioHeadlineStyle:  data.bio_headline_style || "vibe",       
         contactEmail:      data.contact_email       || "",
         primaryNiche:      data.primary_niche       || "",
         availableFor:      data.available_for       || "",
@@ -334,6 +345,7 @@ export default function DashboardProfilePage() {
         short_bio:          profile.shortBio,
         long_bio:           profile.longBio,
         writing_intro:      profile.writingIntro,
+        bio_headline_style: profile.bioHeadlineStyle,
         contact_email:      profile.contactEmail,
         primary_niche:      profile.primaryNiche,
         available_for:      profile.availableFor,
