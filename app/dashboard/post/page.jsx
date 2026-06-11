@@ -143,7 +143,9 @@ export default function DashboardPostPage() {
     );
 
     if (unsupported.length) {
-      setErrorMessage("Only JPEG, PNG, WEBP, MP4, WEBM, and MOV files are allowed.");
+      setErrorMessage(
+        "Only JPEG, PNG, WEBP, MP4, WEBM, and MOV files are allowed."
+      );
       event.target.value = "";
       return;
     }
@@ -245,8 +247,15 @@ export default function DashboardPostPage() {
 
     for (let index = 0; index < mediaFiles.length; index++) {
       const file = mediaFiles[index];
-      const mediaType = allowedVideoTypes.includes(file.type) ? "video" : "image";
-      const mediaUrl = await uploadPostAsset(file, `exchange-media-${index}`, safeSlug);
+      const mediaType = allowedVideoTypes.includes(file.type)
+        ? "video"
+        : "image";
+
+      const mediaUrl = await uploadPostAsset(
+        file,
+        `exchange-media-${index}`,
+        safeSlug
+      );
 
       uploadedMedia.push({
         post_id: postId,
@@ -425,15 +434,29 @@ export default function DashboardPostPage() {
             Hub community.
           </p>
 
-          {profile?.slug && (
-            <div className="profileMiniCard">
-              <span>Posting as</span>
-              <strong>{profile.display_name || profile.slug}</strong>
-              <a href={`/creator/${profile.slug}`} target="_blank" rel="noopener noreferrer">
-                View public profile
-              </a>
-            </div>
-          )}
+        <div className="postHeroActions">
+  <a className="primaryHeroButton" href="/create-postcard">
+    Create Postcard Post
+  </a>
+
+  <a className="secondaryHeroButton" href="/impact-exchange">
+    View Impact Exchange
+  </a>
+</div>
+
+{profile?.slug && (
+  <div className="profileMiniCard">
+    <span>Posting as</span>
+    <strong>{profile.display_name || profile.slug}</strong>
+    <a
+      href={`/creator/${profile.slug}`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      View public profile
+    </a>
+  </div>
+)}
         </div>
 
         <aside className="postTips">
@@ -523,7 +546,9 @@ export default function DashboardPostPage() {
               <span>Post media</span>
               <strong>
                 {mediaFiles.length
-                  ? `${mediaFiles.length} file${mediaFiles.length === 1 ? "" : "s"} selected`
+                  ? `${mediaFiles.length} file${
+                      mediaFiles.length === 1 ? "" : "s"
+                    } selected`
                   : "Choose images or video"}
               </strong>
               <small>
@@ -552,7 +577,10 @@ export default function DashboardPostPage() {
               }`}
             >
               {mediaPreviews.map((item, index) => (
-                <article className="mediaPreviewCard" key={`${item.name}-${index}`}>
+                <article
+                  className="mediaPreviewCard"
+                  key={`${item.name}-${index}`}
+                >
                   {item.type === "image" ? (
                     <img src={item.previewUrl} alt={item.name} />
                   ) : (
@@ -579,9 +607,13 @@ export default function DashboardPostPage() {
             {errorMessage && <p className="error">{errorMessage}</p>}
           </div>
 
-          <button type="submit" disabled={posting}>
-            {posting ? "Posting..." : "Post to Impact Exchange"}
-          </button>
+          <div className="postActionButtons">
+            <a href="/impact-exchange">View Impact Exchange</a>
+
+            <button type="submit" disabled={posting}>
+              {posting ? "Posting..." : "Post to Impact Exchange"}
+            </button>
+          </div>
         </section>
       </form>
 
@@ -747,6 +779,36 @@ const postStyles = `
     text-decoration: none;
   }
 
+.postHeroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.postHeroActions a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 950;
+  padding: 0 18px;
+  text-decoration: none;
+}
+
+.primaryHeroButton {
+  background: #00e8f0;
+  color: #020617;
+}
+
+.secondaryHeroButton {
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.08);
+  color: #ffffff;
+}
+
   .postTips {
     padding: 22px;
     background:
@@ -894,7 +956,8 @@ const postStyles = `
   }
 
   .uploadButton,
-  .postActions button {
+  .postActions button,
+  .postActionButtons a {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
@@ -985,6 +1048,19 @@ const postStyles = `
     background: rgba(2, 6, 23, 0.92);
   }
 
+  .postActionButtons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .postActionButtons a {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: #ffffff;
+  }
+
   button:disabled {
     cursor: not-allowed;
     opacity: 0.62;
@@ -1032,6 +1108,11 @@ const postStyles = `
       flex-direction: column;
     }
 
+    .postActionButtons {
+      width: 100%;
+    }
+
+    .postActionButtons a,
     .postActions button {
       width: 100%;
     }
