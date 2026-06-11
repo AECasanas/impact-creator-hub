@@ -1,177 +1,281 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import ImpactHeaderBrand from "@/components/ImpactHeaderBrand";
 
-const accentLogoImages = {
-  "Electric Cyan": "/logo-colors/impact-logo-electric-cyan.png",
-  Orange: "/logo-colors/impact-logo-orange.png",
-  Pink: "/logo-colors/impact-logo-pink.png",
-  Purple: "/logo-colors/impact-logo-purple.png",
-  "Emerald Green": "/logo-colors/impact-logo-emerald-green.png",
-  White: "/logo-colors/impact-logo-white.png",
-};
-
-export default function SavedDashboardPage() {
+export default function SavedPostsDashboardPage() {
   const [user, setUser] = useState(null);
-  const [savedPosts, setSavedPosts] = useState([]);
-  const [profileMap, setProfileMap] = useState({});
-  const [brandMap, setBrandMap] = useState({});
+  const [boards, setBoards] = useState([]);
+  const [savedRows, setSavedRows] = useState([]);
+  const [posts, setPosts] = useState([]);
+
   const [loading, setLoading] = useState(true);
+  const [savingBoard, setSavingBoard] = useState(false);
   const [status, setStatus] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [selectedBoardId, setSelectedBoardId] = useState("all");
+
+  const [boardDraft, setBoardDraft] = useState({
+    boardName: "",
+    boardDescription: "",
+  });
+
   useEffect(() => {
-    loadSavedPosts();
+    loadSavedPage();
   }, []);
 
-  async function loadSavedPosts() {
+  const savedPosts = useMemo(() => {
+    const postMap = new Map(posts.map((post) => [post.id, post]));
+
+    return savedRows
+      .map((savedRow) => {
+        const post = postMap.get(savedRow.post_id);
+
+        if (!post) {
+          return null;
+        }
+
+        return {
+          savedId: savedRow.id,
+          savedAt: savedRow.created_at,
+          boardId: savedRow.board_id || "",
+          post,
+        };
+      })
+      .filter(Boolean);
+  }, [posts, savedRows]);
+
+  const filteredSavedPosts = useMemo(() => {
+    if (selectedBoardId === "all") {
+      return savedPosts;
+    }
+
+    if (selectedBoardId === "unboarded") {
+      return savedPosts.filter((item) => !item.boardId);
+    }
+
+    return savedPosts.filter((item) => item.boardId === selectedBoardId);
+  }, [savedPosts, selectedBoardId]);
+
+  const boardCounts = useMemo(() => {
+    const counts = {};
+
+    for (const item of savedPosts) {
+      const key = item.boardId || "unboarded";
+      counts[key] = (counts[key] || 0) + 1;
+    }
+
+    return counts;
+  }, [savedPosts]);
+
+  function updateBoardDraft(field, value) {
+    setBoardDraft((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  }
+
+  async function loadSavedPage() {
     setLoading(true);
     setStatus("");
     setErrorMessage("");
 
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
-    if (userError) {
-      setErrorMessage(userError.message);
+      if (userError) {
+        throw userError;
+      }
+
+      if (!user) {
+        window.location.assign("/login");
+        return;
+      }
+
+      setUser(user);
+
+      const { data: boardData, error: boardError } = await supabase
+        .from("saved_post_boards")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (boardError) {
+        throw boardError;
+      }
+
+      setBoards(boardData || []);
+
+      const { data: savedData, error: savedError } = await supabase
+        .from("impact_exchange_saved_posts")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (savedError) {
+        throw savedError;
+      }
+
+      const savedItems = savedData || [];
+      setSavedRows(savedItems);
+
+      const postIds = savedItems
+        .map((item) => item.post_id)
+        .filter(Boolean);
+
+      if (!postIds.length) {
+        setPosts([]);
+        return;
+      }
+
+      const { data: postData, error: postError } = await supabase
+        .from("impact_exchange_posts")
+        .select("*")
+        .in("id", postIds);
+
+      if (postError) {
+        throw postError;
+      }
+
+      setPosts(postData || []);
+    } catch (error) {
+      console.warn("LOAD SAVED POSTS ERROR:", error);
+
+      setErrorMessage(
+        error?.message ||
+          error?.details ||
+          error?.hint ||
+          "Could not load saved posts."
+      );
+    } finally {
       setLoading(false);
-      return;
     }
+  }
+
+  async function handleCreateBoard(event) {
+    event.preventDefault();
+
+    setStatus("");
+    setErrorMessage("");
 
     if (!user) {
       window.location.assign("/login");
       return;
     }
 
-    setUser(user);
-
-    const { data, error } = await supabase
-      .from("impact_exchange_saved_posts")
-      .select(
-        `
-          id,
-          created_at,
-          post_id,
-          impact_exchange_posts (
-            id,
-            user_id,
-            creator_profile_id,
-            creator_slug,
-            brand_profile_id,
-            brand_slug,
-            author_type,
-            author_name,
-            title,
-            body,
-            post_type,
-            post_url,
-            link_url,
-            category,
-            image_url,
-            is_published,
-            created_at,
-            updated_at
-          )
-        `
-      )
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
+    if (!boardDraft.boardName.trim()) {
+      setErrorMessage("Board name is required.");
       return;
     }
 
-    const cleanSavedPosts = (data || [])
-      .map((saved) => ({
-        ...saved,
-        post: saved.impact_exchange_posts,
-      }))
-      .filter((saved) => saved.post);
+    try {
+      setSavingBoard(true);
 
-    setSavedPosts(cleanSavedPosts);
+      const payload = {
+        user_id: user.id,
+        board_name: boardDraft.boardName.trim(),
+        board_description: boardDraft.boardDescription.trim(),
+      };
 
-    await loadProfilesForPosts(cleanSavedPosts.map((item) => item.post));
+      const { error } = await supabase
+        .from("saved_post_boards")
+        .insert(payload);
 
-    setLoading(false);
-  }
+      if (error) {
+        throw error;
+      }
 
-  async function loadProfilesForPosts(posts) {
-    const creatorIds = [
-      ...new Set(
-        posts
-          .filter((post) => post.creator_profile_id)
-          .map((post) => post.creator_profile_id)
-      ),
-    ];
-
-    const brandIds = [
-      ...new Set(
-        posts
-          .filter((post) => post.brand_profile_id)
-          .map((post) => post.brand_profile_id)
-      ),
-    ];
-
-    if (creatorIds.length > 0) {
-      const { data: creators } = await supabase
-        .from("creator_profiles")
-        .select(
-          "id, slug, display_name, creator_type, location, profile_photo_url, banner_photo_url, accent_name, accent_color"
-        )
-        .in("id", creatorIds);
-
-      const creatorLookup = {};
-
-      (creators || []).forEach((creator) => {
-        creatorLookup[creator.id] = creator;
+      setBoardDraft({
+        boardName: "",
+        boardDescription: "",
       });
 
-      setProfileMap(creatorLookup);
-    } else {
-      setProfileMap({});
-    }
+      setStatus("Saved board created.");
+      await loadSavedPage();
+    } catch (error) {
+      console.warn("CREATE SAVED BOARD ERROR:", error);
 
-    if (brandIds.length > 0) {
-      const { data: brands } = await supabase
-        .from("brand_profiles")
-        .select(
-          "id, slug, company_name, brand_type, industry, location, logo_url, banner_url, accent_name, accent_color"
-        )
-        .in("id", brandIds);
-
-      const brandLookup = {};
-
-      (brands || []).forEach((brand) => {
-        brandLookup[brand.id] = brand;
-      });
-
-      setBrandMap(brandLookup);
-    } else {
-      setBrandMap({});
+      setErrorMessage(
+        error?.message ||
+          error?.details ||
+          error?.hint ||
+          "Could not create this saved board."
+      );
+    } finally {
+      setSavingBoard(false);
     }
   }
 
-  async function removeSavedPost(savedId) {
+  async function handleMoveSavedPost(savedId, boardId) {
     setStatus("");
     setErrorMessage("");
 
-    const { error } = await supabase
-      .from("impact_exchange_saved_posts")
-      .delete()
-      .eq("id", savedId);
+    try {
+      const cleanBoardId = boardId || null;
 
-    if (error) {
-      setErrorMessage(error.message);
-      return;
+      const { error } = await supabase
+        .from("impact_exchange_saved_posts")
+        .update({
+          board_id: cleanBoardId,
+        })
+        .eq("id", savedId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      setSavedRows((current) =>
+        current.map((item) =>
+          item.id === savedId ? { ...item, board_id: cleanBoardId } : item
+        )
+      );
+
+      setStatus("Saved post moved.");
+    } catch (error) {
+      console.warn("MOVE SAVED POST ERROR:", error);
+
+      setErrorMessage(
+        error?.message ||
+          error?.details ||
+          error?.hint ||
+          "Could not move this saved post."
+      );
     }
+  }
 
-    setSavedPosts((current) => current.filter((item) => item.id !== savedId));
-    setStatus("Removed from saved posts.");
+  async function handleRemoveSavedPost(savedId) {
+    setStatus("");
+    setErrorMessage("");
+
+    try {
+      const { error } = await supabase
+        .from("impact_exchange_saved_posts")
+        .delete()
+        .eq("id", savedId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      setSavedRows((current) => current.filter((item) => item.id !== savedId));
+      setStatus("Saved post removed.");
+    } catch (error) {
+      console.warn("REMOVE SAVED POST ERROR:", error);
+
+      setErrorMessage(
+        error?.message ||
+          error?.details ||
+          error?.hint ||
+          "Could not remove this saved post."
+      );
+    }
   }
 
   async function handleSignOut() {
@@ -179,23 +283,35 @@ export default function SavedDashboardPage() {
     window.location.assign("/login");
   }
 
-  return (
-    <main className="savedPage">
-      <header className="savedHeader">
-        <a href="/" className="brandHeader">
-          <img src="/logo-ripple.png" alt="Impact Creator Hub logo" />
+  function getBoardName(boardId) {
+    const board = boards.find((item) => item.id === boardId);
+    return board?.board_name || "Unboarded";
+  }
 
-          <div>
-            <strong>Impact Creator Hub</strong>
-            <span>
-              BUILD YOUR BRAND. <em>GROW YOUR IMPACT.</em>
-            </span>
-          </div>
-        </a>
+  if (loading) {
+    return (
+      <main className="savedDashboardPage">
+        <section className="loadingCard">Loading saved posts...</section>
+        <style jsx global>{savedStyles}</style>
+      </main>
+    );
+  }
+
+  return (
+    <main className="savedDashboardPage">
+      <header className="dashboardHeader">
+        <div className="dashboardHeaderLogo">
+          <ImpactHeaderBrand
+            logoSize={52}
+            compact
+            subtitle="SAVE IDEAS. BUILD BOARDS. GROW YOUR IMPACT."
+          />
+        </div>
 
         <nav>
+          <a href="/dashboard/profile">Profile</a>
+          <a href="/dashboard/inquiries">Inquiries</a>
           <a href="/impact-exchange">Impact Exchange</a>
-          <a href="/dashboard/profile">Profile Dashboard</a>
           <button type="button" onClick={handleSignOut}>
             Sign Out
           </button>
@@ -203,56 +319,177 @@ export default function SavedDashboardPage() {
       </header>
 
       <section className="savedHero">
-        <p>Saved Dashboard</p>
-        <h1></h1>
-        <span>
-         
-        </span>
+        <div>
+          <p className="eyebrow">Saved Posts</p>
+          <h1>Your saved inspiration boards.</h1>
+          <p>
+            Organize saved Impact Exchange posts into boards for campaign ideas,
+            creator connections, brand research, and collaboration inspiration.
+          </p>
+        </div>
+
+        <form className="createBoardCard" onSubmit={handleCreateBoard}>
+          <p className="panelLabel">Create a board</p>
+
+          <label>
+            Board name
+            <input
+              value={boardDraft.boardName}
+              placeholder="Food brands I like"
+              onChange={(event) =>
+                updateBoardDraft("boardName", event.target.value)
+              }
+            />
+          </label>
+
+          <label>
+            Description
+            <textarea
+              value={boardDraft.boardDescription}
+              placeholder="Optional notes about what this board is for."
+              onChange={(event) =>
+                updateBoardDraft("boardDescription", event.target.value)
+              }
+            />
+          </label>
+
+          <button type="submit" disabled={savingBoard}>
+            {savingBoard ? "Creating..." : "Create Board"}
+          </button>
+        </form>
       </section>
 
-      <section className="savedContent">
-        {loading && (
-          <div className="statusCard">
-            <strong>Loading saved posts...</strong>
-          </div>
-        )}
+      <section className="statusRow">
+        {status && <p className="success">{status}</p>}
+        {errorMessage && <p className="error">{errorMessage}</p>}
+      </section>
 
-        {!loading && errorMessage && (
-          <div className="errorCard">
-            <strong>{errorMessage}</strong>
-          </div>
-        )}
+      <section className="boardFilters">
+        <button
+          type="button"
+          className={selectedBoardId === "all" ? "activeFilter" : ""}
+          onClick={() => setSelectedBoardId("all")}
+        >
+          All saved
+          <span>{savedPosts.length}</span>
+        </button>
 
-        {!loading && status && (
-          <div className="successCard">
-            <strong>{status}</strong>
-          </div>
-        )}
+        <button
+          type="button"
+          className={selectedBoardId === "unboarded" ? "activeFilter" : ""}
+          onClick={() => setSelectedBoardId("unboarded")}
+        >
+          Unboarded
+          <span>{boardCounts.unboarded || 0}</span>
+        </button>
 
-        {!loading && !errorMessage && savedPosts.length === 0 && (
-          <div className="emptyCard">
-            <strong>No saved posts yet.</strong>
+        {boards.map((board) => (
+          <button
+            type="button"
+            key={board.id}
+            className={selectedBoardId === board.id ? "activeFilter" : ""}
+            onClick={() => setSelectedBoardId(board.id)}
+          >
+            {board.board_name}
+            <span>{boardCounts[board.id] || 0}</span>
+          </button>
+        ))}
+      </section>
+
+      <section className="savedGrid">
+        {filteredSavedPosts.length > 0 ? (
+          filteredSavedPosts.map((item) => {
+            const post = item.post;
+            const postHref = formatExternalUrl(
+              post.post_url || post.link_url || ""
+            );
+            const profileHref =
+              post.author_profile_url ||
+              (post.creator_slug ? `/creator/${post.creator_slug}` : "");
+
+            return (
+              <article className="savedPostCard" key={item.savedId}>
+                {post.image_url && (
+                  <img
+                    className="postImage"
+                    src={post.image_url}
+                    alt={post.title || "Saved post"}
+                  />
+                )}
+
+                <div className="savedCardBody">
+                  <div className="savedTopline">
+                    <span>{post.post_type || "Saved post"}</span>
+                    <strong>{getBoardName(item.boardId)}</strong>
+                  </div>
+
+                  <h2>{post.title || "Untitled saved post"}</h2>
+
+                  {post.body && <p>{post.body}</p>}
+
+                  <div className="authorLine">
+                    {post.author_avatar_url && (
+                      <img src={post.author_avatar_url} alt="" />
+                    )}
+
+                    <div>
+                      <strong>{post.author_name || "Impact creator"}</strong>
+                      <span>{post.author_role || post.category || "Creator"}</span>
+                    </div>
+                  </div>
+
+                  <label className="boardSelectLabel">
+                    Save to board
+                    <select
+                      value={item.boardId || ""}
+                      onChange={(event) =>
+                        handleMoveSavedPost(item.savedId, event.target.value)
+                      }
+                    >
+                      <option value="">Unboarded</option>
+                      {boards.map((board) => (
+                        <option key={board.id} value={board.id}>
+                          {board.board_name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <div className="cardActions">
+                    {profileHref && (
+                      <a href={profileHref} target="_blank" rel="noopener noreferrer">
+                        View profile
+                      </a>
+                    )}
+
+                    {postHref && (
+                      <a href={postHref} target="_blank" rel="noopener noreferrer">
+                        Open link ↗
+                      </a>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSavedPost(item.savedId)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </article>
+            );
+          })
+        ) : (
+          <section className="emptyState">
+            <p className="eyebrow">Nothing here yet</p>
+            <h2>No saved posts in this board.</h2>
             <p>
-              When you save posts from the Impact Exchange, they will appear
+              Save posts from Impact Exchange, then organize them into boards
               here.
             </p>
 
-            <a href="/impact-exchange">Go to Impact Exchange</a>
-          </div>
-        )}
-
-        {!loading && savedPosts.length > 0 && (
-          <div className="savedGrid">
-            {savedPosts.map((savedItem) => (
-              <SavedPostCard
-                key={savedItem.id}
-                savedItem={savedItem}
-                profile={profileMap[savedItem.post.creator_profile_id]}
-                brand={brandMap[savedItem.post.brand_profile_id]}
-                onRemove={() => removeSavedPost(savedItem.id)}
-              />
-            ))}
-          </div>
+            <a href="/impact-exchange">Explore Impact Exchange</a>
+          </section>
         )}
       </section>
 
@@ -261,113 +498,8 @@ export default function SavedDashboardPage() {
   );
 }
 
-function SavedPostCard({ savedItem, profile, brand, onRemove }) {
-  const post = savedItem.post;
-  const isBrand = post.author_type?.toLowerCase() === "brand";
-
-  const authorName =
-    post.author_name ||
-    (isBrand
-      ? brand?.company_name || post.brand_slug
-      : profile?.display_name || post.creator_slug) ||
-    "Impact Creator Hub Member";
-
-  const authorType = isBrand
-    ? brand?.brand_type || brand?.industry || "Brand"
-    : profile?.creator_type || "Creator";
-
-  const profileUrl = isBrand
-    ? post.brand_slug
-      ? `/brand/${post.brand_slug}`
-      : brand?.slug
-        ? `/brand/${brand.slug}`
-        : ""
-    : post.creator_slug
-      ? `/creator/${post.creator_slug}`
-      : profile?.slug
-        ? `/creator/${profile.slug}`
-        : "";
-
-  const avatarUrl = isBrand ? brand?.logo_url : profile?.profile_photo_url;
-  const imageUrl =
-    post.image_url || (isBrand ? brand?.banner_url : profile?.banner_photo_url);
-
-  const accentName = isBrand ? brand?.accent_name : profile?.accent_name;
-  const accentColor =
-    (isBrand ? brand?.accent_color : profile?.accent_color) || "#00e8f0";
-
-  const accentImage =
-    accentLogoImages[accentName] ||
-    "/logo-colors/impact-logo-electric-cyan.png";
-
-  const externalUrl = formatExternalUrl(post.link_url || post.post_url || "");
-
-  return (
-    <article
-      className="savedPostCard"
-      style={{
-        "--post-accent": accentColor,
-      }}
-    >
-      {imageUrl ? (
-        <div
-          className="savedImage"
-          style={{
-            backgroundImage: `linear-gradient(180deg, rgba(5, 9, 20, 0.08), rgba(5, 9, 20, 0.22)), url(${imageUrl})`,
-          }}
-        />
-      ) : (
-        <div className="savedImage emptySavedImage" />
-      )}
-
-      <div className="savedPostBody">
-        <div className="savedPostAuthor">
-          <div className="avatarWrap">
-            {avatarUrl ? (
-              <img src={avatarUrl} alt={authorName} className="postAvatar" />
-            ) : (
-              <div className="postAvatar">{authorName?.charAt(0) || "I"}</div>
-            )}
-
-            <img src={accentImage} alt="" className="accentBadge" />
-          </div>
-
-          <div>
-            <strong>{authorName}</strong>
-            <p>
-              {isBrand ? "Brand" : "Creator"} · {authorType}
-            </p>
-          </div>
-        </div>
-
-        <h2>{post.title || "Untitled post"}</h2>
-
-        {post.body && <p className="postText">{post.body}</p>}
-
-        <div className="savedActions">
-          {profileUrl && (
-            <a href={profileUrl} target="_blank" rel="noopener noreferrer">
-              View Profile
-            </a>
-          )}
-
-          {externalUrl && (
-            <a href={externalUrl} target="_blank" rel="noopener noreferrer">
-              Open Link
-            </a>
-          )}
-
-          <button type="button" onClick={onRemove}>
-            Remove
-          </button>
-        </div>
-      </div>
-    </article>
-  );
-}
-
 function formatExternalUrl(value) {
-  const trimmed = value?.trim?.() || "";
+  const trimmed = String(value || "").trim();
 
   if (!trimmed) {
     return "";
@@ -381,10 +513,10 @@ function formatExternalUrl(value) {
 }
 
 const savedStyles = `
-  .savedPage {
+  .savedDashboardPage {
     min-height: 100vh;
     background:
-      radial-gradient(circle at 12% 8%, rgba(0, 232, 240, 0.09), transparent 28%),
+      radial-gradient(circle at 12% 12%, rgba(0, 232, 240, 0.14), transparent 30%),
       linear-gradient(135deg, #05090b 0%, #08131a 52%, #05090b 100%);
     color: #ffffff;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system,
@@ -392,287 +524,406 @@ const savedStyles = `
     padding: 28px;
   }
 
-  .savedHeader {
+  .loadingCard {
+    width: min(620px, 100%);
+    margin: 18vh auto 0;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 28px;
+    background: rgba(255,255,255,0.07);
+    padding: 34px;
+    font-weight: 950;
+  }
+
+  .dashboardHeader {
     width: min(1240px, 100%);
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    gap: 22px;
     padding-bottom: 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
   }
 
-  .brandHeader {
-    display: inline-flex;
-    align-items: center;
-    gap: 16px;
-    color: #ffffff;
-    text-decoration: none;
+  .dashboardHeaderLogo .impactHeaderBrand {
+    gap: 12px !important;
   }
 
-  .brandHeader img {
-    width: 62px;
-    height: 62px;
-    background: #000000;
-    object-fit: contain;
+  .dashboardHeaderLogo .impactHeaderBrand img {
+    width: 52px !important;
+    height: 52px !important;
   }
 
-  .brandHeader strong {
-    display: block;
-    font-size: 1.35rem;
-    font-weight: 950;
-    letter-spacing: -0.03em;
-    line-height: 1;
+  .dashboardHeaderLogo .impactHeaderBrand strong {
+    font-size: 1.15rem !important;
+    line-height: 1 !important;
+    letter-spacing: -0.02em !important;
   }
 
-  .brandHeader span {
-    display: block;
-    margin-top: 8px;
-    color: rgba(255,255,255,0.68);
-    font-size: 0.56rem;
-    font-weight: 950;
-    letter-spacing: 0.27em;
-    text-transform: uppercase;
-  }
-
-  .brandHeader em {
-    color: #ff8c82;
-    font-style: normal;
+  .dashboardHeaderLogo .impactHeaderBrand span {
+    margin-top: 6px !important;
+    font-size: 0.5rem !important;
+    letter-spacing: 0.24em !important;
   }
 
   nav {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+    font-weight: 900;
   }
 
   nav a,
   nav button {
-    min-height: 42px;
-    display: inline-flex;
-    align-items: center;
     border: 1px solid rgba(255,255,255,0.14);
     border-radius: 999px;
-    background: rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.08);
     color: #ffffff;
     cursor: pointer;
     font: inherit;
-    font-weight: 900;
-    padding: 0 16px;
+    padding: 11px 16px;
     text-decoration: none;
   }
 
   .savedHero {
     width: min(1240px, 100%);
-    margin: 44px auto 0;
+    margin: 42px auto 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+    gap: 26px;
+    align-items: start;
   }
 
-  .savedHero p {
+  .eyebrow,
+  .panelLabel {
     margin: 0;
     color: #00e8f0;
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     font-weight: 950;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
-  .savedHero h1 {
-    max-width: 760px;
+  h1 {
+    max-width: 740px;
     margin: 14px 0 0;
     font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(2.6rem, 7vw, 5rem);
+    font-size: clamp(3rem, 7vw, 5.8rem);
     letter-spacing: -0.06em;
-    line-height: 0.96;
+    line-height: 0.94;
   }
 
-  .savedHero span {
-    display: block;
+  .savedHero p:not(.eyebrow):not(.panelLabel) {
     max-width: 700px;
-    margin-top: 18px;
-    color: rgba(255,255,255,0.68);
-    font-size: 1.02rem;
-    line-height: 1.65;
+    margin: 20px 0 0;
+    color: rgba(255,255,255,0.7);
+    font-size: 1.05rem;
+    line-height: 1.7;
   }
 
-  .savedContent {
-    width: min(1240px, 100%);
-    margin: 34px auto 90px;
-  }
-
-  .savedGrid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
-  }
-
-  .savedPostCard,
-  .emptyCard,
-  .statusCard,
-  .errorCard,
-  .successCard {
-    overflow: hidden;
+  .createBoardCard {
     border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 24px;
-    background: rgba(255,255,255,0.06);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.24);
-  }
-
-  .savedImage {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background-color: rgba(255,255,255,0.05);
-    background-size: cover;
-    background-position: center;
-  }
-
-  .emptySavedImage {
+    border-radius: 26px;
     background:
-      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--post-accent, #00e8f0) 24%, transparent), transparent 30%),
-      linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-  }
-
-  .savedPostBody {
-    padding: 18px;
-  }
-
-  .savedPostAuthor {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .avatarWrap {
-    position: relative;
-    width: 52px;
-    height: 52px;
-    flex: 0 0 auto;
-  }
-
-  .postAvatar {
-    width: 52px;
-    height: 52px;
+      radial-gradient(circle at 92% 10%, rgba(0,232,240,0.16), transparent 28%),
+      rgba(255,255,255,0.07);
+    padding: 20px;
     display: grid;
-    place-items: center;
-    overflow: hidden;
-    border: 2px solid var(--post-accent, #00e8f0);
-    border-radius: 999px;
-    background: #020617;
-    color: #ffffff;
-    object-fit: cover;
-    font-weight: 950;
+    gap: 14px;
   }
 
-  .accentBadge {
-    position: absolute;
-    right: -7px;
-    bottom: -5px;
-    width: 24px;
-    height: 24px;
-    border: 3px solid #05090b;
-    border-radius: 999px;
-    background: #000000;
-    object-fit: cover;
-  }
-
-  .savedPostAuthor strong {
-    display: block;
-    color: #ffffff;
-    font-weight: 950;
-  }
-
-  .savedPostAuthor p {
-    margin: 4px 0 0;
-    color: rgba(255,255,255,0.58);
+  label {
+    display: grid;
+    gap: 8px;
+    color: rgba(255,255,255,0.92);
     font-size: 0.84rem;
-    font-weight: 800;
+    font-weight: 900;
   }
 
-  .savedPostBody h2 {
-    margin: 18px 0 0;
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 13px;
+    background: rgba(255,255,255,0.1);
     color: #ffffff;
-    font-size: 1.24rem;
-    letter-spacing: -0.03em;
+    font: inherit;
+    font-weight: 800;
+    outline: none;
+    padding: 0 13px;
   }
 
-  .postText {
-    margin: 10px 0 0;
-    color: rgba(255,255,255,0.72);
-    font-size: 0.95rem;
-    line-height: 1.55;
+  textarea {
+    min-height: 96px;
+    padding: 13px;
+    resize: vertical;
   }
 
-  .savedActions {
+  input::placeholder,
+  textarea::placeholder {
+    color: rgba(255,255,255,0.45);
+  }
+
+  select option {
+    background: #101820;
+    color: #ffffff;
+  }
+
+  .createBoardCard button,
+  .emptyState a {
+    min-height: 42px;
+    border: 0;
+    border-radius: 999px;
+    background: #00e8f0;
+    color: #020617;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 950;
+    padding: 0 18px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+
+  .statusRow {
+    width: min(1240px, 100%);
+    margin: 18px auto 0;
+  }
+
+  .success,
+  .error {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 900;
+  }
+
+  .success {
+    color: #00e8f0;
+  }
+
+  .error {
+    color: #ff6a61;
+  }
+
+  .boardFilters {
+    width: min(1240px, 100%);
+    margin: 28px auto 0;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 18px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 16px;
   }
 
-  .savedActions a,
-  .savedActions button,
-  .emptyCard a {
-    min-height: 38px;
+  .boardFilters button {
+    min-height: 42px;
     display: inline-flex;
     align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(255,255,255,0.13);
     border-radius: 999px;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.78);
+    cursor: pointer;
     font: inherit;
-    font-size: 0.82rem;
     font-weight: 950;
-    padding: 0 14px;
+    padding: 0 16px;
+  }
+
+  .boardFilters button span {
+    min-width: 24px;
+    min-height: 24px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    color: #ffffff;
+    font-size: 0.72rem;
+  }
+
+  .boardFilters .activeFilter {
+    border-color: #00e8f0;
+    background: rgba(0,232,240,0.14);
+    color: #ffffff;
+  }
+
+  .savedGrid {
+    width: min(1240px, 100%);
+    margin: 24px auto 100px;
+    columns: 3 280px;
+    column-gap: 18px;
+  }
+
+  .savedPostCard {
+    width: 100%;
+    display: inline-block;
+    break-inside: avoid;
+    margin: 0 0 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 28px;
+    background: rgba(255,255,255,0.07);
+    box-shadow: 0 24px 70px rgba(0,0,0,0.22);
+  }
+
+  .postImage {
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .savedCardBody {
+    padding: 18px;
+  }
+
+  .savedTopline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .savedTopline span {
+    color: #00e8f0;
+    font-size: 0.7rem;
+    font-weight: 950;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .savedTopline strong {
+    border-radius: 999px;
+    background: rgba(0,232,240,0.12);
+    color: #00e8f0;
+    font-size: 0.68rem;
+    font-weight: 950;
+    padding: 5px 9px;
+  }
+
+  .savedPostCard h2 {
+    margin: 12px 0 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.7rem;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+
+  .savedPostCard p {
+    margin: 12px 0 0;
+    color: rgba(255,255,255,0.68);
+    line-height: 1.55;
+    white-space: pre-wrap;
+  }
+
+  .authorLine {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .authorLine img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .authorLine strong {
+    display: block;
+    font-size: 0.86rem;
+  }
+
+  .authorLine span {
+    display: block;
+    margin-top: 3px;
+    color: rgba(255,255,255,0.48);
+    font-size: 0.74rem;
+    font-weight: 800;
+  }
+
+  .boardSelectLabel {
+    margin-top: 16px;
+  }
+
+  .cardActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 16px;
+  }
+
+  .cardActions a,
+  .cardActions button {
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: #ffffff;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 950;
+    padding: 0 12px;
     text-decoration: none;
   }
 
-  .savedActions a,
-  .emptyCard a {
-    border: 1px solid #00e8f0;
-    color: #00e8f0;
+  .cardActions button {
+    color: #ff8f87;
   }
 
-  .savedActions button {
-    border: 1px solid rgba(255,255,255,0.16);
-    background: transparent;
-    color: rgba(255,255,255,0.72);
-    cursor: pointer;
+  .emptyState {
+    display: inline-block;
+    width: 100%;
+    break-inside: avoid;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 28px;
+    background: rgba(255,255,255,0.07);
+    padding: 26px;
   }
 
-  .emptyCard,
-  .statusCard,
-  .errorCard,
-  .successCard {
-    padding: 28px;
+  .emptyState h2 {
+    margin: 12px 0 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 2.2rem;
+    letter-spacing: -0.05em;
   }
 
-  .emptyCard strong,
-  .statusCard strong,
-  .errorCard strong,
-  .successCard strong {
-    display: block;
-    font-size: 1.15rem;
-  }
-
-  .emptyCard p {
-    margin: 10px 0 18px;
+  .emptyState p:not(.eyebrow) {
+    margin: 12px 0 0;
     color: rgba(255,255,255,0.68);
+    line-height: 1.6;
   }
 
-  .errorCard {
-    border-color: rgba(255,107,97,0.35);
-    background: rgba(255,107,97,0.12);
-    color: #ffc8c3;
-  }
-
-  .successCard {
-    border-color: rgba(0,232,240,0.32);
-    background: rgba(0,232,240,0.1);
-    color: #00e8f0;
-    margin-bottom: 18px;
+  .emptyState a {
+    margin-top: 18px;
   }
 
   @media (max-width: 900px) {
-    .savedHeader {
+    .savedDashboardPage {
+      padding: 18px;
+    }
+
+    .dashboardHeader,
+    .savedHero,
+    .statusRow,
+    .boardFilters,
+    .savedGrid {
+      width: 100%;
+    }
+
+    .dashboardHeader {
       align-items: flex-start;
       flex-direction: column;
     }
@@ -681,28 +932,12 @@ const savedStyles = `
       flex-wrap: wrap;
     }
 
-    .savedGrid {
+    .savedHero {
       grid-template-columns: 1fr;
     }
-  }
 
-  @media (max-width: 640px) {
-    .savedPage {
-      padding: 18px;
-    }
-
-    .brandHeader img {
-      width: 52px;
-      height: 52px;
-    }
-
-    .brandHeader strong {
-      font-size: 1.1rem;
-    }
-
-    .brandHeader span {
-      font-size: 0.46rem;
-      letter-spacing: 0.2em;
+    .savedGrid {
+      columns: 1;
     }
   }
 `;
