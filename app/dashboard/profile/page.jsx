@@ -142,28 +142,42 @@ export default function DashboardProfilePage() {
   const [boardImageFileName, setBoardImageFileName] = useState("");
   const [exchangeMediaFileNames, setExchangeMediaFileNames] = useState("");
 
-  const [profile, setProfile] = useState({
-    displayName: "",
-    creatorType: "",
-    tagline: "",
-    location: "",
-    shortBio: "",
-    longBio: "",
-    writingIntro: "",
-    contactEmail: "",
-    primaryNiche: "",
-    availableFor: "",
-    featuredLinkTitle: "",
-    featuredLinkUrl: "",
-    profileStyle: "Simple Light",
-    accentName: "Electric Cyan",
-    accentColor: "#00e8f0",
-    profilePhotoUrl: "",
-    bannerPhotoUrl: "",
-    socialPlatform: "Instagram",
-    socialUrl: "",
-    isPublished: true,
-  });
+const [profile, setProfile] = useState({
+  displayName: "",
+  creatorType: "",
+  tagline: "",
+  location: "",
+  shortBio: "",
+  longBio: "",
+  writingIntro: "",
+  contactEmail: "",
+
+  // New profile highlight fields
+  nicheTags: [],
+  followerCount: "",
+  engagementRate: "",
+  minRate: "",
+  maxRate: "",
+  availableForCollabs: false,
+  availableFromMonth: "",
+
+  // Keep these old fields for now so nothing breaks
+  primaryNiche: "",
+  availableFor: "",
+
+  featuredLinkTitle: "",
+  featuredLinkUrl: "",
+  profileStyle: "Simple Light",
+  accentName: "Electric Cyan",
+  accentColor: "#00e8f0",
+  profilePhotoUrl: "",
+  bannerPhotoUrl: "",
+  socialPlatform: "Instagram",
+  socialUrl: "",
+  isPublished: true,
+});
+
+
 
   const [boardDraft, setBoardDraft] = useState({
     title: "",
@@ -1008,30 +1022,6 @@ async function handleSaveBoardItem() {
           <p className="panelLabel">Profile highlights</p>
 
           <div className="formGrid">
-            // In your formGrid inside the "Profile highlights" panel, add:
-<label>
-  Follower count
-  <input value={profile.followerCount} placeholder="42000"
-    onChange={e => updateProfile("followerCount", e.target.value)} />
-</label>
-
-<label>
-  Engagement rate
-  <input value={profile.engagementRate} placeholder="4.8%"
-    onChange={e => updateProfile("engagementRate", e.target.value)} />
-</label>
-
-<label>
-  Rate range (min)
-  <input value={profile.rateMin} placeholder="$500"
-    onChange={e => updateProfile("rateMin", e.target.value)} />
-</label>
-
-<label>
-  Rate range (max)
-  <input value={profile.rateMax} placeholder="$2,400"
-    onChange={e => updateProfile("rateMax", e.target.value)} />
-</label>
             <label>
               Primary niche
               <input
@@ -1150,7 +1140,7 @@ async function handleSaveBoardItem() {
           <p className="panelLabel">Profile boards</p>
 
           <p className="panelIntro">
-            Add Pinterest-style board cards to your public profile. Use these
+            Add style board cards to your public profile. Use these
             for current work, projects, campaign ideas, press, writing,
             resources, moodboards, or collaboration offers.
           </p>
@@ -1226,7 +1216,7 @@ async function handleSaveBoardItem() {
                 <span>Board image</span>
                 <strong>{boardImageFileName || "Choose a board image"}</strong>
                 <small>
-                  Best for Pinterest-style cards: vertical images, project
+                  Best for style cards: vertical images, project
                   photos, campaign graphics, moodboards, or screenshots.
                 </small>
               </div>
