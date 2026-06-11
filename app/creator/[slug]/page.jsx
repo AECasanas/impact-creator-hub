@@ -212,7 +212,7 @@ export default async function CreatorPublicProfilePage({ params }) {
                 )}
                 <div className={`statItem availStat ${profile.is_available === false ? "unavail" : "avail"}`}>
                   <strong>{profile.is_available === false ? "Unavailable" : "Available"}</strong>
-                  <span>{availabilityText}</span>
+                  <span>For collabs</span>
                 </div>
               </div>
             )}
@@ -225,8 +225,8 @@ export default async function CreatorPublicProfilePage({ params }) {
                 </p>
                 <p className="workWithMeta">
                   {nicheTags.length > 0 && `${nicheTags.slice(0, 2).join(" & ")} campaigns`}
-                  {hasRates && ` · ${rateDisplay}/post`}
-                  {` · ${availabilityText}`}
+                  {hasRates && `${nicheTags.length > 0 ? " · " : ""}${rateDisplay}/post`}
+                  {!hasRates && !nicheTags.length && "Open to brand collaborations"}
                 </p>
               </div>
               {profile.contact_email
@@ -292,11 +292,7 @@ export default async function CreatorPublicProfilePage({ params }) {
               </div>
             )}
 
-            {/* NEW: availability status card */}
-            <div className={`pillCard ${profile.is_available !== false ? "availCard" : "unavailCard"}`}>
-              <span>Collab status</span>
-              <strong>{availabilityText}</strong>
-            </div>
+
           </aside>
         </section>
 
