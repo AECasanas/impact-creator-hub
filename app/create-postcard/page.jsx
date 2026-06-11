@@ -88,17 +88,19 @@ export default function CreatePostcardPage() {
   const [status, setStatus] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const [selectedStampId, setSelectedStampId] = useState("cafe");
+  const [stampModalOpen, setStampModalOpen] = useState(false);
+  const [selectedStampId, setSelectedStampId] = useState("");
+
   const [postcardTitle, setPostcardTitle] = useState("Postcard");
   const [greeting, setGreeting] = useState("Dear...");
   const [message, setMessage] = useState(
     "Write a short update, idea, project note, or collaboration opportunity."
   );
   const [signature, setSignature] = useState("From, Impact Creator Hub");
+  const [stampText, setStampText] = useState("ICH");
 
   const selectedStamp =
-    stampOptions.find((stamp) => stamp.id === selectedStampId) ||
-    stampOptions[0];
+    stampOptions.find((stamp) => stamp.id === selectedStampId) || null;
 
   useEffect(() => {
     loadProfile();
@@ -184,15 +186,6 @@ export default function CreatePostcardPage() {
     setImagePreview(imageUrl);
   }
 
-  function clearCustomImage() {
-    if (imagePreview) {
-      URL.revokeObjectURL(imagePreview);
-    }
-
-    setImageFile(null);
-    setImagePreview("");
-  }
-
   async function uploadPostcardImage(file, safeSlug) {
     if (!file) {
       return "";
@@ -250,11 +243,11 @@ export default function CreatePostcardPage() {
         profile.slug || profile.display_name || "creator"
       );
 
-      let customImageUrl = "";
+      let postcardImageUrl = "";
 
       if (imageFile) {
         setStatus("Uploading postcard image...");
-        customImageUrl = await uploadPostcardImage(imageFile, cleanSlug);
+        postcardImageUrl = await uploadPostcardImage(imageFile, cleanSlug);
       }
 
       const postcardBody = [
@@ -263,8 +256,8 @@ export default function CreatePostcardPage() {
         message,
         "",
         signature,
-        "",
-        `Stamp: ${selectedStamp.name}`,
+        selectedStamp ? "" : null,
+        selectedStamp ? `Selected stamp: ${selectedStamp.name}` : null,
       ]
         .filter((line) => line !== null && line !== undefined)
         .join("\n");
@@ -282,13 +275,13 @@ export default function CreatePostcardPage() {
         author_accent_color: profile.accent_color || "#00e8f0",
         author_profile_url: `/creator/${cleanSlug}`,
 
-        title: postcardTitle.trim() || selectedStamp.name || "Postcard",
+        title: postcardTitle.trim() || "Postcard",
         body: postcardBody,
         post_type: "Postcard",
         category: "Postcard",
         post_url: "",
         link_url: "",
-        image_url: customImageUrl || selectedStamp.src,
+        image_url: postcardImageUrl,
         is_published: true,
         updated_at: new Date().toISOString(),
       };
@@ -316,11 +309,6 @@ export default function CreatePostcardPage() {
     }
   }
 
-  async function handleSignOut() {
-    await supabase.auth.signOut();
-    window.location.assign("/login");
-  }
-
   return (
     <main className="postcardPage">
       <section className="shell">
@@ -337,18 +325,6 @@ export default function CreatePostcardPage() {
               </p>
             </div>
           </a>
-
-          <nav className="dashboardNav">
-            <a href="/dashboard/profile">Profile</a>
-            <a href="/dashboard/post">Post</a>
-            <a href="/dashboard/inquiries">Inquiries</a>
-            <a href="/dashboard/saved">Saved</a>
-            <a href="/impact-exchange">Exchange</a>
-
-            <button type="button" onClick={handleSignOut}>
-              Sign Out
-            </button>
-          </nav>
         </header>
 
         <section className="intro">
@@ -357,8 +333,8 @@ export default function CreatePostcardPage() {
           <h1>Create a postcard post</h1>
 
           <p>
-            Choose a stamp style, write your message, and post it to Impact
-            Exchange.
+            Draft a visual postcard for a social update, project idea, creative
+            call, or collaboration opportunity.
           </p>
         </section>
 
@@ -369,7 +345,22 @@ export default function CreatePostcardPage() {
                 {imagePreview ? (
                   <img src={imagePreview} alt="Uploaded postcard visual" />
                 ) : (
-                  <img src={selectedStamp.src} alt={selectedStamp.name} />
+                  <div className="defaultArtwork">
+                    <div className="sunsetLines">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+
+                    <h2>{postcardTitle || "Postcard"}</h2>
+
+                    <div className="sun"></div>
+                    <div className="bird birdOne"></div>
+                    <div className="bird birdTwo"></div>
+                    <div className="bird birdThree"></div>
+                    <div className="bird birdFour smallBird"></div>
+                    <div className="water"></div>
+                  </div>
                 )}
               </div>
             </div>
@@ -379,7 +370,7 @@ export default function CreatePostcardPage() {
             <div className="backSide">
               <div className="stamp">
                 <div className="miniImage">
-                  <img src={selectedStamp.src} alt={selectedStamp.name} />
+                  <span>{stampText || "ICH"}</span>
                 </div>
               </div>
 
@@ -408,47 +399,9 @@ export default function CreatePostcardPage() {
             <h2>Edit the postcard</h2>
 
             <label>
-              Stamp style
-              <select
-                value={selectedStampId}
-                onChange={(event) => setSelectedStampId(event.target.value)}
-              >
-                {stampOptions.map((stamp) => (
-                  <option key={stamp.id} value={stamp.id}>
-                    {stamp.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <div className="stampPicker">
-              {stampOptions.map((stamp) => (
-                <button
-                  key={stamp.id}
-                  type="button"
-                  className={selectedStampId === stamp.id ? "activeStamp" : ""}
-                  onClick={() => setSelectedStampId(stamp.id)}
-                >
-                  <img src={stamp.src} alt={stamp.name} />
-                  <span>{stamp.name}</span>
-                </button>
-              ))}
-            </div>
-
-            <label>
-              Optional custom front image
+              Replace image
               <input type="file" accept="image/*" onChange={handleImageUpload} />
             </label>
-
-            {imagePreview && (
-              <button
-                className="clearImageButton"
-                type="button"
-                onClick={clearCustomImage}
-              >
-                Use selected stamp as front image
-              </button>
-            )}
 
             <label>
               Front title
@@ -486,6 +439,36 @@ export default function CreatePostcardPage() {
               />
             </label>
 
+            <label>
+              Stamp text
+              <input
+                value={stampText}
+                onChange={(event) => setStampText(event.target.value)}
+                placeholder="ICH"
+              />
+            </label>
+
+            <div className="stampChoiceBox">
+              <div>
+                <span>Optional stamp art</span>
+                <strong>{selectedStamp ? selectedStamp.name : "None selected"}</strong>
+              </div>
+
+              <button type="button" onClick={() => setStampModalOpen(true)}>
+                Add Stamp
+              </button>
+            </div>
+
+            {selectedStamp && (
+              <div className="selectedStampPreview">
+                <img src={selectedStamp.src} alt={selectedStamp.name} />
+
+                <button type="button" onClick={() => setSelectedStampId("")}>
+                  Remove selected stamp
+                </button>
+              </div>
+            )}
+
             {profile?.display_name && (
               <div className="postingAs">
                 <span>Posting as</span>
@@ -502,7 +485,7 @@ export default function CreatePostcardPage() {
                 onClick={handlePostToImpactExchange}
                 disabled={posting || loadingProfile}
               >
-                {posting ? "Posting..." : "Post to Exchange"}
+                {posting ? "Posting..." : "Post the postcard to Exchange"}
               </button>
 
               <a href="/impact-exchange">View Exchange</a>
@@ -510,6 +493,44 @@ export default function CreatePostcardPage() {
           </aside>
         </section>
       </section>
+
+      {stampModalOpen && (
+        <div className="modalOverlay">
+          <div className="stampModal">
+            <div className="modalHeader">
+              <div>
+                <p className="eyebrow">Choose a stamp</p>
+                <h2>Add optional stamp art</h2>
+              </div>
+
+              <button
+                className="closeModal"
+                type="button"
+                onClick={() => setStampModalOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="stampGrid">
+              {stampOptions.map((stamp) => (
+                <button
+                  key={stamp.id}
+                  type="button"
+                  className={selectedStampId === stamp.id ? "activeStamp" : ""}
+                  onClick={() => {
+                    setSelectedStampId(stamp.id);
+                    setStampModalOpen(false);
+                  }}
+                >
+                  <img src={stamp.src} alt={stamp.name} />
+                  <span>{stamp.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .postcardPage {
@@ -538,10 +559,6 @@ export default function CreatePostcardPage() {
         }
 
         .topBar {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 18px;
           padding-bottom: 22px;
           border-bottom: 1px solid rgba(255, 255, 255, 0.12);
         }
@@ -577,36 +594,6 @@ export default function CreatePostcardPage() {
 
         .brand p span:first-child {
           color: rgba(255, 255, 255, 0.66);
-        }
-
-        .dashboardNav {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          flex-wrap: wrap;
-          font-weight: 900;
-        }
-
-        .dashboardNav a,
-        .dashboardNav button {
-          min-height: 40px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          border: 1px solid rgba(255, 255, 255, 0.14);
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.08);
-          color: #ffffff;
-          cursor: pointer;
-          font: inherit;
-          font-size: 0.84rem;
-          font-weight: 900;
-          padding: 0 15px;
-          text-decoration: none;
-        }
-
-        .dashboardNav button {
-          color: #f28c82;
         }
 
         .intro {
@@ -672,22 +659,160 @@ export default function CreatePostcardPage() {
           width: 100%;
           height: 100%;
           min-height: 520px;
-          display: grid;
-          place-items: center;
-          background:
-            radial-gradient(
-              circle at center,
-              rgba(255, 255, 255, 0.2),
-              transparent 55%
-            ),
-            #ff9f73;
         }
 
         .frontImage img {
           width: 100%;
           height: 100%;
-          object-fit: contain;
+          object-fit: cover;
           display: block;
+        }
+
+        .defaultArtwork {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          min-height: 520px;
+          overflow: hidden;
+          background: linear-gradient(
+            180deg,
+            #ff6b6b 0%,
+            #ff9d72 40%,
+            #ffdca3 100%
+          );
+          color: #25375f;
+        }
+
+        .defaultArtwork h2 {
+          position: relative;
+          z-index: 3;
+          margin: 105px auto 0;
+          padding: 0 26px;
+          text-align: center;
+          color: #25375f;
+          font-family: "Brush Script MT", "Segoe Script", cursive;
+          font-size: clamp(3.2rem, 8vw, 6.4rem);
+          font-weight: 400;
+          letter-spacing: 0;
+        }
+
+        .sunsetLines {
+          position: absolute;
+          inset: 34px 0 auto;
+          display: grid;
+          gap: 13px;
+        }
+
+        .sunsetLines span {
+          height: 15px;
+          background: rgba(255, 202, 118, 0.7);
+          border-radius: 999px;
+          transform: skewX(-18deg);
+        }
+
+        .sunsetLines span:nth-child(1) {
+          margin-left: 46%;
+        }
+
+        .sunsetLines span:nth-child(2) {
+          margin-right: 24%;
+        }
+
+        .sunsetLines span:nth-child(3) {
+          margin-left: 12%;
+          margin-right: 38%;
+        }
+
+        .sun {
+          position: absolute;
+          left: 50%;
+          bottom: 95px;
+          width: 240px;
+          height: 240px;
+          transform: translateX(-50%);
+          border-radius: 50%;
+          background: #ffe176;
+          z-index: 1;
+        }
+
+        .bird {
+          position: absolute;
+          z-index: 4;
+          width: 54px;
+          height: 20px;
+        }
+
+        .bird::before,
+        .bird::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          width: 26px;
+          height: 14px;
+          border-top: 4px solid #25375f;
+          border-radius: 50px 50px 0 0;
+        }
+
+        .bird::before {
+          left: 0;
+          transform: rotate(-12deg);
+        }
+
+        .bird::after {
+          right: 0;
+          transform: rotate(12deg);
+        }
+
+        .smallBird {
+          width: 36px;
+          height: 14px;
+        }
+
+        .smallBird::before,
+        .smallBird::after {
+          width: 17px;
+          height: 10px;
+          border-top: 3px solid #25375f;
+        }
+
+        .birdOne {
+          top: 65px;
+          left: 45px;
+        }
+
+        .birdTwo {
+          top: 38px;
+          left: 65px;
+        }
+
+        .birdThree {
+          top: 65px;
+          right: 90px;
+        }
+
+        .birdFour {
+          top: 70px;
+          right: 65px;
+        }
+
+        .water {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 64px;
+          background: linear-gradient(180deg, #77d4c8 0%, #4bb8b2 100%);
+        }
+
+        .water::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 24%;
+          top: 18px;
+          height: 10px;
+          border-radius: 999px;
+          background: rgba(17, 128, 129, 0.65);
         }
 
         .dividerLine {
@@ -707,19 +832,16 @@ export default function CreatePostcardPage() {
         }
 
         .miniImage {
-          width: 140px;
+          width: 110px;
           height: 140px;
           display: grid;
           place-items: center;
-          background: transparent;
-          overflow: visible;
-        }
-
-        .miniImage img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          display: block;
+          border: 4px solid #289c9a;
+          background: #ff9f73;
+          color: #25375f;
+          font-size: 1.6rem;
+          font-weight: 900;
+          overflow: hidden;
         }
 
         .messageArea {
@@ -788,7 +910,6 @@ export default function CreatePostcardPage() {
         }
 
         input,
-        select,
         textarea {
           width: 100%;
           border: 1px solid #d9dee8;
@@ -800,8 +921,7 @@ export default function CreatePostcardPage() {
           padding: 12px 14px;
         }
 
-        input,
-        select {
+        input {
           min-height: 46px;
         }
 
@@ -817,65 +937,81 @@ export default function CreatePostcardPage() {
         }
 
         input:focus,
-        select:focus,
         textarea:focus {
           border-color: #17c9d5;
           box-shadow: 0 0 0 4px rgba(23, 201, 213, 0.14);
         }
 
-        .clearImageButton {
-          width: 100%;
-          min-height: 42px;
-          border: 1px solid rgba(16, 23, 47, 0.14);
-          border-radius: 999px;
-          background: rgba(16, 23, 47, 0.06);
+        .stampChoiceBox {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 14px;
+          border: 1px solid rgba(16, 23, 47, 0.08);
+          border-radius: 16px;
+          background: rgba(23, 201, 213, 0.08);
+          margin-top: 8px;
+          padding: 14px;
+        }
+
+        .stampChoiceBox span {
+          display: block;
+          color: #667085;
+          font-size: 0.72rem;
+          font-weight: 900;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+        }
+
+        .stampChoiceBox strong {
+          display: block;
+          margin-top: 4px;
           color: #10172f;
+          font-size: 0.9rem;
+          font-weight: 950;
+        }
+
+        .stampChoiceBox button {
+          min-height: 40px;
+          border: 0;
+          border-radius: 999px;
+          background: #17c9d5;
+          color: #020617;
           cursor: pointer;
           font: inherit;
           font-size: 0.82rem;
           font-weight: 950;
-          margin: -4px 0 14px;
           padding: 0 14px;
+          white-space: nowrap;
         }
 
-        .stampPicker {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 10px;
-          max-height: 430px;
-          overflow: auto;
-          margin: 8px 0 18px;
-          padding-right: 4px;
-        }
-
-        .stampPicker button {
+        .selectedStampPreview {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-top: 12px;
           border: 1px solid #d9dee8;
-          border-radius: 14px;
+          border-radius: 16px;
           background: #ffffff;
-          cursor: pointer;
-          padding: 8px;
-          text-align: left;
+          padding: 10px;
         }
 
-        .stampPicker button.activeStamp {
-          border-color: #17c9d5;
-          box-shadow: 0 0 0 4px rgba(23, 201, 213, 0.14);
-        }
-
-        .stampPicker img {
-          width: 100%;
-          aspect-ratio: 1 / 1;
+        .selectedStampPreview img {
+          width: 70px;
+          height: 70px;
           object-fit: contain;
           display: block;
         }
 
-        .stampPicker span {
-          display: block;
-          margin-top: 6px;
+        .selectedStampPreview button {
+          border: 0;
+          background: transparent;
           color: #10172f;
-          font-size: 0.72rem;
+          cursor: pointer;
+          font: inherit;
+          font-size: 0.78rem;
           font-weight: 900;
-          line-height: 1.25;
+          text-decoration: underline;
         }
 
         .postingAs {
@@ -952,12 +1088,92 @@ export default function CreatePostcardPage() {
           color: #c0392b;
         }
 
-        @media (max-width: 980px) {
-          .topBar {
-            align-items: flex-start;
-            flex-direction: column;
-          }
+        .modalOverlay {
+          position: fixed;
+          inset: 0;
+          z-index: 100;
+          display: grid;
+          place-items: center;
+          background: rgba(0, 0, 0, 0.72);
+          padding: 22px;
+        }
 
+        .stampModal {
+          width: min(980px, 100%);
+          max-height: 86vh;
+          overflow: auto;
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          border-radius: 24px;
+          background: #f8fafc;
+          color: #10172f;
+          box-shadow: 0 30px 90px rgba(0, 0, 0, 0.38);
+          padding: 24px;
+        }
+
+        .modalHeader {
+          display: flex;
+          justify-content: space-between;
+          gap: 18px;
+          align-items: flex-start;
+          margin-bottom: 18px;
+        }
+
+        .modalHeader h2 {
+          margin-top: 8px;
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 2rem;
+          letter-spacing: -0.04em;
+        }
+
+        .closeModal {
+          width: 42px;
+          height: 42px;
+          border: 0;
+          border-radius: 999px;
+          background: #10172f;
+          color: #ffffff;
+          cursor: pointer;
+          font-size: 1.7rem;
+          line-height: 1;
+        }
+
+        .stampGrid {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 14px;
+        }
+
+        .stampGrid button {
+          border: 1px solid #d9dee8;
+          border-radius: 16px;
+          background: #ffffff;
+          cursor: pointer;
+          padding: 10px;
+          text-align: left;
+        }
+
+        .stampGrid button.activeStamp {
+          border-color: #17c9d5;
+          box-shadow: 0 0 0 4px rgba(23, 201, 213, 0.16);
+        }
+
+        .stampGrid img {
+          width: 100%;
+          aspect-ratio: 1 / 1;
+          object-fit: contain;
+          display: block;
+        }
+
+        .stampGrid span {
+          display: block;
+          margin-top: 8px;
+          color: #10172f;
+          font-size: 0.8rem;
+          font-weight: 950;
+          line-height: 1.25;
+        }
+
+        @media (max-width: 980px) {
           .workspace,
           .postcardPreview {
             grid-template-columns: 1fr;
@@ -967,12 +1183,17 @@ export default function CreatePostcardPage() {
             height: 2px;
           }
 
-          .frontImage {
+          .frontImage,
+          .defaultArtwork {
             min-height: 420px;
           }
 
           .backSide {
             padding: 36px;
+          }
+
+          .stampGrid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
           }
         }
 
@@ -1000,7 +1221,12 @@ export default function CreatePostcardPage() {
             width: 100%;
           }
 
-          .stampPicker {
+          .stampChoiceBox {
+            align-items: stretch;
+            flex-direction: column;
+          }
+
+          .stampGrid {
             grid-template-columns: 1fr;
           }
         }
