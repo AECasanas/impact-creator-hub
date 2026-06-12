@@ -12,6 +12,7 @@ import {
   Heart,
   House,
   ImagePlus,
+  Link as LinkIcon,
   Mail,
   MessageCircle,
   PenLine,
@@ -1224,7 +1225,7 @@ function ExchangePostCard({
             <MessageCircle size={16} strokeWidth={2.4} /> {commentCount}
           </button>
 
-       <div className="shareMenuWrap">
+ <div className="shareMenuWrap">
   <button
     type="button"
     className="shareMainButton"
@@ -1237,7 +1238,7 @@ function ExchangePostCard({
   {shareMenuOpen && (
     <div className="shareMenu">
       <button type="button" onClick={copyPostLink}>
-        <span className="shareIcon linkIcon">↗</span>
+        <LinkIcon size={17} strokeWidth={2.1} className="shareSvgIcon copyIcon" />
         Copy link
       </button>
 
@@ -1249,7 +1250,12 @@ function ExchangePostCard({
           )
         }
       >
-        <span className="shareIcon xIcon">𝕏</span>
+        <svg className="shareSvgIcon" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+          />
+        </svg>
         X
       </button>
 
@@ -1261,7 +1267,12 @@ function ExchangePostCard({
           )
         }
       >
-        <span className="shareIcon facebookIcon">f</span>
+        <svg className="shareSvgIcon" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M22 12.06C22 6.48 17.52 2 11.94 2S2 6.48 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.84c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.89h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94z"
+          />
+        </svg>
         Facebook
       </button>
 
@@ -1273,7 +1284,12 @@ function ExchangePostCard({
           )
         }
       >
-        <span className="shareIcon linkedinIcon">in</span>
+        <svg className="shareSvgIcon" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M20.45 20.45h-3.56v-5.58c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.95v5.67H9.34V8.98h3.42v1.57h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.29zM5.32 7.42a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.1 20.45H3.54V8.98H7.1v11.47zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z"
+          />
+        </svg>
         LinkedIn
       </button>
 
@@ -1281,12 +1297,22 @@ function ExchangePostCard({
         type="button"
         onClick={() => openShareWindow(pinterestShareUrl)}
       >
-        <span className="shareIcon pinterestIcon">P</span>
+        <svg className="shareSvgIcon" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M12.04 0C5.4 0 2 4.78 2 8.76c0 2.4.91 4.54 2.86 5.34.32.13.61 0 .7-.35.06-.24.22-.86.29-1.12.09-.35.05-.48-.2-.78-.56-.66-.91-1.52-.91-2.74 0-3.53 2.64-6.69 6.88-6.69 3.75 0 5.81 2.29 5.81 5.35 0 4.03-1.78 7.44-4.43 7.44-1.46 0-2.56-1.21-2.21-2.7.42-1.78 1.24-3.7 1.24-4.99 0-1.15-.62-2.11-1.9-2.11-1.5 0-2.71 1.55-2.71 3.64 0 1.33.45 2.23.45 2.23s-1.54 6.52-1.81 7.66c-.54 2.28-.08 5.08-.04 5.36.02.17.24.21.34.08.14-.18 1.97-2.45 2.59-4.71.18-.64 1.01-3.96 1.01-3.96.5.95 1.96 1.79 3.51 1.79 4.62 0 7.75-4.21 7.75-9.84C21.2 3.7 17.59 0 12.04 0z"
+          />
+        </svg>
         Pinterest
       </button>
 
       <button type="button" onClick={shareToInstagram}>
-        <span className="shareIcon instagramIcon">IG</span>
+        <svg className="shareSvgIcon" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M12 2.16c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.15-3.23 1.66-4.77 4.92-4.92 1.27-.06 1.65-.07 4.85-.07zM12 0C8.74 0 8.33.01 7.05.07 2.7.27.27 2.69.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.2 4.36 2.62 6.78 6.98 6.98C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c4.36-.2 6.78-2.62 6.98-6.98.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.2-4.36-2.62-6.78-6.98-6.98C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.84a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"
+          />
+        </svg>
         Instagram
       </button>
 
@@ -1298,7 +1324,7 @@ function ExchangePostCard({
           )
         }
       >
-        <span className="shareIcon emailIcon">@</span>
+        <Mail size={17} strokeWidth={2.1} className="shareSvgIcon" />
         Email
       </button>
     </div>
@@ -2039,29 +2065,29 @@ const exchangeStyles = `
     left: 0;
     top: calc(100% + 10px);
     z-index: 900;
-    width: 188px;
+    width: 174px;
     display: grid;
-    gap: 3px;
-    border: 1px solid rgba(0, 232, 240, 0.16);
-    border-radius: 18px;
-    background: rgba(18, 22, 30, 0.98);
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
-    backdrop-filter: blur(14px);
+    gap: 1px;
+    border: 1px solid rgba(0, 232, 240, 0.14);
+    border-radius: 16px;
+    background: rgba(13, 17, 24, 0.98);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.46);
+    backdrop-filter: blur(18px);
     padding: 8px;
   }
 
   .shareMenu button {
     width: 100%;
-    min-height: 34px;
+    min-height: 32px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 9px;
-    border-radius: 12px;
-    color: rgba(238, 243, 247, 0.82);
-    font-size: 0.76rem;
-    font-weight: 800;
-    letter-spacing: -0.01em;
+    gap: 11px;
+    border-radius: 10px;
+    color: rgba(238, 243, 247, 0.78);
+    font-size: 0.74rem;
+    font-weight: 400;
+    letter-spacing: 0;
     padding: 0 9px;
   }
 
@@ -2070,64 +2096,30 @@ const exchangeStyles = `
     color: #ffffff;
   }
 
-  .shareIcon {
-    width: 22px;
-    height: 22px;
-    display: inline-grid;
-    place-items: center;
+  .shareSvgIcon {
+    width: 17px;
+    height: 17px;
     flex: 0 0 auto;
-    border-radius: 9px;
-    color: #ffffff;
-    font-size: 0.62rem;
-    font-weight: 850;
-    letter-spacing: -0.04em;
-    line-height: 1;
+    color: rgba(238, 243, 247, 0.82);
   }
 
-  .linkIcon {
-    background: linear-gradient(135deg, #00e8f0, #008b94);
+  .shareMenu button:hover .shareSvgIcon {
+    color: #00e8f0;
   }
 
-  .xIcon {
-    background: #050505;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-  }
-
-  .facebookIcon {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    font-family: Arial, sans-serif;
-    font-size: 0.86rem;
-  }
-
-  .linkedinIcon {
-    background: linear-gradient(135deg, #38bdf8, #0a66c2);
-    font-size: 0.54rem;
-  }
-
-  .pinterestIcon {
-    background: linear-gradient(135deg, #ff4b5c, #e60023);
-    font-family: Georgia, serif;
-    font-size: 0.82rem;
-  }
-
-  .instagramIcon {
-    background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af);
-    font-size: 0.52rem;
-  }
-
-  .emailIcon {
-    background: linear-gradient(135deg, #ff8c82, #ff5f73);
-    font-size: 0.72rem;
+  .shareMenu .copyIcon {
+    color: #00e8f0;
   }
 
   .exchangePage.darkFeed .shareMenu {
-    border-color: rgba(0, 232, 240, 0.18);
-    background: rgba(18, 22, 30, 0.98);
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
+    border-color: rgba(0, 232, 240, 0.14);
+    background: rgba(13, 17, 24, 0.98);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
   }
 
   .exchangePage.darkFeed .shareMenu button {
-    color: rgba(238, 243, 247, 0.82);
+    color: rgba(238, 243, 247, 0.78);
+    font-weight: 400;
   }
 
   .exchangePage.darkFeed .shareMenu button:hover {
