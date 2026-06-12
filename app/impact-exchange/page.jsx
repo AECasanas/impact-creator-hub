@@ -923,10 +923,8 @@ function formatExternalUrl(value) {
 const exchangeStyles = `
   .exchangePage {
     min-height: 100vh;
-    background:
-      radial-gradient(circle at 12% 8%, rgba(0, 232, 240, 0.08), transparent 28%),
-      linear-gradient(135deg, #05090b 0%, #08131a 52%, #05090b 100%);
-    color: #ffffff;
+    background: #f7f8fb;
+    color: #10172f;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system,
       BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
@@ -939,7 +937,7 @@ const exchangeStyles = `
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(16, 23, 47, 0.1);
     padding: 16px 32px;
   }
 
@@ -947,7 +945,7 @@ const exchangeStyles = `
     display: inline-flex;
     align-items: center;
     gap: 14px;
-    color: #ffffff;
+    color: #10172f;
     text-decoration: none;
   }
 
@@ -969,7 +967,7 @@ const exchangeStyles = `
   .brandHeader span {
     display: block;
     margin-top: 7px;
-    color: rgba(255,255,255,0.68);
+    color: rgba(16,23,47,0.62);
     font-size: 0.48rem;
     font-weight: 950;
     letter-spacing: 0.24em;
@@ -986,12 +984,14 @@ const exchangeStyles = `
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #00e8f0;
+    border: 1px solid #00aeb8;
     border-radius: 14px;
-    color: #00e8f0;
+    color: #008b94;
+    background: #ffffff;
     font-weight: 950;
     padding: 0 22px;
     text-decoration: none;
+    box-shadow: 0 8px 22px rgba(16,23,47,0.06);
   }
 
   .exchangeLayout {
@@ -1019,7 +1019,7 @@ const exchangeStyles = `
 
   .feedKicker {
     margin: 0;
-    color: #00e8f0;
+    color: #00aeb8;
     font-size: 0.72rem;
     font-weight: 950;
     letter-spacing: 0.2em;
@@ -1034,24 +1034,24 @@ const exchangeStyles = `
   .postCard {
     width: 500px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid #e6e8ef;
     border-radius: 18px;
-    background: rgba(255,255,255,0.055);
-    box-shadow: 0 18px 50px rgba(0,0,0,0.22);
+    background: #ffffff;
+    box-shadow: 0 14px 36px rgba(16, 23, 47, 0.08);
   }
 
   .postBanner {
     width: 500px;
     height: 500px;
-    background-color: rgba(255,255,255,0.05);
+    background-color: #eef2f7;
     background-size: cover;
     background-position: center;
   }
 
   .emptyBanner {
     background:
-      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--post-accent, #00e8f0) 28%, transparent), transparent 30%),
-      linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--post-accent, #00e8f0) 22%, transparent), transparent 30%),
+      linear-gradient(135deg, #f4f7fb, #eef2f7);
   }
 
   .postInner {
@@ -1091,7 +1091,7 @@ const exchangeStyles = `
     bottom: -5px;
     width: 24px;
     height: 24px;
-    border: 3px solid #05090b;
+    border: 3px solid #ffffff;
     border-radius: 999px;
     background: #000000;
     object-fit: cover;
@@ -1111,7 +1111,7 @@ const exchangeStyles = `
 
   .authorNameLine a,
   .authorNameLine strong {
-    color: #ffffff;
+    color: #10172f;
     font-size: 1rem;
     font-weight: 950;
     text-decoration: none;
@@ -1119,7 +1119,7 @@ const exchangeStyles = `
 
   .postAuthor p {
     margin: 4px 0 0;
-    color: rgba(255,255,255,0.56);
+    color: rgba(16,23,47,0.56);
     font-size: 0.82rem;
     font-weight: 750;
   }
@@ -1136,13 +1136,13 @@ const exchangeStyles = `
   }
 
   .creatorBadge {
-    background: rgba(0,232,240,0.16);
-    color: #00e8f0;
+    background: rgba(0,174,184,0.12);
+    color: #008b94;
   }
 
   .brandBadge {
-    background: color-mix(in srgb, var(--post-accent, #00e8f0) 18%, transparent);
-    color: var(--post-accent, #00e8f0);
+    background: color-mix(in srgb, var(--post-accent, #00e8f0) 14%, white);
+    color: #10172f;
   }
 
   .postBody {
@@ -1151,7 +1151,7 @@ const exchangeStyles = `
 
   .postBody h2 {
     margin: 0;
-    color: #ffffff;
+    color: #10172f;
     font-size: 1.08rem;
     line-height: 1.25;
     letter-spacing: -0.025em;
@@ -1159,7 +1159,7 @@ const exchangeStyles = `
 
   .postBody p {
     margin: 8px 0 0;
-    color: rgba(255,255,255,0.78);
+    color: rgba(16,23,47,0.72);
     font-size: 0.96rem;
     line-height: 1.55;
   }
@@ -1169,9 +1169,10 @@ const exchangeStyles = `
     display: inline-flex;
     align-items: center;
     margin-top: 12px;
-    border: 1px solid rgba(255,255,255,0.13);
+    border: 1px solid #e6e8ef;
     border-radius: 999px;
-    color: var(--post-accent, #00e8f0);
+    color: #008b94;
+    background: #f7f8fb;
     font-size: 0.82rem;
     font-weight: 950;
     padding: 0 13px;
@@ -1183,14 +1184,14 @@ const exchangeStyles = `
     align-items: center;
     gap: 20px;
     margin: 14px -18px -10px;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid #eef0f5;
     padding: 10px 18px;
   }
 
   .postActions button {
     border: 0;
     background: transparent;
-    color: rgba(255,255,255,0.72);
+    color: rgba(16,23,47,0.62);
     cursor: pointer;
     font: inherit;
     font-size: 0.86rem;
@@ -1200,7 +1201,7 @@ const exchangeStyles = `
 
   .postActions .likedButton,
   .postActions .savedButton {
-    color: var(--post-accent, #00e8f0);
+    color: #008b94;
   }
 
   .postActions button:last-child {
@@ -1209,7 +1210,7 @@ const exchangeStyles = `
 
   .commentsPanel {
     margin-top: 14px;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid #eef0f5;
     padding-top: 14px;
   }
 
@@ -1221,18 +1222,19 @@ const exchangeStyles = `
 
   .commentItem {
     border-radius: 14px;
-    background: rgba(255,255,255,0.07);
+    background: #f7f8fb;
     padding: 10px 12px;
   }
 
   .commentItem strong {
     display: block;
+    color: #10172f;
     font-size: 0.82rem;
   }
 
   .commentItem p {
     margin: 4px 0 0;
-    color: rgba(255,255,255,0.76);
+    color: rgba(16,23,47,0.72);
     font-size: 0.86rem;
     line-height: 1.4;
   }
@@ -1245,23 +1247,23 @@ const exchangeStyles = `
 
   .commentForm input {
     width: 100%;
-    border: 1px solid rgba(255,255,255,0.14);
+    border: 1px solid #e6e8ef;
     border-radius: 999px;
-    background: rgba(255,255,255,0.08);
-    color: #ffffff;
+    background: #f7f8fb;
+    color: #10172f;
     font: inherit;
     outline: none;
     padding: 11px 14px;
   }
 
   .commentForm input::placeholder {
-    color: rgba(255,255,255,0.48);
+    color: rgba(16,23,47,0.42);
   }
 
   .commentForm button {
     border: 0;
     border-radius: 999px;
-    background: var(--post-accent, #00e8f0);
+    background: #00e8f0;
     color: #020617;
     cursor: pointer;
     font: inherit;
@@ -1284,15 +1286,16 @@ const exchangeStyles = `
 
   .filterRow button {
     min-height: 36px;
-    border: 1px solid rgba(255,255,255,0.14);
+    border: 1px solid #e6e8ef;
     border-radius: 999px;
-    background: rgba(255,255,255,0.07);
-    color: #ffffff;
+    background: #ffffff;
+    color: #10172f;
     cursor: pointer;
     font: inherit;
     font-size: 0.82rem;
     font-weight: 900;
     padding: 0 15px;
+    box-shadow: 0 8px 22px rgba(16,23,47,0.05);
   }
 
   .filterRow .activeFilter {
@@ -1305,10 +1308,10 @@ const exchangeStyles = `
   .signInCard,
   .statusCard,
   .errorCard {
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid #e6e8ef;
     border-radius: 16px;
-    background: rgba(255,255,255,0.055);
-    box-shadow: 0 18px 50px rgba(0,0,0,0.22);
+    background: #ffffff;
+    box-shadow: 0 14px 36px rgba(16, 23, 47, 0.08);
   }
 
   .sidebarCard {
@@ -1325,6 +1328,7 @@ const exchangeStyles = `
 
   .sidebarCardHeader h2 {
     margin: 0;
+    color: #10172f;
     font-size: 1rem;
     letter-spacing: -0.02em;
   }
@@ -1366,7 +1370,7 @@ const exchangeStyles = `
     bottom: -4px;
     width: 20px;
     height: 20px;
-    border: 3px solid #08131a;
+    border: 3px solid #ffffff;
     border-radius: 999px;
     background: #000000;
     object-fit: cover;
@@ -1375,7 +1379,7 @@ const exchangeStyles = `
   .sidebarPerson strong,
   .sidebarNameLink {
     display: block;
-    color: #ffffff;
+    color: #10172f;
     font-size: 0.9rem;
     font-weight: 950;
     text-decoration: none;
@@ -1383,14 +1387,14 @@ const exchangeStyles = `
 
   .sidebarPerson p {
     margin: 2px 0 0;
-    color: rgba(255,255,255,0.56);
+    color: rgba(16,23,47,0.56);
     font-size: 0.78rem;
     line-height: 1.25;
   }
 
   .emptySidebarMessage {
     margin: 0;
-    color: rgba(255,255,255,0.58);
+    color: rgba(16,23,47,0.58);
     font-size: 0.86rem;
     line-height: 1.45;
   }
@@ -1406,19 +1410,19 @@ const exchangeStyles = `
     display: grid;
     align-content: center;
     border-radius: 14px;
-    background: rgba(255,255,255,0.06);
+    background: #f7f8fb;
     padding: 12px;
   }
 
   .exchangeStats strong {
-    color: #00e8f0;
+    color: #00aeb8;
     font-size: 1.35rem;
     line-height: 1;
   }
 
   .exchangeStats span {
     margin-top: 6px;
-    color: rgba(255,255,255,0.58);
+    color: rgba(16,23,47,0.58);
     font-size: 0.72rem;
     font-weight: 800;
     line-height: 1.25;
@@ -1446,12 +1450,13 @@ const exchangeStyles = `
 
   .signInCard h3 {
     margin: 0;
+    color: #10172f;
     font-size: 1rem;
   }
 
   .signInCard p {
     margin: 4px 0 0;
-    color: rgba(255,255,255,0.62);
+    color: rgba(16,23,47,0.62);
     font-size: 0.82rem;
     line-height: 1.4;
   }
@@ -1483,13 +1488,14 @@ const exchangeStyles = `
   .statusCard p,
   .errorCard p {
     margin: 0;
+    color: #10172f;
     font-weight: 950;
   }
 
   .statusCard span {
     display: block;
     margin-top: 12px;
-    color: rgba(255,255,255,0.62);
+    color: rgba(16,23,47,0.62);
     font-size: 1rem;
     line-height: 1.5;
   }
@@ -1497,7 +1503,11 @@ const exchangeStyles = `
   .errorCard {
     border-color: rgba(255,107,97,0.4);
     background: rgba(255,107,97,0.12);
-    color: #ffc8c3;
+    color: #9b1c1c;
+  }
+
+  .errorCard p {
+    color: #9b1c1c;
   }
 
   @media (max-width: 1200px) {
