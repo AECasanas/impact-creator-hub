@@ -1,3 +1,4 @@
+cat > app/impact-exchange/page.jsx <<'EOF'
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -1025,9 +1026,9 @@ const exchangeStyles = `
   }
 
   .exchangeHeader {
-    width: min(1640px, 100%);
+    width: 100%;
     min-height: 78px;
-    margin: 0 auto;
+    margin: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1151,14 +1152,15 @@ const exchangeStyles = `
   }
 
   .exchangeLayout {
-    width: min(1640px, 100%);
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
     display: grid;
-    grid-template-columns: 210px 650px 360px;
-    gap: 64px;
+    grid-template-columns: 250px 50px 650px minmax(80px, 1fr) 380px;
+    column-gap: 0;
+    row-gap: 24px;
     align-items: start;
-    justify-content: center;
-    padding: 24px 32px 80px;
+    justify-content: stretch;
+    padding: 24px 20px 80px;
   }
 
   .leftMenu {
@@ -1166,6 +1168,9 @@ const exchangeStyles = `
     top: 18px;
     display: grid;
     gap: 8px;
+    grid-column: 1;
+    justify-self: start;
+    width: 250px;
   }
 
   .leftMenuItem {
@@ -1195,7 +1200,9 @@ const exchangeStyles = `
   }
 
   .feedColumn {
+    grid-column: 3;
     min-width: 0;
+    width: 650px;
   }
 
   .feedTitleRow {
@@ -1531,6 +1538,9 @@ const exchangeStyles = `
     top: 18px;
     display: grid;
     gap: 10px;
+    grid-column: 5;
+    justify-self: end;
+    width: 380px;
   }
 
   .filterRow {
@@ -1765,24 +1775,47 @@ const exchangeStyles = `
     color: #9b1c1c;
   }
 
-  @media (max-width: 1200px) {
+  @media (max-width: 1450px) {
     .exchangeLayout {
       grid-template-columns: 650px 360px;
+      column-gap: 48px;
       justify-content: center;
+      padding: 24px 32px 80px;
     }
 
     .leftMenu {
       display: none;
+    }
+
+    .feedColumn {
+      grid-column: 1;
+      width: 650px;
+    }
+
+    .rightColumn {
+      grid-column: 2;
+      width: 360px;
+      justify-self: start;
     }
   }
 
   @media (max-width: 960px) {
     .exchangeLayout {
       grid-template-columns: 1fr;
+      justify-content: center;
+      padding: 24px 18px 80px;
+    }
+
+    .feedColumn {
+      grid-column: 1;
+      width: min(650px, 100%);
     }
 
     .rightColumn {
+      grid-column: 1;
       position: static;
+      width: min(650px, 100%);
+      justify-self: center;
     }
 
     .filterRow {
@@ -1818,6 +1851,10 @@ const exchangeStyles = `
 
     .exchangeLayout {
       padding: 16px;
+    }
+
+    .feedColumn {
+      width: 100%;
     }
 
     .quickPostActions {
@@ -1856,3 +1893,4 @@ const exchangeStyles = `
     }
   }
 `;
+EOF
