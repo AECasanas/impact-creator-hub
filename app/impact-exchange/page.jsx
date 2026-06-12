@@ -1224,7 +1224,7 @@ function ExchangePostCard({
             <MessageCircle size={16} strokeWidth={2.4} /> {commentCount}
           </button>
 
-           <div className="shareMenuWrap">
+       <div className="shareMenuWrap">
   <button
     type="button"
     className="shareMainButton"
@@ -1237,13 +1237,8 @@ function ExchangePostCard({
   {shareMenuOpen && (
     <div className="shareMenu">
       <button type="button" onClick={copyPostLink}>
-        <span className="shareIcon linkIcon">🔗</span>
+        <span className="shareIcon linkIcon">↗</span>
         Copy link
-      </button>
-
-      <button type="button" onClick={openNativeShare}>
-        <span className="shareIcon deviceIcon">↗</span>
-        Device share
       </button>
 
       <button
@@ -1254,8 +1249,8 @@ function ExchangePostCard({
           )
         }
       >
-        <span className="shareIcon xIcon">X</span>
-        X / Twitter
+        <span className="shareIcon xIcon">𝕏</span>
+        X
       </button>
 
       <button
@@ -2028,7 +2023,7 @@ const exchangeStyles = `
     .postActions .pushAction {
     margin-left: auto;
   }
-     .shareMenuWrap {
+    .shareMenuWrap {
     position: relative;
     z-index: 500;
     display: inline-flex;
@@ -2044,108 +2039,101 @@ const exchangeStyles = `
     left: 0;
     top: calc(100% + 10px);
     z-index: 900;
-    width: 220px;
-    max-height: 360px;
-    overflow-y: auto;
+    width: 188px;
     display: grid;
-    gap: 4px;
-    border: 1px solid rgba(0, 174, 184, 0.22);
-    border-radius: 16px;
-    background: #ffffff;
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+    gap: 3px;
+    border: 1px solid rgba(0, 232, 240, 0.16);
+    border-radius: 18px;
+    background: rgba(18, 22, 30, 0.98);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(14px);
     padding: 8px;
   }
 
   .shareMenu button {
     width: 100%;
-    min-height: 40px;
+    min-height: 34px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 10px;
+    gap: 9px;
     border-radius: 12px;
-    color: rgba(16, 23, 47, 0.78);
-    font-size: 0.82rem;
-    font-weight: 900;
-    padding: 0 10px;
+    color: rgba(238, 243, 247, 0.82);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    padding: 0 9px;
   }
 
   .shareMenu button:hover {
     background: rgba(0, 232, 240, 0.1);
-    color: #008b94;
+    color: #ffffff;
   }
 
   .shareIcon {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     display: inline-grid;
     place-items: center;
     flex: 0 0 auto;
-    border-radius: 999px;
+    border-radius: 9px;
     color: #ffffff;
-    font-size: 0.68rem;
-    font-weight: 950;
-    letter-spacing: -0.02em;
+    font-size: 0.62rem;
+    font-weight: 850;
+    letter-spacing: -0.04em;
     line-height: 1;
   }
 
   .linkIcon {
-    background: #00aeb8;
-    font-size: 0.72rem;
-  }
-
-  .deviceIcon {
-    background: #10172f;
-    font-size: 0.9rem;
+    background: linear-gradient(135deg, #00e8f0, #008b94);
   }
 
   .xIcon {
-    background: #000000;
+    background: #050505;
+    border: 1px solid rgba(255, 255, 255, 0.16);
   }
 
   .facebookIcon {
-    background: #1877f2;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
     font-family: Arial, sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.86rem;
   }
 
   .linkedinIcon {
-    background: #0a66c2;
-    font-size: 0.58rem;
-    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, #38bdf8, #0a66c2);
+    font-size: 0.54rem;
   }
 
   .pinterestIcon {
-    background: #e60023;
+    background: linear-gradient(135deg, #ff4b5c, #e60023);
     font-family: Georgia, serif;
-    font-size: 0.9rem;
+    font-size: 0.82rem;
   }
 
   .instagramIcon {
-    background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
-    font-size: 0.56rem;
-    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af);
+    font-size: 0.52rem;
   }
 
   .emailIcon {
-    background: #ff8c82;
-    font-size: 0.8rem;
+    background: linear-gradient(135deg, #ff8c82, #ff5f73);
+    font-size: 0.72rem;
   }
 
   .exchangePage.darkFeed .shareMenu {
-    border-color: rgba(0, 232, 240, 0.22);
-    background: #f7f8fb;
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+    border-color: rgba(0, 232, 240, 0.18);
+    background: rgba(18, 22, 30, 0.98);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
   }
 
   .exchangePage.darkFeed .shareMenu button {
-    color: rgba(16, 23, 47, 0.82);
+    color: rgba(238, 243, 247, 0.82);
   }
 
   .exchangePage.darkFeed .shareMenu button:hover {
-    background: rgba(0, 232, 240, 0.12);
-    color: #008b94;
-  } 
+    background: rgba(0, 232, 240, 0.1);
+    color: #ffffff;
+  }
     .ownerActions {
     display: grid;
     gap: 8px;
