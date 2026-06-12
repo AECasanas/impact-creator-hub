@@ -1224,82 +1224,91 @@ function ExchangePostCard({
             <MessageCircle size={16} strokeWidth={2.4} /> {commentCount}
           </button>
 
-                   <div className="shareMenuWrap">
-            <button
-              type="button"
-              onClick={() => setShareMenuOpen((current) => !current)}
-            >
-              <Share2 size={16} strokeWidth={2.4} />{" "}
-              {shareCopied ? "Copied!" : "Share"}
-            </button>
+           <div className="shareMenuWrap">
+  <button
+    type="button"
+    className="shareMainButton"
+    onClick={() => setShareMenuOpen((current) => !current)}
+  >
+    <Share2 size={16} strokeWidth={2.4} />{" "}
+    {shareCopied ? "Copied!" : "Share"}
+  </button>
 
-            {shareMenuOpen && (
-              <div className="shareMenu">
-                <button type="button" onClick={copyPostLink}>
-                  Copy link
-                </button>
+  {shareMenuOpen && (
+    <div className="shareMenu">
+      <button type="button" onClick={copyPostLink}>
+        <span className="shareIcon linkIcon">🔗</span>
+        Copy link
+      </button>
 
-                <button type="button" onClick={openNativeShare}>
-                  Device share
-                </button>
+      <button type="button" onClick={openNativeShare}>
+        <span className="shareIcon deviceIcon">↗</span>
+        Device share
+      </button>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    openShareWindow(
-                      `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`
-                    )
-                  }
-                >
-                  X / Twitter
-                </button>
+      <button
+        type="button"
+        onClick={() =>
+          openShareWindow(
+            `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`
+          )
+        }
+      >
+        <span className="shareIcon xIcon">X</span>
+        X / Twitter
+      </button>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    openShareWindow(
-                      `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
-                    )
-                  }
-                >
-                  Facebook
-                </button>
+      <button
+        type="button"
+        onClick={() =>
+          openShareWindow(
+            `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
+          )
+        }
+      >
+        <span className="shareIcon facebookIcon">f</span>
+        Facebook
+      </button>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    openShareWindow(
-                      `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`
-                    )
-                  }
-                >
-                  LinkedIn
-                </button>
+      <button
+        type="button"
+        onClick={() =>
+          openShareWindow(
+            `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`
+          )
+        }
+      >
+        <span className="shareIcon linkedinIcon">in</span>
+        LinkedIn
+      </button>
 
-                <button
-                  type="button"
-                  onClick={() => openShareWindow(pinterestShareUrl)}
-                >
-                  Pinterest
-                </button>
+      <button
+        type="button"
+        onClick={() => openShareWindow(pinterestShareUrl)}
+      >
+        <span className="shareIcon pinterestIcon">P</span>
+        Pinterest
+      </button>
 
-                <button type="button" onClick={shareToInstagram}>
-                  Instagram
-                </button>
+      <button type="button" onClick={shareToInstagram}>
+        <span className="shareIcon instagramIcon">IG</span>
+        Instagram
+      </button>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    openShareWindow(
-                      `mailto:?subject=${encodedTitle}&body=${encodedBody}`
-                    )
-                  }
-                >
-                  Email
-                </button>
-              </div>
-            )}
-          </div>
+      <button
+        type="button"
+        onClick={() =>
+          openShareWindow(
+            `mailto:?subject=${encodedTitle}&body=${encodedBody}`
+          )
+        }
+      >
+        <span className="shareIcon emailIcon">@</span>
+        Email
+      </button>
+    </div>
+  )}
+</div>
 
           <button
             type="button"
@@ -1833,18 +1842,25 @@ const exchangeStyles = `
     gap: 10px;
   }
 
-  .postCard {
+   .postCard {
     width: 650px;
-    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    overflow: visible;
     border: 1px solid #e6e8ef;
     border-radius: 18px;
     background: #ffffff;
     box-shadow: 0 14px 36px rgba(16, 23, 47, 0.08);
   }
 
+  .postCard:focus-within {
+    z-index: 40;
+  }
+
   .postBanner {
     width: 650px;
     height: 500px;
+    border-radius: 18px 18px 0 0;
     background-color: #eef2f7;
     background-size: cover;
     background-position: center;
@@ -2014,53 +2030,121 @@ const exchangeStyles = `
   }
      .shareMenuWrap {
     position: relative;
+    z-index: 500;
     display: inline-flex;
+  }
+
+  .shareMainButton {
+    position: relative;
+    z-index: 2;
   }
 
   .shareMenu {
     position: absolute;
     left: 0;
     top: calc(100% + 10px);
-    z-index: 80;
-    width: 190px;
+    z-index: 900;
+    width: 220px;
+    max-height: 360px;
+    overflow-y: auto;
     display: grid;
     gap: 4px;
-    border: 1px solid #e6e8ef;
-    border-radius: 14px;
+    border: 1px solid rgba(0, 174, 184, 0.22);
+    border-radius: 16px;
     background: #ffffff;
-    box-shadow: 0 18px 44px rgba(16, 23, 47, 0.18);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
     padding: 8px;
   }
 
   .shareMenu button {
     width: 100%;
-    min-height: 36px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
     justify-content: flex-start;
-    border-radius: 10px;
-    color: rgba(16, 23, 47, 0.74);
-    font-size: 0.8rem;
+    gap: 10px;
+    border-radius: 12px;
+    color: rgba(16, 23, 47, 0.78);
+    font-size: 0.82rem;
     font-weight: 900;
     padding: 0 10px;
   }
 
   .shareMenu button:hover {
-    background: #f7f8fb;
+    background: rgba(0, 232, 240, 0.1);
     color: #008b94;
   }
 
+  .shareIcon {
+    width: 24px;
+    height: 24px;
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 950;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .linkIcon {
+    background: #00aeb8;
+    font-size: 0.72rem;
+  }
+
+  .deviceIcon {
+    background: #10172f;
+    font-size: 0.9rem;
+  }
+
+  .xIcon {
+    background: #000000;
+  }
+
+  .facebookIcon {
+    background: #1877f2;
+    font-family: Arial, sans-serif;
+    font-size: 0.95rem;
+  }
+
+  .linkedinIcon {
+    background: #0a66c2;
+    font-size: 0.58rem;
+    letter-spacing: -0.04em;
+  }
+
+  .pinterestIcon {
+    background: #e60023;
+    font-family: Georgia, serif;
+    font-size: 0.9rem;
+  }
+
+  .instagramIcon {
+    background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
+    font-size: 0.56rem;
+    letter-spacing: -0.03em;
+  }
+
+  .emailIcon {
+    background: #ff8c82;
+    font-size: 0.8rem;
+  }
+
   .exchangePage.darkFeed .shareMenu {
-    border-color: rgba(255, 255, 255, 0.1);
-    background: #151a22;
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.32);
+    border-color: rgba(0, 232, 240, 0.22);
+    background: #f7f8fb;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
   }
 
   .exchangePage.darkFeed .shareMenu button {
-    color: rgba(238, 243, 247, 0.74);
+    color: rgba(16, 23, 47, 0.82);
   }
 
   .exchangePage.darkFeed .shareMenu button:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: #00e8f0;
+    background: rgba(0, 232, 240, 0.12);
+    color: #008b94;
   } 
     .ownerActions {
     display: grid;
