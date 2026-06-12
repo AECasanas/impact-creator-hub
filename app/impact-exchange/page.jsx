@@ -480,23 +480,111 @@ export default function ImpactExchangePage() {
           </div>
         </a>
 
-        {user ? (
-          <a href={dashboardPath} className="loginButton">
-            Dashboard
+        <nav className="topMenu">
+          <a href="/impact-exchange" className="activeTopMenu">
+            Exchange
           </a>
-        ) : (
-          <a href="/login?redirect=/impact-exchange" className="loginButton">
-            Log In
-          </a>
-        )}
+          <a href={dashboardPath}>Dashboard</a>
+          <a href="/dashboard/post">Post</a>
+          <a href="/dashboard/saved">Saved</a>
+        </nav>
+
+        <div className="topIconGroup">
+          <button type="button" className="topIconButton" aria-label="Search">
+            ⌕
+          </button>
+
+          <button
+            type="button"
+            className="topIconButton"
+            aria-label="Notifications"
+          >
+            🔔
+            <span className="notificationDot"></span>
+          </button>
+
+          {user ? (
+            <a href={dashboardPath} className="topProfileButton">
+              {user.email?.charAt(0)?.toUpperCase() || "I"}
+            </a>
+          ) : (
+            <a href="/login?redirect=/impact-exchange" className="loginButton">
+              Log In
+            </a>
+          )}
+        </div>
       </header>
 
       <section className="exchangeLayout">
-        <div className="leftBlank" />
+        <aside className="leftMenu">
+          <a href={dashboardPath} className="leftMenuItem">
+            <span>🏠</span>
+            Dashboard
+          </a>
+
+          <a href={dashboardPath} className="leftMenuItem">
+            <span>👤</span>
+            Profile
+          </a>
+
+          <a href="/dashboard/post" className="leftMenuItem">
+            <span>✍️</span>
+            Create Post
+          </a>
+
+          <a href="/create-postcard" className="leftMenuItem">
+            <span>💌</span>
+            Postcard
+          </a>
+
+          <a href="/dashboard/saved" className="leftMenuItem">
+            <span>🔖</span>
+            Saved
+          </a>
+
+          <a href="/dashboard/inquiries" className="leftMenuItem">
+            <span>💬</span>
+            Inquiries
+          </a>
+
+          <a href="/impact-exchange" className="leftMenuItem activeLeftMenu">
+            <span>🌐</span>
+            Exchange
+          </a>
+        </aside>
 
         <section className="feedColumn">
           <div className="feedTitleRow">
             <p className="feedKicker">Impact Exchange</p>
+          </div>
+
+          <div className="quickPostCard">
+            <div className="quickPostTop">
+              <div className="quickPostAvatar">
+                {user ? user.email?.charAt(0)?.toUpperCase() || "I" : "I"}
+              </div>
+
+              <a
+                href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}
+                className="quickPostInput"
+              >
+                What do you want to share today?
+              </a>
+            </div>
+
+            <div className="quickPostActions">
+              <a href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}>
+                🖼 Photo/video
+              </a>
+
+              <a href={user ? "/create-postcard" : "/login?redirect=/create-postcard"}>
+                💌 Postcard
+              </a>
+
+              <a href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}>
+                ✨ Collaboration
+              </a>
+            </div>
           </div>
 
           {loading && (
@@ -520,6 +608,7 @@ export default function ImpactExchangePage() {
                   : activeFilter.toLowerCase().slice(0, -1) + " "}
                 posts yet.
               </p>
+
               <span>
                 {activeFilter === "All"
                   ? "Brand and creator posts will appear here once they are published."
@@ -607,6 +696,7 @@ export default function ImpactExchangePage() {
                 <strong>{posts.length}</strong>
                 <span>Total posts</span>
               </div>
+
               <div>
                 <strong>
                   {
@@ -617,6 +707,7 @@ export default function ImpactExchangePage() {
                 </strong>
                 <span>Creator posts</span>
               </div>
+
               <div>
                 <strong>
                   {
@@ -698,10 +789,12 @@ function ExchangePostCard({
         : "";
 
   const avatarUrl = isBrand ? brand?.logo_url : profile?.profile_photo_url;
+
   const bannerUrl =
     post.image_url || (isBrand ? brand?.banner_url : profile?.banner_photo_url);
 
   const accentName = isBrand ? brand?.accent_name : profile?.accent_name;
+
   const accentColor =
     (isBrand ? brand?.accent_color : profile?.accent_color) || "#00e8f0";
 
@@ -857,6 +950,7 @@ function SidebarProfile({ type, profile }) {
     : profile.creator_type || "Creator";
 
   const location = profile.location || "";
+
   const avatarUrl = isBrand ? profile.logo_url : profile.profile_photo_url;
 
   const profileUrl = isBrand
@@ -893,6 +987,7 @@ function SidebarProfile({ type, profile }) {
         )}
 
         <p>{isBrand ? "Brand" : "Creator"}</p>
+
         <p>
           {label}
           {location ? ` · ${location}` : ""}
@@ -930,13 +1025,13 @@ const exchangeStyles = `
   }
 
   .exchangeHeader {
-    width: min(1480px, 100%);
+    width: min(1540px, 100%);
     min-height: 78px;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
+    gap: 18px;
     border-bottom: 1px solid rgba(16, 23, 47, 0.1);
     padding: 16px 32px;
   }
@@ -979,6 +1074,67 @@ const exchangeStyles = `
     font-style: normal;
   }
 
+  .topMenu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .topMenu a {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    color: rgba(16,23,47,0.68);
+    font-size: 0.86rem;
+    font-weight: 900;
+    padding: 0 14px;
+    text-decoration: none;
+  }
+
+  .topMenu a:hover,
+  .topMenu .activeTopMenu {
+    background: #ffffff;
+    color: #008b94;
+    box-shadow: 0 8px 22px rgba(16,23,47,0.06);
+  }
+
+  .topIconGroup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .topIconButton,
+  .topProfileButton {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #e6e8ef;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #10172f;
+    box-shadow: 0 8px 22px rgba(16,23,47,0.06);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 950;
+    text-decoration: none;
+  }
+
+  .notificationDot {
+    position: absolute;
+    top: 7px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border: 2px solid #ffffff;
+    border-radius: 999px;
+    background: #ff6b61;
+  }
+
   .loginButton {
     min-height: 42px;
     display: inline-flex;
@@ -995,18 +1151,47 @@ const exchangeStyles = `
   }
 
   .exchangeLayout {
-    width: min(1480px, 100%);
+    width: min(1540px, 100%);
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 180px 500px 410px;
-    gap: 48px;
+    grid-template-columns: 210px 650px 360px;
+    gap: 36px;
     align-items: start;
     justify-content: center;
     padding: 18px 32px 80px;
   }
 
-  .leftBlank {
-    min-height: 1px;
+  .leftMenu {
+    position: sticky;
+    top: 18px;
+    display: grid;
+    gap: 8px;
+  }
+
+  .leftMenuItem {
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 14px;
+    color: rgba(16,23,47,0.76);
+    font-size: 0.92rem;
+    font-weight: 900;
+    padding: 0 12px;
+    text-decoration: none;
+  }
+
+  .leftMenuItem span {
+    width: 26px;
+    display: inline-flex;
+    justify-content: center;
+  }
+
+  .leftMenuItem:hover,
+  .leftMenuItem.activeLeftMenu {
+    background: #ffffff;
+    color: #008b94;
+    box-shadow: 0 8px 22px rgba(16,23,47,0.06);
   }
 
   .feedColumn {
@@ -1026,13 +1211,83 @@ const exchangeStyles = `
     text-transform: uppercase;
   }
 
+  .quickPostCard {
+    width: 650px;
+    margin-bottom: 12px;
+    border: 1px solid #e6e8ef;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 14px 36px rgba(16, 23, 47, 0.08);
+    padding: 14px 16px;
+  }
+
+  .quickPostTop {
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .quickPostAvatar {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: #020617;
+    color: #ffffff;
+    font-weight: 950;
+  }
+
+  .quickPostInput {
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    border-radius: 999px;
+    background: #f7f8fb;
+    color: rgba(16,23,47,0.56);
+    font-size: 0.95rem;
+    font-weight: 800;
+    padding: 0 18px;
+    text-decoration: none;
+  }
+
+  .quickPostInput:hover {
+    background: #eef2f7;
+  }
+
+  .quickPostActions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+    border-top: 1px solid #eef0f5;
+    padding-top: 10px;
+  }
+
+  .quickPostActions a {
+    min-height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    color: rgba(16,23,47,0.7);
+    font-size: 0.84rem;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .quickPostActions a:hover {
+    background: #f7f8fb;
+    color: #008b94;
+  }
+
   .postFeed {
     display: grid;
     gap: 10px;
   }
 
   .postCard {
-    width: 500px;
+    width: 650px;
     overflow: hidden;
     border: 1px solid #e6e8ef;
     border-radius: 18px;
@@ -1041,7 +1296,7 @@ const exchangeStyles = `
   }
 
   .postBanner {
-    width: 500px;
+    width: 650px;
     height: 500px;
     background-color: #eef2f7;
     background-size: cover;
@@ -1476,7 +1731,7 @@ const exchangeStyles = `
 
   .statusCard,
   .errorCard {
-    width: 500px;
+    width: 650px;
     min-height: 500px;
     display: flex;
     flex-direction: column;
@@ -1512,11 +1767,11 @@ const exchangeStyles = `
 
   @media (max-width: 1200px) {
     .exchangeLayout {
-      grid-template-columns: 500px 410px;
+      grid-template-columns: 650px 360px;
       justify-content: center;
     }
 
-    .leftBlank {
+    .leftMenu {
       display: none;
     }
   }
@@ -1535,10 +1790,18 @@ const exchangeStyles = `
       order: -1;
     }
 
+    .topMenu {
+      display: none;
+    }
+
+    .quickPostCard {
+      width: min(650px, 100%);
+    }
+
     .postCard,
     .statusCard,
     .errorCard {
-      width: min(500px, 100%);
+      width: min(650px, 100%);
     }
   }
 
@@ -1549,8 +1812,16 @@ const exchangeStyles = `
       padding: 18px;
     }
 
+    .topIconGroup {
+      align-self: stretch;
+    }
+
     .exchangeLayout {
       padding: 16px;
+    }
+
+    .quickPostActions {
+      grid-template-columns: 1fr;
     }
 
     .postBanner {
