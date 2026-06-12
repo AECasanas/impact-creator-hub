@@ -1662,10 +1662,10 @@ const exchangeStyles = `
 .exchangePage.darkFeed .quickPostInput,
 .exchangePage.darkFeed .commentItem,
 .exchangePage.darkFeed .commentForm input {
-  border-color: rgba(255, 255, 255, 0.085);
-  background: rgba(255, 255, 255, 0.038);
+  border-color: rgba(255, 255, 255, 0.13);
+  background: rgba(7, 10, 16, 0.46);
   color: #eef3f7;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.26);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
 }
 
 .exchangePage.darkFeed .quickPostInput {
@@ -2687,12 +2687,12 @@ const exchangeStyles = `
     line-height: 1.25;
   }
 
-  .followButton {
+   .followButton {
     min-height: 34px;
-    border: 1px solid rgba(0, 232, 240, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.72);
     border-radius: 999px;
-    background: rgba(0, 232, 240, 0.1);
-    color: #00e8f0;
+    background: transparent;
+    color: #ffffff;
     cursor: pointer;
     font: inherit;
     font-size: 0.74rem;
@@ -2702,18 +2702,20 @@ const exchangeStyles = `
   }
 
   .followButton:hover {
-    background: #00e8f0;
-    color: #020617;
+    border-color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
   }
 
   .followingButton {
-    border-color: rgba(255, 255, 255, 0.16);
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(238, 243, 247, 0.72);
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
   }
 
   .followingButton:hover {
-    background: rgba(255, 140, 130, 0.14);
+    border-color: #ff8c82;
+    background: rgba(255, 140, 130, 0.12);
     color: #ff8c82;
   }
 
