@@ -915,7 +915,7 @@ function ExchangePostCard({
           </button>
 
           <button type="button" onClick={onShare}>
-            ↗ Share
+            Share
           </button>
 
           <button
