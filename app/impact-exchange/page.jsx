@@ -1285,23 +1285,25 @@ const exchangeStyles = `
     box-shadow: 0 8px 22px rgba(16,23,47,0.06);
   }
 
-  .exchangeLayout {
-    width: min(1540px, 100%);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 210px 650px 360px;
-    gap: 36px;
-    align-items: start;
-    justify-content: center;
-    padding: 18px 32px 80px;
-  }
+ .exchangeLayout {
+  width: 100%;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 260px 90px 650px 36px 360px;
+  gap: 0;
+  align-items: start;
+  justify-content: start;
+  padding: 18px 32px 80px;
+}
 
-  .leftMenu {
-    position: sticky;
-    top: 18px;
-    display: grid;
-    gap: 8px;
-  }
+ .leftMenu {
+  position: sticky;
+  top: 18px;
+  display: grid;
+  gap: 8px;
+  grid-column: 1;
+  padding-left: 92px;
+}
 
   .leftMenuItem {
     min-height: 46px;
@@ -1329,9 +1331,10 @@ const exchangeStyles = `
     box-shadow: 0 8px 22px rgba(16,23,47,0.06);
   }
 
-  .feedColumn {
-    min-width: 0;
-  }
+.feedColumn {
+  min-width: 0;
+  grid-column: 3;
+}
 
   .feedTitleRow {
     margin-bottom: 12px;
@@ -1667,11 +1670,12 @@ const exchangeStyles = `
   }
 
   .rightColumn {
-    position: sticky;
-    top: 18px;
-    display: grid;
-    gap: 10px;
-  }
+  position: sticky;
+  top: 18px;
+  display: grid;
+  gap: 10px;
+  grid-column: 5;
+}
 
   .filterRow {
     display: flex;
