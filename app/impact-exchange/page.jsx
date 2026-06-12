@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -321,6 +322,32 @@ export default function ImpactExchangePage() {
     }));
   }
 
+  async function sharePost(post) {
+    const postUrl = `${window.location.origin}/impact-exchange`;
+    const shareTitle = post.title || "Impact Exchange post";
+    const shareText = post.body || "Check out this post on Impact Creator Hub.";
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: postUrl,
+        });
+        return;
+      } catch (error) {
+        console.warn("Share cancelled or failed:", error);
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(postUrl);
+      alert("Post link copied.");
+    } catch (error) {
+      alert("Could not copy the link.");
+    }
+  }
+
   async function toggleSave(postId) {
     if (!user) {
       window.location.assign("/login?redirect=/impact-exchange");
@@ -634,6 +661,7 @@ export default function ImpactExchangePage() {
                   onToggleLike={() => toggleLike(post.id)}
                   onToggleSave={() => toggleSave(post.id)}
                   onToggleComments={() => toggleComments(post.id)}
+                  onShare={() => sharePost(post)}
                   onCommentDraftChange={(value) =>
                     setCommentDrafts((current) => ({
                       ...current,
@@ -757,6 +785,7 @@ function ExchangePostCard({
   onToggleLike,
   onToggleSave,
   onToggleComments,
+  onShare,
   onCommentDraftChange,
   onSubmitComment,
 }) {
@@ -883,6 +912,10 @@ function ExchangePostCard({
 
           <button type="button" onClick={onToggleComments}>
             □ {commentCount}
+          </button>
+
+          <button type="button" onClick={onShare}>
+            ↗ Share
           </button>
 
           <button
