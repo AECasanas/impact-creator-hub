@@ -701,25 +701,6 @@ export default function ImpactExchangePage() {
   const featuredCreators = sidebarCreators.slice(0, 3);
   const featuredBrands = sidebarBrands.slice(0, 3);
 
-    const trendingPosts = useMemo(() => {
-    return [...posts]
-      .sort((firstPost, secondPost) => {
-        const firstScore =
-          (likeCounts[firstPost.id] || 0) + (commentCounts[firstPost.id] || 0);
-
-        const secondScore =
-          (likeCounts[secondPost.id] || 0) +
-          (commentCounts[secondPost.id] || 0);
-
-        if (secondScore !== firstScore) {
-          return secondScore - firstScore;
-        }
-
-        return new Date(secondPost.created_at || 0) - new Date(firstPost.created_at || 0);
-      })
-      .slice(0, 3);
-  }, [posts, likeCounts, commentCounts]);
-
   return (
     <main className={`exchangePage ${feedTheme === "dark" ? "darkFeed" : "lightFeed"}`}>
       <header className="exchangeHeader">
@@ -966,45 +947,35 @@ export default function ImpactExchangePage() {
             </SidebarCard>
           )}
 
-                   <SidebarCard title="Trending now">
-            {trendingPosts.length > 0 ? (
-              <div className="trendingList">
-                {trendingPosts.map((post, index) => {
-                  const isBrandPost = post.author_type?.toLowerCase() === "brand";
-                  const profile = profileMap[post.creator_profile_id];
-                  const brand = brandMap[post.brand_profile_id];
-
-                  const authorName = isBrandPost
-                    ? brand?.company_name || post.author_name || "Brand"
-                    : profile?.display_name || post.author_name || "Creator";
-
-                  const likes = likeCounts[post.id] || 0;
-                  const comments = commentCounts[post.id] || 0;
-                  const activityLabel =
-                    likes || comments
-                      ? `${likes} likes · ${comments} comments`
-                      : "New post";
-
-                  return (
-                    <a
-                      href={`/impact-exchange/post/${post.id}`}
-                      className="trendingItem"
-                      key={post.id}
-                    >
-                      <span>{index + 1}</span>
-
-                      <div>
-                        <strong>{post.title || "Untitled post"}</strong>
-                        <p>{authorName}</p>
-                        <em>{activityLabel}</em>
-                      </div>
-                    </a>
-                  );
-                })}
+          <SidebarCard title="Exchange status">
+            <div className="exchangeStats">
+              <div>
+                <strong>{posts.length}</strong>
+                <span>Total posts</span>
               </div>
-            ) : (
-              <EmptySidebarMessage text="Trending posts will appear here once posts are published." />
-            )}
+
+              <div>
+                <strong>
+                  {
+                    posts.filter(
+                      (post) => post.author_type?.toLowerCase() === "creator"
+                    ).length
+                  }
+                </strong>
+                <span>Creator posts</span>
+              </div>
+
+              <div>
+                <strong>
+                  {
+                    posts.filter(
+                      (post) => post.author_type?.toLowerCase() === "brand"
+                    ).length
+                  }
+                </strong>
+                <span>Brand posts</span>
+              </div>
+            </div>
           </SidebarCard>
 
           {!user && (
@@ -1645,7 +1616,10 @@ const exchangeStyles = `
 }
 
 .exchangePage.darkFeed {
-  background: linear-gradient(135deg, #181a20 0%, #20222a 46%, #181a20 100%);
+  background:
+    radial-gradient(circle at top left, rgba(0, 232, 240, 0.08), transparent 32%),
+    radial-gradient(circle at top right, rgba(255, 140, 130, 0.07), transparent 30%),
+    linear-gradient(135deg, #15171d 0%, #20232b 42%, #14171d 100%);
   color: #eef3f7;
 }
 
@@ -2752,61 +2726,33 @@ const exchangeStyles = `
     line-height: 1.45;
   }
 
-   .trendingList {
+  .exchangeStats {
     display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
   }
 
-  .trendingItem {
+  .exchangeStats div {
+    min-height: 78px;
     display: grid;
-    grid-template-columns: 28px minmax(0, 1fr);
-    gap: 10px;
-    align-items: start;
+    align-content: center;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.055);
-    color: inherit;
+    background: #f7f8fb;
     padding: 12px;
-    text-decoration: none;
   }
 
-  .trendingItem:hover {
-    background: rgba(255, 255, 255, 0.09);
+  .exchangeStats strong {
+    color: #00aeb8;
+    font-size: 1.35rem;
+    line-height: 1;
   }
 
-  .trendingItem > span {
-    width: 24px;
-    height: 24px;
-    display: grid;
-    place-items: center;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #00e8f0;
+  .exchangeStats span {
+    margin-top: 6px;
+    color: rgba(16,23,47,0.58);
     font-size: 0.72rem;
-    font-weight: 950;
-  }
-
-  .trendingItem strong {
-    display: block;
-    color: #eef3f7;
-    font-size: 0.86rem;
-    font-weight: 950;
-    line-height: 1.25;
-  }
-
-  .trendingItem p {
-    margin: 4px 0 0;
-    color: rgba(238, 243, 247, 0.64);
-    font-size: 0.76rem;
-    font-weight: 750;
-  }
-
-  .trendingItem em {
-    display: block;
-    margin-top: 4px;
-    color: rgba(238, 243, 247, 0.48);
-    font-size: 0.7rem;
-    font-style: normal;
     font-weight: 800;
+    line-height: 1.25;
   }
 
   .signInCard {
@@ -2977,7 +2923,8 @@ const exchangeStyles = `
       justify-self: start;
     }
 
-       .trendingItem {
-      grid-template-columns: 24px minmax(0, 1fr);
+    .exchangeStats {
+      grid-template-columns: 1fr;
     }
+  }
 `;
