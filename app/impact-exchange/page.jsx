@@ -36,6 +36,8 @@ const accentLogoImages = {
 export default function ImpactExchangePage() {
   const [user, setUser] = useState(null);
   const [dashboardPath, setDashboardPath] = useState("/dashboard/profile");
+  const [currentUserAvatarUrl, setCurrentUserAvatarUrl] = useState("");
+  const [currentUserInitial, setCurrentUserInitial] = useState("I");
   const [posts, setPosts] = useState([]);
   const [profileMap, setProfileMap] = useState({});
   const [brandMap, setBrandMap] = useState({});
@@ -110,26 +112,36 @@ export default function ImpactExchangePage() {
   async function resolveDashboardPath(userId) {
     const { data: brandProfile } = await supabase
       .from("brand_profiles")
-      .select("id")
+      .select("id, company_name, logo_url")
       .eq("user_id", userId)
       .maybeSingle();
 
     if (brandProfile) {
       setDashboardPath("/dashboard/brand");
+      setCurrentUserAvatarUrl(brandProfile.logo_url || "");
+      setCurrentUserInitial(
+        (brandProfile.company_name || "B").charAt(0).toUpperCase()
+      );
       return;
     }
 
     const { data: creatorProfile } = await supabase
       .from("creator_profiles")
-      .select("id")
+      .select("id, display_name, profile_photo_url")
       .eq("user_id", userId)
       .maybeSingle();
 
     if (creatorProfile) {
       setDashboardPath("/dashboard/profile");
+      setCurrentUserAvatarUrl(creatorProfile.profile_photo_url || "");
+      setCurrentUserInitial(
+        (creatorProfile.display_name || "I").charAt(0).toUpperCase()
+      );
       return;
     }
 
+    setCurrentUserAvatarUrl("");
+    setCurrentUserInitial("I");
     setDashboardPath("/create-profile/free");
   }
 
@@ -739,8 +751,16 @@ export default function ImpactExchangePage() {
           </button>
 
           {user ? (
-            <a href={dashboardPath} className="topProfileButton">
-              {user.email?.charAt(0)?.toUpperCase() || "I"}
+                       <a href={dashboardPath} className="topProfileButton">
+              {currentUserAvatarUrl ? (
+                <img
+                  src={currentUserAvatarUrl}
+                  alt="Your profile"
+                  className="topProfileImage"
+                />
+              ) : (
+                currentUserInitial
+              )}
             </a>
           ) : (
             <a href="/login?redirect=/impact-exchange" className="loginButton">
@@ -758,7 +778,13 @@ export default function ImpactExchangePage() {
           </a>
 
           <a href={dashboardPath} className="leftMenuItem">
-            <span><CircleUserRound size={18} strokeWidth={2.4} /></span>
+                        <span className="leftMenuProfileIcon">
+              {currentUserAvatarUrl ? (
+                <img src={currentUserAvatarUrl} alt="Your profile" />
+              ) : (
+                <CircleUserRound size={18} strokeWidth={2.4} />
+              )}
+            </span>
             Profile
           </a>
 
@@ -1819,7 +1845,12 @@ const exchangeStyles = `
     font-weight: 950;
     text-decoration: none;
   }
-
+  .topProfileImage {
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    object-fit: cover;
+  }
   .notificationDot {
     position: absolute;
     top: 7px;
@@ -1884,7 +1915,12 @@ const exchangeStyles = `
     display: inline-flex;
     justify-content: center;
   }
-
+  .leftMenuProfileIcon img {
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    object-fit: cover;
+  }
   .leftMenuItem:hover,
   .leftMenuItem.activeLeftMenu {
     background: #ffffff;
