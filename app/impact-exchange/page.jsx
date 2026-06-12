@@ -1064,18 +1064,77 @@ function ExchangePostCard({
   const externalUrl = formatExternalUrl(post.link_url || post.post_url || "");
   const isOwner = currentUserId && post.user_id === currentUserId;
 
+   const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
+
   const postShareUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/impact-exchange?post=${post.id}`
       : `/impact-exchange?post=${post.id}`;
 
+  const postImageUrl = post.image_url || bannerUrl || "";
+  const shareTitle = post.title || "Impact Creator Hub post";
+  const shareText = `Check out this post on Impact Creator Hub: ${shareTitle}`;
+  const shareBody = `${shareText}\n\n${postShareUrl}`;
+
+  const encodedUrl = encodeURIComponent(postShareUrl);
+  const encodedTitle = encodeURIComponent(shareTitle);
+  const encodedText = encodeURIComponent(shareText);
+  const encodedBody = encodeURIComponent(shareBody);
+  const encodedImage = encodeURIComponent(postImageUrl);
+
+  const pinterestShareUrl = postImageUrl
+    ? `https://www.pinterest.com/pin/create/button/?url=${encodedUrl}&media=${encodedImage}&description=${encodedText}`
+    : `https://www.pinterest.com/pin/create/button/?url=${encodedUrl}&description=${encodedText}`;
+
   async function copyPostLink() {
     try {
       await navigator.clipboard.writeText(postShareUrl);
-      alert("Post link copied.");
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 1800);
     } catch {
       window.prompt("Copy this post link:", postShareUrl);
     }
+  }
+
+  async function copyShareBody() {
+    try {
+      await navigator.clipboard.writeText(shareBody);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 1800);
+    } catch {
+      window.prompt("Copy this post text:", shareBody);
+    }
+  }
+
+  async function openNativeShare() {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: postShareUrl,
+        });
+
+        setShareMenuOpen(false);
+        return;
+      } catch {
+        return;
+      }
+    }
+
+    await copyPostLink();
+  }
+
+  function openShareWindow(url) {
+    window.open(url, "_blank", "noopener,noreferrer");
+    setShareMenuOpen(false);
+  }
+
+  async function shareToInstagram() {
+    await copyShareBody();
+    window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+    setShareMenuOpen(false);
   }
 
   return (
@@ -1165,9 +1224,82 @@ function ExchangePostCard({
             <MessageCircle size={16} strokeWidth={2.4} /> {commentCount}
           </button>
 
-          <button type="button" onClick={copyPostLink}>
-            <Share2 size={16} strokeWidth={2.4} /> Share
-          </button>
+                   <div className="shareMenuWrap">
+            <button
+              type="button"
+              onClick={() => setShareMenuOpen((current) => !current)}
+            >
+              <Share2 size={16} strokeWidth={2.4} />{" "}
+              {shareCopied ? "Copied!" : "Share"}
+            </button>
+
+            {shareMenuOpen && (
+              <div className="shareMenu">
+                <button type="button" onClick={copyPostLink}>
+                  Copy link
+                </button>
+
+                <button type="button" onClick={openNativeShare}>
+                  Device share
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    openShareWindow(
+                      `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`
+                    )
+                  }
+                >
+                  X / Twitter
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    openShareWindow(
+                      `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
+                    )
+                  }
+                >
+                  Facebook
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    openShareWindow(
+                      `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`
+                    )
+                  }
+                >
+                  LinkedIn
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => openShareWindow(pinterestShareUrl)}
+                >
+                  Pinterest
+                </button>
+
+                <button type="button" onClick={shareToInstagram}>
+                  Instagram
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    openShareWindow(
+                      `mailto:?subject=${encodedTitle}&body=${encodedBody}`
+                    )
+                  }
+                >
+                  Email
+                </button>
+              </div>
+            )}
+          </div>
 
           <button
             type="button"
@@ -1880,6 +2012,56 @@ const exchangeStyles = `
     .postActions .pushAction {
     margin-left: auto;
   }
+     .shareMenuWrap {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .shareMenu {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 10px);
+    z-index: 80;
+    width: 190px;
+    display: grid;
+    gap: 4px;
+    border: 1px solid #e6e8ef;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 18px 44px rgba(16, 23, 47, 0.18);
+    padding: 8px;
+  }
+
+  .shareMenu button {
+    width: 100%;
+    min-height: 36px;
+    justify-content: flex-start;
+    border-radius: 10px;
+    color: rgba(16, 23, 47, 0.74);
+    font-size: 0.8rem;
+    font-weight: 900;
+    padding: 0 10px;
+  }
+
+  .shareMenu button:hover {
+    background: #f7f8fb;
+    color: #008b94;
+  }
+
+  .exchangePage.darkFeed .shareMenu {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: #151a22;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.32);
+  }
+
+  .exchangePage.darkFeed .shareMenu button {
+    color: rgba(238, 243, 247, 0.74);
+  }
+
+  .exchangePage.darkFeed .shareMenu button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #00e8f0;
+  } 
     .ownerActions {
     display: grid;
     gap: 8px;
