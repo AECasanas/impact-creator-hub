@@ -51,6 +51,15 @@ export default function ImpactExchangePage() {
   const [feedTheme, setFeedTheme] = useState("dark");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [editingPost, setEditingPost] = useState(null);
+  const [editDraft, setEditDraft] = useState({
+    title: "",
+    body: "",
+    post_type: "Collaboration",
+    link_url: "",
+    is_published: true,
+  });
+  const [editSaving, setEditSaving] = useState(false);
 
   useEffect(() => {
     loadPage();
@@ -488,6 +497,78 @@ export default function ImpactExchangePage() {
 
     setPosts((current) => current.filter((post) => post.id !== postId));
   }
+    function startEditPost(post) {
+    if (!user) {
+      window.location.assign("/login?redirect=/impact-exchange");
+      return;
+    }
+
+    if (post.user_id !== user.id) {
+      alert("You can only edit your own posts.");
+      return;
+    }
+
+    setEditingPost(post);
+    setEditDraft({
+      title: post.title || "",
+      body: post.body || "",
+      post_type: post.post_type || "Collaboration",
+      link_url: post.link_url || post.post_url || "",
+      is_published: post.is_published !== false,
+    });
+  }
+
+  function cancelEditPost() {
+    setEditingPost(null);
+    setEditDraft({
+      title: "",
+      body: "",
+      post_type: "Collaboration",
+      link_url: "",
+      is_published: true,
+    });
+  }
+
+  async function saveEditedPost() {
+    if (!user || !editingPost) {
+      return;
+    }
+
+    if (editingPost.user_id !== user.id) {
+      alert("You can only edit your own posts.");
+      return;
+    }
+
+    setEditSaving(true);
+
+    const { data, error } = await supabase
+      .from("impact_exchange_posts")
+      .update({
+        title: editDraft.title.trim(),
+        body: editDraft.body.trim(),
+        post_type: editDraft.post_type,
+        link_url: editDraft.link_url.trim(),
+        is_published: editDraft.is_published,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", editingPost.id)
+      .eq("user_id", user.id)
+      .select("*")
+      .single();
+
+    setEditSaving(false);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    setPosts((current) =>
+      current.map((post) => (post.id === editingPost.id ? data : post))
+    );
+
+    cancelEditPost();
+  }
   const filteredPosts = useMemo(() => {
     if (activeFilter === "All") {
       return posts;
@@ -692,6 +773,7 @@ export default function ImpactExchangePage() {
   }
   onSubmitComment={() => submitComment(post.id)}
   onDeletePost={() => deletePost(post.id)}
+  onStartEditPost={() => startEditPost(post)}
 />
               ))}
             </div>
@@ -794,8 +876,110 @@ export default function ImpactExchangePage() {
               <a href="/login?redirect=/impact-exchange">Log In</a>
             </div>
           )}
-        </aside>
+               </aside>
       </section>
+
+      {editingPost && (
+        <div className="editModalOverlay">
+          <div className="editModalCard">
+            <div className="editModalHeader">
+              <div>
+                <p>Edit post</p>
+                <h2>Update your Impact Exchange post.</h2>
+              </div>
+
+              <button type="button" onClick={cancelEditPost}>
+                ×
+              </button>
+            </div>
+
+            <div className="editModalGrid">
+              <label>
+                Post title
+                <input
+                  value={editDraft.title}
+                  onChange={(event) =>
+                    setEditDraft((current) => ({
+                      ...current,
+                      title: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+
+              <label>
+                Post type
+                <select
+                  value={editDraft.post_type}
+                  onChange={(event) =>
+                    setEditDraft((current) => ({
+                      ...current,
+                      post_type: event.target.value,
+                    }))
+                  }
+                >
+                  <option value="Collaboration">Collaboration</option>
+                  <option value="Project update">Project update</option>
+                  <option value="Availability">Availability</option>
+                  <option value="Creator call">Creator call</option>
+                  <option value="Campaign idea">Campaign idea</option>
+                  <option value="Announcement">Announcement</option>
+                </select>
+              </label>
+            </div>
+
+            <label className="editModalFull">
+              Post details
+              <textarea
+                value={editDraft.body}
+                onChange={(event) =>
+                  setEditDraft((current) => ({
+                    ...current,
+                    body: event.target.value,
+                  }))
+                }
+              />
+            </label>
+
+            <label className="editModalFull">
+              Link URL
+              <input
+                value={editDraft.link_url}
+                onChange={(event) =>
+                  setEditDraft((current) => ({
+                    ...current,
+                    link_url: event.target.value,
+                  }))
+                }
+              />
+            </label>
+
+            <label className="editPublishRow">
+              <input
+                type="checkbox"
+                checked={editDraft.is_published}
+                onChange={(event) =>
+                  setEditDraft((current) => ({
+                    ...current,
+                    is_published: event.target.checked,
+                  }))
+                }
+              />
+              Published on Impact Exchange
+            </label>
+
+            <div className="editModalActions">
+              <button type="button" onClick={cancelEditPost}>
+                Cancel
+              </button>
+
+              <button type="button" onClick={saveEditedPost} disabled={editSaving}>
+                {editSaving ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx global>{exchangeStyles}</style>
     </main>
@@ -820,6 +1004,7 @@ function ExchangePostCard({
   onCommentDraftChange,
   onSubmitComment,
   onDeletePost,
+  onStartEditPost,
 }) {
   const isBrand = post.author_type?.toLowerCase() === "brand";
 
@@ -984,11 +1169,11 @@ function ExchangePostCard({
           </button>
         </div>
 
-        {isOwner && (
+                {isOwner && (
           <div className="ownerActions">
-            <a href={`/dashboard/post?edit=${post.id}`}>
+            <button type="button" onClick={onStartEditPost}>
               <Pencil size={14} strokeWidth={2.4} /> Edit
-            </a>
+            </button>
 
             <button type="button" onClick={onDeletePost}>
               <Trash2 size={14} strokeWidth={2.4} /> Delete
@@ -1717,6 +1902,147 @@ const exchangeStyles = `
 
   .exchangePage.darkFeed .ownerActions button {
     color: #ff8c82;
+  }
+
+    .editModalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    background: rgba(2, 6, 23, 0.74);
+    padding: 24px;
+  }
+
+  .editModalCard {
+    width: min(640px, 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px;
+    background: #151a22;
+    color: #eef3f7;
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.45);
+    padding: 22px;
+  }
+
+  .editModalHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+
+  .editModalHeader p {
+    margin: 0 0 8px;
+    color: #00e8f0;
+    font-size: 0.68rem;
+    font-weight: 950;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .editModalHeader h2 {
+    margin: 0;
+    font-size: 1.45rem;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+  }
+
+  .editModalHeader button {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  .editModalGrid {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 12px;
+  }
+
+  .editModalGrid label,
+  .editModalFull {
+    display: grid;
+    gap: 8px;
+    color: rgba(238, 243, 247, 0.74);
+    font-size: 0.76rem;
+    font-weight: 900;
+  }
+
+  .editModalFull {
+    margin-top: 12px;
+  }
+
+  .editModalGrid input,
+  .editModalGrid select,
+  .editModalFull input,
+  .editModalFull textarea {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.07);
+    color: #eef3f7;
+    font: inherit;
+    outline: none;
+    padding: 12px 13px;
+  }
+
+  .editModalGrid select option {
+    color: #10172f;
+  }
+
+  .editModalFull textarea {
+    min-height: 140px;
+    resize: vertical;
+  }
+
+  .editPublishRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    color: rgba(238, 243, 247, 0.74);
+    font-size: 0.82rem;
+    font-weight: 850;
+  }
+
+  .editModalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .editModalActions button {
+    min-height: 40px;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 950;
+    padding: 0 18px;
+  }
+
+  .editModalActions button:first-child {
+    background: rgba(255, 255, 255, 0.08);
+    color: #eef3f7;
+  }
+
+  .editModalActions button:last-child {
+    background: #00e8f0;
+    color: #020617;
+  }
+
+  .editModalActions button:disabled {
+    cursor: not-allowed;
+    opacity: 0.58;
   }
   .commentsPanel {
     margin-top: 14px;
