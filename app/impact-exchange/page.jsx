@@ -296,7 +296,112 @@ export default function ImpactExchangePage() {
 
     setSavedPosts(nextSavedPosts);
   }
+  async function loadFollowedProfiles(currentUser) {
+    if (!currentUser) {
+      setFollowedCreators({});
+      setFollowedBrands({});
+      return;
+    }
 
+    const { data, error } = await supabase
+      .from("follow_relationships")
+      .select("id, followed_creator_profile_id, followed_brand_profile_id")
+      .eq("follower_user_id", currentUser.id);
+
+    if (error) {
+      console.warn("LOAD FOLLOWED PROFILES ERROR:", error);
+      setFollowedCreators({});
+      setFollowedBrands({});
+      return;
+    }
+
+    const nextCreators = {};
+    const nextBrands = {};
+
+    (data || []).forEach((follow) => {
+      if (follow.followed_creator_profile_id) {
+        nextCreators[follow.followed_creator_profile_id] = true;
+      }
+
+      if (follow.followed_brand_profile_id) {
+        nextBrands[follow.followed_brand_profile_id] = true;
+      }
+    });
+
+    setFollowedCreators(nextCreators);
+    setFollowedBrands(nextBrands);
+  }
+
+  async function toggleFollowProfile(type, profileId) {
+    if (!user) {
+      window.location.assign("/login?redirect=/impact-exchange");
+      return;
+    }
+
+    const isCreator = type === "creator";
+    const alreadyFollowing = isCreator
+      ? followedCreators[profileId]
+      : followedBrands[profileId];
+
+    if (alreadyFollowing) {
+      let query = supabase
+        .from("follow_relationships")
+        .delete()
+        .eq("follower_user_id", user.id);
+
+      query = isCreator
+        ? query.eq("followed_creator_profile_id", profileId)
+        : query.eq("followed_brand_profile_id", profileId);
+
+      const { error } = await query;
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      if (isCreator) {
+        setFollowedCreators((current) => ({
+          ...current,
+          [profileId]: false,
+        }));
+      } else {
+        setFollowedBrands((current) => ({
+          ...current,
+          [profileId]: false,
+        }));
+      }
+
+      return;
+    }
+
+    const payload = {
+      follower_user_id: user.id,
+      followed_creator_profile_id: isCreator ? profileId : null,
+      followed_brand_profile_id: isCreator ? null : profileId,
+    };
+
+    const { error } = await supabase
+      .from("follow_relationships")
+      .insert(payload);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    if (isCreator) {
+      setFollowedCreators((current) => ({
+        ...current,
+        [profileId]: true,
+      }));
+    } else {
+      setFollowedBrands((current) => ({
+        ...current,
+        [profileId]: true,
+      }));
+    }
+  }
   async function toggleLike(postId) {
     if (!user) {
       window.location.assign("/login?redirect=/impact-exchange");
@@ -807,10 +912,12 @@ export default function ImpactExchangePage() {
             <SidebarCard title="Published creators">
               {featuredCreators.length > 0 ? (
                 featuredCreators.map((creator) => (
-                  <SidebarProfile
+                                   <SidebarProfile
                     key={creator.id}
                     type="creator"
                     profile={creator}
+                    isFollowing={followedCreators[creator.id] || false}
+                    onToggleFollow={() => toggleFollowProfile("creator", creator.id)}
                   />
                 ))
               ) : (
@@ -823,7 +930,13 @@ export default function ImpactExchangePage() {
             <SidebarCard title="Published brands">
               {featuredBrands.length > 0 ? (
                 featuredBrands.map((brand) => (
-                  <SidebarProfile key={brand.id} type="brand" profile={brand} />
+                                   <SidebarProfile
+                    key={brand.id}
+                    type="brand"
+                    profile={brand}
+                    isFollowing={followedBrands[brand.id] || false}
+                    onToggleFollow={() => toggleFollowProfile("brand", brand.id)}
+                  />
                 ))
               ) : (
                 <EmptySidebarMessage text="No published brands yet." />
@@ -1068,10 +1181,10 @@ function ExchangePostCard({
    const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
 
-  const postShareUrl =
+    const postShareUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/impact-exchange?post=${post.id}`
-      : `/impact-exchange?post=${post.id}`;
+      ? `${window.location.origin}/impact-exchange/post/${post.id}`
+      : `/impact-exchange/post/${post.id}`;
 
   const postImageUrl = post.image_url || bannerUrl || "";
   const shareTitle = post.title || "Impact Creator Hub post";
@@ -1405,7 +1518,7 @@ function SidebarCard({ title, children }) {
   );
 }
 
-function SidebarProfile({ type, profile }) {
+function SidebarProfile({ type, profile, isFollowing, onToggleFollow }) {
   const isBrand = type === "brand";
 
   const name = isBrand
@@ -1444,7 +1557,7 @@ function SidebarProfile({ type, profile }) {
         <img src={accentImage} alt="" className="sidebarAccent" />
       </div>
 
-      <div>
+      <div className="sidebarPersonInfo">
         {profileUrl ? (
           <a href={profileUrl} className="sidebarNameLink">
             {name}
@@ -1460,6 +1573,14 @@ function SidebarProfile({ type, profile }) {
           {location ? ` · ${location}` : ""}
         </p>
       </div>
+
+      <button
+        type="button"
+        className={isFollowing ? "followButton followingButton" : "followButton"}
+        onClick={onToggleFollow}
+      >
+        {isFollowing ? "Following" : "Follow"}
+      </button>
     </div>
   );
 }
@@ -1538,10 +1659,10 @@ const exchangeStyles = `
 .exchangePage.darkFeed .quickPostInput,
 .exchangePage.darkFeed .commentItem,
 .exchangePage.darkFeed .commentForm input {
-  border-color: rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.085);
+  background: rgba(255, 255, 255, 0.038);
   color: #eef3f7;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.26);
 }
 
 .exchangePage.darkFeed .quickPostInput {
@@ -2505,9 +2626,9 @@ const exchangeStyles = `
     gap: 14px;
   }
 
-  .sidebarPerson {
+   .sidebarPerson {
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr);
+    grid-template-columns: 48px minmax(0, 1fr) auto;
     align-items: center;
     gap: 12px;
   }
@@ -2543,6 +2664,10 @@ const exchangeStyles = `
     object-fit: cover;
   }
 
+  .sidebarPersonInfo {
+    min-width: 0;
+  }
+
   .sidebarPerson strong,
   .sidebarNameLink {
     display: block;
@@ -2557,6 +2682,36 @@ const exchangeStyles = `
     color: rgba(16,23,47,0.56);
     font-size: 0.78rem;
     line-height: 1.25;
+  }
+
+  .followButton {
+    min-height: 34px;
+    border: 1px solid rgba(0, 232, 240, 0.28);
+    border-radius: 999px;
+    background: rgba(0, 232, 240, 0.1);
+    color: #00e8f0;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 0 13px;
+    white-space: nowrap;
+  }
+
+  .followButton:hover {
+    background: #00e8f0;
+    color: #020617;
+  }
+
+  .followingButton {
+    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(238, 243, 247, 0.72);
+  }
+
+  .followingButton:hover {
+    background: rgba(255, 140, 130, 0.14);
+    color: #ff8c82;
   }
 
   .emptySidebarMessage {
