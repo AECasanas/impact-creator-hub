@@ -45,6 +45,8 @@ export default function ImpactExchangePage() {
   const [commentCounts, setCommentCounts] = useState({});
   const [userLikes, setUserLikes] = useState({});
   const [savedPosts, setSavedPosts] = useState({});
+  const [followedCreators, setFollowedCreators] = useState({});
+  const [followedBrands, setFollowedBrands] = useState({});
   const [commentsByPost, setCommentsByPost] = useState({});
   const [commentDrafts, setCommentDrafts] = useState({});
   const [openComments, setOpenComments] = useState({});
@@ -100,6 +102,7 @@ export default function ImpactExchangePage() {
     await loadSidebarProfiles();
     await loadInteractionCounts(loadedPosts, user || null);
     await loadSavedPosts(loadedPosts, user || null);
+    await loadFollowedProfiles(user || null);
 
     setLoading(false);
   }
