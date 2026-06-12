@@ -48,6 +48,7 @@ export default function ImpactExchangePage() {
   const [commentDrafts, setCommentDrafts] = useState({});
   const [openComments, setOpenComments] = useState({});
   const [activeFilter, setActiveFilter] = useState("All");
+  const [feedTheme, setFeedTheme] = useState("dark");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -485,7 +486,7 @@ export default function ImpactExchangePage() {
   const featuredBrands = sidebarBrands.slice(0, 3);
 
   return (
-    <main className="exchangePage">
+    <main className={`exchangePage ${feedTheme === "dark" ? "darkFeed" : "lightFeed"}`}>
       <header className="exchangeHeader">
         <a href="/" className="brandHeader">
           <img src="/logo-ripple.png" alt="Impact Creator Hub logo" />
@@ -670,19 +671,27 @@ export default function ImpactExchangePage() {
         </section>
 
         <aside className="rightColumn">
-          <div className="filterRow">
-            {filters.map((filter) => (
-              <button
-                type="button"
-                key={filter}
-                className={activeFilter === filter ? "activeFilter" : ""}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
+       
+<div className="filterRow">
+  {filters.map((filter) => (
+    <button
+      type="button"
+      key={filter}
+      className={activeFilter === filter ? "activeFilter" : ""}
+      onClick={() => setActiveFilter(filter)}
+    >
+      {filter}
+    </button>
+  ))}
 
+  <button
+    type="button"
+    className={feedTheme === "dark" ? "activeFilter" : ""}
+    onClick={() => setFeedTheme(feedTheme === "dark" ? "light" : "dark")}
+  >
+    {feedTheme === "dark" ? "Light feed" : "Dark feed"}
+  </button>
+</div>
           {(activeFilter === "All" || activeFilter === "Creators") && (
             <SidebarCard title="Published creators">
               {featuredCreators.length > 0 ? (
@@ -1038,12 +1047,117 @@ function formatExternalUrl(value) {
 
 const exchangeStyles = `
   .exchangePage {
-    min-height: 100vh;
-    background: #f7f8fb;
-    color: #10172f;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system,
-      BlinkMacSystemFont, "Segoe UI", sans-serif;
-  }
+  min-height: 100vh;
+  background: #f7f8fb;
+  color: #10172f;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.exchangePage.darkFeed {
+  background:
+    radial-gradient(circle at top left, rgba(0, 232, 240, 0.08), transparent 32%),
+    radial-gradient(circle at top right, rgba(255, 140, 130, 0.07), transparent 30%),
+    linear-gradient(135deg, #15171d 0%, #20232b 42%, #14171d 100%);
+  color: #eef3f7;
+}
+
+.exchangePage.darkFeed .exchangeHeader {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.exchangePage.darkFeed .brandHeader,
+.exchangePage.darkFeed .topMenu a,
+.exchangePage.darkFeed .leftMenuItem,
+.exchangePage.darkFeed .postBody h2,
+.exchangePage.darkFeed .authorNameLine a,
+.exchangePage.darkFeed .authorNameLine strong,
+.exchangePage.darkFeed .sidebarCardHeader h2,
+.exchangePage.darkFeed .sidebarPerson strong,
+.exchangePage.darkFeed .sidebarNameLink,
+.exchangePage.darkFeed .statusCard p {
+  color: #eef3f7;
+}
+
+.exchangePage.darkFeed .brandHeader span,
+.exchangePage.darkFeed .leftMenuItem,
+.exchangePage.darkFeed .postAuthor p,
+.exchangePage.darkFeed .postBody p,
+.exchangePage.darkFeed .sidebarPerson p,
+.exchangePage.darkFeed .emptySidebarMessage,
+.exchangePage.darkFeed .statusCard span {
+  color: rgba(238, 243, 247, 0.64);
+}
+
+.exchangePage.darkFeed .quickPostCard,
+.exchangePage.darkFeed .postCard,
+.exchangePage.darkFeed .sidebarCard,
+.exchangePage.darkFeed .signInCard,
+.exchangePage.darkFeed .statusCard,
+.exchangePage.darkFeed .errorCard,
+.exchangePage.darkFeed .filterRow button,
+.exchangePage.darkFeed .topIconButton,
+.exchangePage.darkFeed .topProfileButton,
+.exchangePage.darkFeed .quickPostInput,
+.exchangePage.darkFeed .commentItem,
+.exchangePage.darkFeed .commentForm input {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.055);
+  color: #eef3f7;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
+}
+
+.exchangePage.darkFeed .quickPostInput {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(238, 243, 247, 0.62);
+}
+
+.exchangePage.darkFeed .quickPostActions {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.exchangePage.darkFeed .quickPostActions a,
+.exchangePage.darkFeed .postActions button {
+  color: rgba(238, 243, 247, 0.72);
+}
+
+.exchangePage.darkFeed .quickPostActions a:hover,
+.exchangePage.darkFeed .leftMenuItem:hover,
+.exchangePage.darkFeed .leftMenuItem.activeLeftMenu,
+.exchangePage.darkFeed .topMenu a:hover,
+.exchangePage.darkFeed .topMenu .activeTopMenu {
+  background: rgba(255, 255, 255, 0.08);
+  color: #00e8f0;
+}
+
+.exchangePage.darkFeed .postActions,
+.exchangePage.darkFeed .commentsPanel {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.exchangePage.darkFeed .postActions {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.exchangePage.darkFeed .filterRow .activeFilter {
+  border-color: #00e8f0;
+  background: #00e8f0;
+  color: #020617;
+}
+
+.exchangePage.darkFeed .exchangeStats div {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.exchangePage.darkFeed .exchangeStats span {
+  color: rgba(238, 243, 247, 0.62);
+}
+
+.exchangePage.darkFeed .postLinkPreview {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: #00e8f0;
+}
 
   .exchangeHeader {
     width: min(1540px, 100%);
