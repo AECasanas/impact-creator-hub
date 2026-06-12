@@ -596,20 +596,32 @@ export default function ImpactExchangePage() {
               >
                 What do you want to share today?
               </a>
-            </div>
 
-            <div className="quickPostActions">
-              <a href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}>
-                🖼 Photo/video
-              </a>
+              <div className="quickPostActions">
+                <a
+                  href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}
+                  title="Photo/video"
+                >
+                  🖼
+                  <span>Photo/video</span>
+                </a>
 
-              <a href={user ? "/create-postcard" : "/login?redirect=/create-postcard"}>
-                💌 Postcard
-              </a>
+                <a
+                  href={user ? "/create-postcard" : "/login?redirect=/create-postcard"}
+                  title="Postcard"
+                >
+                  💌
+                  <span>Postcard</span>
+                </a>
 
-              <a href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}>
-                ✨ Collaboration
-              </a>
+                <a
+                  href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}
+                  title="Collaboration"
+                >
+                  ✨
+                  <span>Collaboration</span>
+                </a>
+              </div>
             </div>
           </div>
 
@@ -717,34 +729,31 @@ export default function ImpactExchangePage() {
             </SidebarCard>
           )}
 
-          <SidebarCard title="Exchange status">
-            <div className="exchangeStats">
-              <div>
-                <strong>{posts.length}</strong>
-                <span>Total posts</span>
-              </div>
+          <SidebarCard title="Trending niches">
+            <div className="trendingList">
+              <a href="/impact-exchange">
+                <span>1</span>
+                <strong>#FoodTravel</strong>
+                <em>142 posts</em>
+              </a>
 
-              <div>
-                <strong>
-                  {
-                    posts.filter(
-                      (post) => post.author_type?.toLowerCase() === "creator"
-                    ).length
-                  }
-                </strong>
-                <span>Creator posts</span>
-              </div>
+              <a href="/impact-exchange">
+                <span>2</span>
+                <strong>#WellnessBrands</strong>
+                <em>98 posts</em>
+              </a>
 
-              <div>
-                <strong>
-                  {
-                    posts.filter(
-                      (post) => post.author_type?.toLowerCase() === "brand"
-                    ).length
-                  }
-                </strong>
-                <span>Brand posts</span>
-              </div>
+              <a href="/impact-exchange">
+                <span>3</span>
+                <strong>#MicroCreator</strong>
+                <em>87 posts</em>
+              </a>
+
+              <a href="/impact-exchange">
+                <span>4</span>
+                <strong>#UGCCampaign</strong>
+                <em>61 posts</em>
+              </a>
             </div>
           </SidebarCard>
 
@@ -1050,8 +1059,11 @@ function formatExternalUrl(value) {
 const exchangeStyles = `
   .exchangePage {
     min-height: 100vh;
-    background: #f7f8fb;
-    color: #10172f;
+    background:
+      radial-gradient(circle at top left, rgba(0, 232, 240, 0.08), transparent 32%),
+      radial-gradient(circle at top right, rgba(255, 140, 130, 0.07), transparent 30%),
+      linear-gradient(135deg, #15171d 0%, #20232b 42%, #14171d 100%);
+    color: #f7f8fb;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system,
       BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
@@ -1064,7 +1076,9 @@ const exchangeStyles = `
     align-items: center;
     justify-content: space-between;
     gap: 18px;
-    border-bottom: 1px solid rgba(16, 23, 47, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(10, 12, 16, 0.68);
+    backdrop-filter: blur(18px);
     padding: 16px 32px;
   }
 
@@ -1072,7 +1086,7 @@ const exchangeStyles = `
     display: inline-flex;
     align-items: center;
     gap: 14px;
-    color: #10172f;
+    color: #ffffff;
     text-decoration: none;
   }
 
@@ -1094,7 +1108,7 @@ const exchangeStyles = `
   .brandHeader span {
     display: block;
     margin-top: 7px;
-    color: rgba(16,23,47,0.62);
+    color: rgba(255,255,255,0.62);
     font-size: 0.48rem;
     font-weight: 950;
     letter-spacing: 0.24em;
@@ -1118,7 +1132,7 @@ const exchangeStyles = `
     display: inline-flex;
     align-items: center;
     border-radius: 999px;
-    color: rgba(16,23,47,0.68);
+    color: rgba(255,255,255,0.66);
     font-size: 0.86rem;
     font-weight: 900;
     padding: 0 14px;
@@ -1127,9 +1141,9 @@ const exchangeStyles = `
 
   .topMenu a:hover,
   .topMenu .activeTopMenu {
-    background: #ffffff;
-    color: #008b94;
-    box-shadow: 0 8px 22px rgba(16,23,47,0.06);
+    background: rgba(255,255,255,0.1);
+    color: #00e8f0;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.22);
   }
 
   .topIconGroup {
@@ -1145,11 +1159,11 @@ const exchangeStyles = `
     height: 42px;
     display: grid;
     place-items: center;
-    border: 1px solid #e6e8ef;
+    border: 1px solid rgba(255,255,255,0.12);
     border-radius: 999px;
-    background: #ffffff;
-    color: #10172f;
-    box-shadow: 0 8px 22px rgba(16,23,47,0.06);
+    background: rgba(255,255,255,0.08);
+    color: #ffffff;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.22);
     cursor: pointer;
     font: inherit;
     font-weight: 950;
@@ -1162,7 +1176,7 @@ const exchangeStyles = `
     right: 8px;
     width: 8px;
     height: 8px;
-    border: 2px solid #ffffff;
+    border: 2px solid #191c22;
     border-radius: 999px;
     background: #ff6b61;
   }
@@ -1172,14 +1186,14 @@ const exchangeStyles = `
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #00aeb8;
+    border: 1px solid rgba(0,232,240,0.5);
     border-radius: 14px;
-    color: #008b94;
-    background: #ffffff;
+    color: #00e8f0;
+    background: rgba(0,232,240,0.08);
     font-weight: 950;
     padding: 0 22px;
     text-decoration: none;
-    box-shadow: 0 8px 22px rgba(16,23,47,0.06);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.22);
   }
 
   .exchangeLayout {
@@ -1210,7 +1224,7 @@ const exchangeStyles = `
     align-items: center;
     gap: 12px;
     border-radius: 14px;
-    color: rgba(16,23,47,0.76);
+    color: rgba(255,255,255,0.68);
     font-size: 0.92rem;
     font-weight: 900;
     padding: 0 12px;
@@ -1225,9 +1239,9 @@ const exchangeStyles = `
 
   .leftMenuItem:hover,
   .leftMenuItem.activeLeftMenu {
-    background: #ffffff;
-    color: #008b94;
-    box-shadow: 0 8px 22px rgba(16,23,47,0.06);
+    background: rgba(255,255,255,0.1);
+    color: #00e8f0;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.18);
   }
 
   .feedColumn {
@@ -1242,7 +1256,7 @@ const exchangeStyles = `
 
   .feedKicker {
     margin: 0;
-    color: #00aeb8;
+    color: #00e8f0;
     font-size: 0.72rem;
     font-weight: 950;
     letter-spacing: 0.2em;
@@ -1252,18 +1266,18 @@ const exchangeStyles = `
   .quickPostCard {
     width: 650px;
     margin-bottom: 14px;
-    border: 1px solid #e6e8ef;
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 18px;
-    background: #ffffff;
-    box-shadow: 0 14px 36px rgba(16, 23, 47, 0.08);
-    padding: 10px 16px;
+    background: rgba(20, 23, 29, 0.94);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.32);
+    padding: 12px 14px;
   }
 
   .quickPostTop {
     display: grid;
-    grid-template-columns: 40px 1fr;
+    grid-template-columns: 40px 1fr auto;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }
 
   .quickPostAvatar {
@@ -1272,7 +1286,7 @@ const exchangeStyles = `
     display: grid;
     place-items: center;
     border-radius: 999px;
-    background: #020617;
+    background: #05090b;
     color: #ffffff;
     font-weight: 950;
   }
@@ -1282,8 +1296,8 @@ const exchangeStyles = `
     display: flex;
     align-items: center;
     border-radius: 999px;
-    background: #f7f8fb;
-    color: rgba(16,23,47,0.56);
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.58);
     font-size: 0.95rem;
     font-weight: 800;
     padding: 0 18px;
@@ -1291,60 +1305,66 @@ const exchangeStyles = `
   }
 
   .quickPostInput:hover {
-    background: #eef2f7;
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.82);
   }
 
   .quickPostActions {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    align-items: center;
     gap: 8px;
-    margin-top: 8px;
-    border-top: 1px solid #eef0f5;
-    padding-top: 6px;
   }
 
   .quickPostActions a {
-    min-height: 30px;
+    min-width: 40px;
+    min-height: 40px;
     display: grid;
     place-items: center;
-    border-radius: 12px;
-    color: rgba(16,23,47,0.7);
-    font-size: 0.84rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.82);
+    font-size: 1rem;
     font-weight: 900;
     text-decoration: none;
   }
 
+  .quickPostActions a span {
+    display: none;
+  }
+
   .quickPostActions a:hover {
-    background: #f7f8fb;
-    color: #008b94;
+    border-color: rgba(0,232,240,0.4);
+    background: rgba(0,232,240,0.12);
+    color: #00e8f0;
   }
 
   .postFeed {
     display: grid;
-    gap: 10px;
+    gap: 12px;
   }
 
   .postCard {
     width: 650px;
     overflow: hidden;
-    border: 1px solid #e6e8ef;
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 18px;
-    background: #ffffff;
-    box-shadow: 0 14px 36px rgba(16, 23, 47, 0.08);
+    background: rgba(20, 23, 29, 0.96);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.34);
   }
 
   .postBanner {
     width: 650px;
     height: 500px;
-    background-color: #eef2f7;
+    background-color: #20242c;
     background-size: cover;
     background-position: center;
   }
 
   .emptyBanner {
     background:
-      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--post-accent, #00e8f0) 22%, transparent), transparent 30%),
-      linear-gradient(135deg, #f4f7fb, #eef2f7);
+      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--post-accent, #00e8f0) 28%, transparent), transparent 30%),
+      linear-gradient(135deg, #222833, #151920);
   }
 
   .postInner {
@@ -1372,7 +1392,7 @@ const exchangeStyles = `
     overflow: hidden;
     border: 2px solid var(--post-accent, #00e8f0);
     border-radius: 999px;
-    background: #020617;
+    background: #05090b;
     color: #ffffff;
     object-fit: cover;
     font-weight: 950;
@@ -1384,7 +1404,7 @@ const exchangeStyles = `
     bottom: -5px;
     width: 24px;
     height: 24px;
-    border: 3px solid #ffffff;
+    border: 3px solid #15171d;
     border-radius: 999px;
     background: #000000;
     object-fit: cover;
@@ -1404,7 +1424,7 @@ const exchangeStyles = `
 
   .authorNameLine a,
   .authorNameLine strong {
-    color: #10172f;
+    color: #ffffff;
     font-size: 1rem;
     font-weight: 950;
     text-decoration: none;
@@ -1412,7 +1432,7 @@ const exchangeStyles = `
 
   .postAuthor p {
     margin: 4px 0 0;
-    color: rgba(16,23,47,0.56);
+    color: rgba(255,255,255,0.55);
     font-size: 0.82rem;
     font-weight: 750;
   }
@@ -1429,13 +1449,13 @@ const exchangeStyles = `
   }
 
   .creatorBadge {
-    background: rgba(0,174,184,0.12);
-    color: #008b94;
+    background: rgba(0,232,240,0.14);
+    color: #00e8f0;
   }
 
   .brandBadge {
-    background: color-mix(in srgb, var(--post-accent, #00e8f0) 14%, white);
-    color: #10172f;
+    background: color-mix(in srgb, var(--post-accent, #00e8f0) 18%, #15171d);
+    color: #ffffff;
   }
 
   .postBody {
@@ -1444,7 +1464,7 @@ const exchangeStyles = `
 
   .postBody h2 {
     margin: 0;
-    color: #10172f;
+    color: #ffffff;
     font-size: 1.08rem;
     line-height: 1.25;
     letter-spacing: -0.025em;
@@ -1452,7 +1472,7 @@ const exchangeStyles = `
 
   .postBody p {
     margin: 8px 0 0;
-    color: rgba(16,23,47,0.72);
+    color: rgba(255,255,255,0.72);
     font-size: 0.96rem;
     line-height: 1.55;
   }
@@ -1462,10 +1482,10 @@ const exchangeStyles = `
     display: inline-flex;
     align-items: center;
     margin-top: 12px;
-    border: 1px solid #e6e8ef;
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 999px;
-    color: #008b94;
-    background: #f7f8fb;
+    color: #00e8f0;
+    background: rgba(0,232,240,0.08);
     font-size: 0.82rem;
     font-weight: 950;
     padding: 0 13px;
@@ -1477,14 +1497,14 @@ const exchangeStyles = `
     align-items: center;
     gap: 20px;
     margin: 14px -18px -10px;
-    border-top: 1px solid #eef0f5;
+    border-top: 1px solid rgba(255,255,255,0.08);
     padding: 10px 18px;
   }
 
   .postActions button {
     border: 0;
     background: transparent;
-    color: rgba(16,23,47,0.62);
+    color: rgba(255,255,255,0.62);
     cursor: pointer;
     font: inherit;
     font-size: 0.86rem;
@@ -1492,9 +1512,10 @@ const exchangeStyles = `
     padding: 0;
   }
 
+  .postActions button:hover,
   .postActions .likedButton,
   .postActions .savedButton {
-    color: #008b94;
+    color: #00e8f0;
   }
 
   .postActions button:last-child {
@@ -1503,7 +1524,7 @@ const exchangeStyles = `
 
   .commentsPanel {
     margin-top: 14px;
-    border-top: 1px solid #eef0f5;
+    border-top: 1px solid rgba(255,255,255,0.08);
     padding-top: 14px;
   }
 
@@ -1515,19 +1536,19 @@ const exchangeStyles = `
 
   .commentItem {
     border-radius: 14px;
-    background: #f7f8fb;
+    background: rgba(255,255,255,0.07);
     padding: 10px 12px;
   }
 
   .commentItem strong {
     display: block;
-    color: #10172f;
+    color: #ffffff;
     font-size: 0.82rem;
   }
 
   .commentItem p {
     margin: 4px 0 0;
-    color: rgba(16,23,47,0.72);
+    color: rgba(255,255,255,0.7);
     font-size: 0.86rem;
     line-height: 1.4;
   }
@@ -1540,17 +1561,17 @@ const exchangeStyles = `
 
   .commentForm input {
     width: 100%;
-    border: 1px solid #e6e8ef;
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 999px;
-    background: #f7f8fb;
-    color: #10172f;
+    background: rgba(255,255,255,0.07);
+    color: #ffffff;
     font: inherit;
     outline: none;
     padding: 11px 14px;
   }
 
   .commentForm input::placeholder {
-    color: rgba(16,23,47,0.42);
+    color: rgba(255,255,255,0.42);
   }
 
   .commentForm button {
@@ -1582,16 +1603,16 @@ const exchangeStyles = `
 
   .filterRow button {
     min-height: 36px;
-    border: 1px solid #e6e8ef;
+    border: 1px solid rgba(255,255,255,0.12);
     border-radius: 999px;
-    background: #ffffff;
-    color: #10172f;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.78);
     cursor: pointer;
     font: inherit;
     font-size: 0.82rem;
     font-weight: 900;
     padding: 0 15px;
-    box-shadow: 0 8px 22px rgba(16,23,47,0.05);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.18);
   }
 
   .filterRow .activeFilter {
@@ -1604,10 +1625,10 @@ const exchangeStyles = `
   .signInCard,
   .statusCard,
   .errorCard {
-    border: 1px solid #e6e8ef;
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 16px;
-    background: #ffffff;
-    box-shadow: 0 14px 36px rgba(16, 23, 47, 0.08);
+    background: rgba(20, 23, 29, 0.94);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.32);
   }
 
   .sidebarCard {
@@ -1624,7 +1645,7 @@ const exchangeStyles = `
 
   .sidebarCardHeader h2 {
     margin: 0;
-    color: #10172f;
+    color: #ffffff;
     font-size: 1rem;
     letter-spacing: -0.02em;
   }
@@ -1654,7 +1675,7 @@ const exchangeStyles = `
     place-items: center;
     overflow: hidden;
     border-radius: 999px;
-    background: #16202a;
+    background: #05090b;
     color: #ffffff;
     object-fit: cover;
     font-weight: 950;
@@ -1666,7 +1687,7 @@ const exchangeStyles = `
     bottom: -4px;
     width: 20px;
     height: 20px;
-    border: 3px solid #ffffff;
+    border: 3px solid #15171d;
     border-radius: 999px;
     background: #000000;
     object-fit: cover;
@@ -1675,7 +1696,7 @@ const exchangeStyles = `
   .sidebarPerson strong,
   .sidebarNameLink {
     display: block;
-    color: #10172f;
+    color: #ffffff;
     font-size: 0.9rem;
     font-weight: 950;
     text-decoration: none;
@@ -1683,45 +1704,55 @@ const exchangeStyles = `
 
   .sidebarPerson p {
     margin: 2px 0 0;
-    color: rgba(16,23,47,0.56);
+    color: rgba(255,255,255,0.52);
     font-size: 0.78rem;
     line-height: 1.25;
   }
 
   .emptySidebarMessage {
     margin: 0;
-    color: rgba(16,23,47,0.58);
+    color: rgba(255,255,255,0.58);
     font-size: 0.86rem;
     line-height: 1.45;
   }
 
-  .exchangeStats {
+  .trendingList {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 12px;
   }
 
-  .exchangeStats div {
-    min-height: 78px;
+  .trendingList a {
     display: grid;
-    align-content: center;
-    border-radius: 14px;
-    background: #f7f8fb;
-    padding: 12px;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255,255,255,0.72);
+    text-decoration: none;
   }
 
-  .exchangeStats strong {
-    color: #00aeb8;
-    font-size: 1.35rem;
-    line-height: 1;
+  .trendingList span {
+    color: rgba(255,255,255,0.32);
+    font-size: 0.9rem;
+    font-weight: 950;
   }
 
-  .exchangeStats span {
-    margin-top: 6px;
-    color: rgba(16,23,47,0.58);
-    font-size: 0.72rem;
-    font-weight: 800;
-    line-height: 1.25;
+  .trendingList strong {
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-weight: 950;
+    letter-spacing: -0.02em;
+  }
+
+  .trendingList em {
+    color: rgba(255,255,255,0.36);
+    font-size: 0.78rem;
+    font-style: normal;
+    font-weight: 850;
+  }
+
+  .trendingList a:hover strong,
+  .trendingList a:hover em {
+    color: #00e8f0;
   }
 
   .signInCard {
@@ -1746,13 +1777,13 @@ const exchangeStyles = `
 
   .signInCard h3 {
     margin: 0;
-    color: #10172f;
+    color: #ffffff;
     font-size: 1rem;
   }
 
   .signInCard p {
     margin: 4px 0 0;
-    color: rgba(16,23,47,0.62);
+    color: rgba(255,255,255,0.62);
     font-size: 0.82rem;
     line-height: 1.4;
   }
@@ -1784,14 +1815,14 @@ const exchangeStyles = `
   .statusCard p,
   .errorCard p {
     margin: 0;
-    color: #10172f;
+    color: #ffffff;
     font-weight: 950;
   }
 
   .statusCard span {
     display: block;
     margin-top: 12px;
-    color: rgba(16,23,47,0.62);
+    color: rgba(255,255,255,0.62);
     font-size: 1rem;
     line-height: 1.5;
   }
@@ -1799,11 +1830,11 @@ const exchangeStyles = `
   .errorCard {
     border-color: rgba(255,107,97,0.4);
     background: rgba(255,107,97,0.12);
-    color: #9b1c1c;
+    color: #ffb4ad;
   }
 
   .errorCard p {
-    color: #9b1c1c;
+    color: #ffb4ad;
   }
 
   @media (max-width: 1450px) {
@@ -1888,8 +1919,18 @@ const exchangeStyles = `
       width: 100%;
     }
 
+    .quickPostTop {
+      grid-template-columns: 40px 1fr;
+    }
+
     .quickPostActions {
-      grid-template-columns: 1fr;
+      grid-column: 1 / -1;
+      justify-content: space-between;
+    }
+
+    .quickPostActions a {
+      flex: 1;
+      border-radius: 14px;
     }
 
     .postBanner {
@@ -1917,10 +1958,6 @@ const exchangeStyles = `
     .signInCard a {
       grid-column: 2;
       justify-self: start;
-    }
-
-    .exchangeStats {
-      grid-template-columns: 1fr;
     }
   }
 `;
