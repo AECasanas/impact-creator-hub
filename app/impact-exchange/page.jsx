@@ -887,6 +887,20 @@ export default function ImpactExchangePage() {
                 <p>Edit post</p>
                 <h2>Update your Impact Exchange post.</h2>
               </div>
+                          <div className="editPostPreview">
+              {editingPost.image_url ? (
+                <img src={editingPost.image_url} alt={editingPost.title || "Post preview"} />
+              ) : (
+                <div className="editPostPreviewFallback">
+                  No image attached to this post
+                </div>
+              )}
+
+              <div>
+                <span>You are editing</span>
+                <strong>{editingPost.title || "Untitled post"}</strong>
+              </div>
+            </div>
 
               <button type="button" onClick={cancelEditPost}>
                 ×
@@ -1169,15 +1183,19 @@ function ExchangePostCard({
           </button>
         </div>
 
-                {isOwner && (
+                 {isOwner && (
           <div className="ownerActions">
-            <button type="button" onClick={onStartEditPost}>
-              <Pencil size={14} strokeWidth={2.4} /> Edit
-            </button>
+            <span className="ownerActionsLabel">Owner tools</span>
 
-            <button type="button" onClick={onDeletePost}>
-              <Trash2 size={14} strokeWidth={2.4} /> Delete
-            </button>
+            <div className="ownerActionButtons">
+              <button type="button" onClick={onStartEditPost}>
+                <Pencil size={14} strokeWidth={2.4} /> Edit this post
+              </button>
+
+              <button type="button" onClick={onDeletePost}>
+                <Trash2 size={14} strokeWidth={2.4} /> Delete
+              </button>
+            </div>
           </div>
         )}
 
@@ -1862,45 +1880,61 @@ const exchangeStyles = `
     .postActions .pushAction {
     margin-left: auto;
   }
-  .ownerActions {
+    .ownerActions {
+    display: grid;
+    gap: 8px;
+    margin: 10px -18px -10px;
+    border-top: 1px solid #eef0f5;
+    background: rgba(0, 232, 240, 0.035);
+    padding: 10px 18px 12px;
+  }
+
+  .ownerActionsLabel {
+    color: rgba(16,23,47,0.46);
+    font-size: 0.62rem;
+    font-weight: 950;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .ownerActionButtons {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin: 10px -18px -10px;
-    border-top: 1px solid #eef0f5;
-    padding: 10px 18px;
   }
 
-  .ownerActions a,
   .ownerActions button {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     border: 0;
     background: transparent;
-    color: rgba(16,23,47,0.62);
+    color: rgba(16,23,47,0.68);
     cursor: pointer;
     font: inherit;
     font-size: 0.8rem;
-    font-weight: 850;
+    font-weight: 900;
     padding: 0;
-    text-decoration: none;
   }
 
-  .ownerActions button {
+  .ownerActions button:last-child {
     color: #ff8c82;
   }
 
   .exchangePage.darkFeed .ownerActions {
     border-top-color: rgba(255, 255, 255, 0.08);
+    background: rgba(0, 232, 240, 0.045);
   }
 
-  .exchangePage.darkFeed .ownerActions a,
-  .exchangePage.darkFeed .ownerActions button {
-    color: rgba(238, 243, 247, 0.72);
+  .exchangePage.darkFeed .ownerActionsLabel {
+    color: rgba(238, 243, 247, 0.46);
   }
 
   .exchangePage.darkFeed .ownerActions button {
+    color: rgba(238, 243, 247, 0.76);
+  }
+
+  .exchangePage.darkFeed .ownerActions button:last-child {
     color: #ff8c82;
   }
 
@@ -1958,6 +1992,56 @@ const exchangeStyles = `
     cursor: pointer;
     font-size: 1.4rem;
     line-height: 1;
+  }
+
+    .editPostPreview {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.055);
+    padding: 10px;
+  }
+
+  .editPostPreview img,
+  .editPostPreviewFallback {
+    width: 96px;
+    height: 72px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .editPostPreviewFallback {
+    display: grid;
+    place-items: center;
+    color: rgba(238, 243, 247, 0.56);
+    font-size: 0.68rem;
+    font-weight: 850;
+    line-height: 1.2;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .editPostPreview span {
+    display: block;
+    color: #00e8f0;
+    font-size: 0.62rem;
+    font-weight: 950;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .editPostPreview strong {
+    display: block;
+    margin-top: 5px;
+    color: #eef3f7;
+    font-size: 0.95rem;
+    font-weight: 950;
+    line-height: 1.2;
   }
 
   .editModalGrid {
