@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+
 import {
   Bell,
   Bookmark,
@@ -11,14 +12,13 @@ import {
   Heart,
   House,
   ImagePlus,
-  LayoutDashboard,
   Mail,
   MessageCircle,
-  MessageCircleMore,
   PenLine,
+  Pencil,
   Search,
-  Sparkles,
-  SquarePen,
+  Share2,
+  Trash2,
 } from "lucide-react";
 
 const filters = ["All", "Creators", "Brands"];
@@ -461,7 +461,33 @@ export default function ImpactExchangePage() {
       [postId]: false,
     }));
   }
+  async function deletePost(postId) {
+    if (!user) {
+      window.location.assign("/login?redirect=/impact-exchange");
+      return;
+    }
 
+    const shouldDelete = window.confirm(
+      "Delete this post? This cannot be undone."
+    );
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from("impact_exchange_posts")
+      .delete()
+      .eq("id", postId)
+      .eq("user_id", user.id);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    setPosts((current) => current.filter((post) => post.id !== postId));
+  }
   const filteredPosts = useMemo(() => {
     if (activeFilter === "All") {
       return posts;
@@ -642,29 +668,31 @@ export default function ImpactExchangePage() {
           {!loading && !error && filteredPosts.length > 0 && (
             <div className="postFeed">
               {filteredPosts.map((post) => (
-                <ExchangePostCard
-                  key={post.id}
-                  post={post}
-                  profile={profileMap[post.creator_profile_id]}
-                  brand={brandMap[post.brand_profile_id]}
-                  likeCount={likeCounts[post.id] || 0}
-                  commentCount={commentCounts[post.id] || 0}
-                  likedByUser={userLikes[post.id] || false}
-                  savedByUser={savedPosts[post.id] || false}
-                  comments={commentsByPost[post.id] || []}
-                  commentDraft={commentDrafts[post.id] || ""}
-                  commentsOpen={openComments[post.id] || false}
-                  onToggleLike={() => toggleLike(post.id)}
-                  onToggleSave={() => toggleSave(post.id)}
-                  onToggleComments={() => toggleComments(post.id)}
-                  onCommentDraftChange={(value) =>
-                    setCommentDrafts((current) => ({
-                      ...current,
-                      [post.id]: value,
-                    }))
-                  }
-                  onSubmitComment={() => submitComment(post.id)}
-                />
+              <ExchangePostCard
+  key={post.id}
+  post={post}
+  profile={profileMap[post.creator_profile_id]}
+  brand={brandMap[post.brand_profile_id]}
+  currentUserId={user?.id || ""}
+  likeCount={likeCounts[post.id] || 0}
+  commentCount={commentCounts[post.id] || 0}
+  likedByUser={userLikes[post.id] || false}
+  savedByUser={savedPosts[post.id] || false}
+  comments={commentsByPost[post.id] || []}
+  commentDraft={commentDrafts[post.id] || ""}
+  commentsOpen={openComments[post.id] || false}
+  onToggleLike={() => toggleLike(post.id)}
+  onToggleSave={() => toggleSave(post.id)}
+  onToggleComments={() => toggleComments(post.id)}
+  onCommentDraftChange={(value) =>
+    setCommentDrafts((current) => ({
+      ...current,
+      [post.id]: value,
+    }))
+  }
+  onSubmitComment={() => submitComment(post.id)}
+  onDeletePost={() => deletePost(post.id)}
+/>
               ))}
             </div>
           )}
@@ -778,6 +806,7 @@ function ExchangePostCard({
   post,
   profile,
   brand,
+  currentUserId,
   likeCount,
   commentCount,
   likedByUser,
@@ -790,6 +819,7 @@ function ExchangePostCard({
   onToggleComments,
   onCommentDraftChange,
   onSubmitComment,
+  onDeletePost,
 }) {
   const isBrand = post.author_type?.toLowerCase() === "brand";
 
@@ -833,6 +863,21 @@ function ExchangePostCard({
     "/logo-colors/impact-logo-electric-cyan.png";
 
   const externalUrl = formatExternalUrl(post.link_url || post.post_url || "");
+  const isOwner = currentUserId && post.user_id === currentUserId;
+
+  const postShareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/impact-exchange?post=${post.id}`
+      : `/impact-exchange?post=${post.id}`;
+
+  async function copyPostLink() {
+    try {
+      await navigator.clipboard.writeText(postShareUrl);
+      alert("Post link copied.");
+    } catch {
+      window.prompt("Copy this post link:", postShareUrl);
+    }
+  }
 
   return (
     <article
@@ -903,27 +948,54 @@ function ExchangePostCard({
           </a>
         )}
 
-        <div className="postActions">
+               <div className="postActions">
           <button
             type="button"
             className={likedByUser ? "likedButton" : ""}
             onClick={onToggleLike}
           >
-            <Heart size={16} strokeWidth={2.4} fill={likedByUser ? "currentColor" : "none"} /> {likeCount}
+            <Heart
+              size={16}
+              strokeWidth={2.4}
+              fill={likedByUser ? "currentColor" : "none"}
+            />{" "}
+            {likeCount}
           </button>
 
           <button type="button" onClick={onToggleComments}>
             <MessageCircle size={16} strokeWidth={2.4} /> {commentCount}
           </button>
 
+          <button type="button" onClick={copyPostLink}>
+            <Share2 size={16} strokeWidth={2.4} /> Share
+          </button>
+
           <button
             type="button"
-            className={savedByUser ? "savedButton" : ""}
+            className={savedByUser ? "savedButton pushAction" : "pushAction"}
             onClick={onToggleSave}
           >
-            <Bookmark size={16} strokeWidth={2.4} fill={savedByUser ? "currentColor" : "none"} /> {savedByUser ? "Saved" : "Save"}
+            <Bookmark
+              size={16}
+              strokeWidth={2.4}
+              fill={savedByUser ? "currentColor" : "none"}
+            />{" "}
+            {savedByUser ? "Saved" : "Save"}
           </button>
         </div>
+
+        {isOwner && (
+          <div className="ownerActions">
+            <a href={`/dashboard/post?edit=${post.id}`}>
+              <Pencil size={14} strokeWidth={2.4} /> Edit
+            </a>
+
+            <button type="button" onClick={onDeletePost}>
+              <Trash2 size={14} strokeWidth={2.4} /> Delete
+            </button>
+          </div>
+        )}
+
 
         {commentsOpen && (
           <div className="commentsPanel">
@@ -1602,10 +1674,50 @@ const exchangeStyles = `
     color: #008b94;
   }
 
-  .postActions button:last-child {
+    .postActions .pushAction {
     margin-left: auto;
   }
+  .ownerActions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 10px -18px -10px;
+    border-top: 1px solid #eef0f5;
+    padding: 10px 18px;
+  }
 
+  .ownerActions a,
+  .ownerActions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+    color: rgba(16,23,47,0.62);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 850;
+    padding: 0;
+    text-decoration: none;
+  }
+
+  .ownerActions button {
+    color: #ff8c82;
+  }
+
+  .exchangePage.darkFeed .ownerActions {
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .exchangePage.darkFeed .ownerActions a,
+  .exchangePage.darkFeed .ownerActions button {
+    color: rgba(238, 243, 247, 0.72);
+  }
+
+  .exchangePage.darkFeed .ownerActions button {
+    color: #ff8c82;
+  }
   .commentsPanel {
     margin-top: 14px;
     border-top: 1px solid #eef0f5;
