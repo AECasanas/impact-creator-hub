@@ -9,27 +9,16 @@ import {
   Globe2,
   Handshake,
   Heart,
+  House,
   ImagePlus,
   LayoutDashboard,
   Mail,
   MessageCircle,
   MessageCircleMore,
-  Search,
-  SquarePen,
-} from "lucide-react";
-import {
-  Bell,
-  Bookmark,
-  CircleUserRound,
-  Globe2,
-  Heart,
-  ImagePlus,
-  LayoutDashboard,
-  Mail,
-  MessageCircle,
   PenLine,
   Search,
   Sparkles,
+  SquarePen,
 } from "lucide-react";
 
 const filters = ["All", "Creators", "Brands"];
@@ -613,7 +602,7 @@ export default function ImpactExchangePage() {
               </a>
 
               <a href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}>
-                <Sparkles size={18} strokeWidth={2.4} />
+                <Handshake size={18} strokeWidth={2.4} />
                 <span>Collaboration</span>
               </a>
             </div>
