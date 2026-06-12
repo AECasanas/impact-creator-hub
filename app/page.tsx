@@ -73,7 +73,7 @@ export default function Home() {
 
               <div className="mt-10 flex flex-col gap-5 sm:flex-row">
                 <a
-                  href="/features"
+                  href="/impact-exchange"
                   className="rounded-md border border-cyan-300 px-10 py-5 text-center text-lg font-semibold text-white transition hover:border-[#f28c82]"
                 >
                   Explore the Hub
