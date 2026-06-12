@@ -1285,15 +1285,15 @@ const exchangeStyles = `
     box-shadow: 0 8px 22px rgba(16,23,47,0.06);
   }
 
- .exchangeLayout {
+.exchangeLayout {
   width: 100%;
   margin: 0;
   display: grid;
-  grid-template-columns: 260px 90px 650px 36px 360px;
+  grid-template-columns: 220px 170px 650px 36px 360px;
   gap: 0;
   align-items: start;
   justify-content: start;
-  padding: 18px 32px 80px;
+  padding: 18px 28px 80px;
 }
 
  .leftMenu {
@@ -1302,7 +1302,7 @@ const exchangeStyles = `
   display: grid;
   gap: 8px;
   grid-column: 1;
-  padding-left: 92px;
+  padding-left: 18px;
 }
 
   .leftMenuItem {
