@@ -1025,7 +1025,7 @@ const exchangeStyles = `
   }
 
   .exchangeHeader {
-    width: min(1540px, 100%);
+    width: min(1640px, 100%);
     min-height: 78px;
     margin: 0 auto;
     display: flex;
@@ -1151,14 +1151,14 @@ const exchangeStyles = `
   }
 
   .exchangeLayout {
-    width: min(1540px, 100%);
+    width: min(1640px, 100%);
     margin: 0 auto;
     display: grid;
     grid-template-columns: 210px 650px 360px;
-    gap: 36px;
+    gap: 64px;
     align-items: start;
     justify-content: center;
-    padding: 18px 32px 80px;
+    padding: 24px 32px 80px;
   }
 
   .leftMenu {
@@ -1213,24 +1213,24 @@ const exchangeStyles = `
 
   .quickPostCard {
     width: 650px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     border: 1px solid #e6e8ef;
     border-radius: 18px;
     background: #ffffff;
     box-shadow: 0 14px 36px rgba(16, 23, 47, 0.08);
-    padding: 14px 16px;
+    padding: 10px 16px;
   }
 
   .quickPostTop {
     display: grid;
-    grid-template-columns: 46px 1fr;
+    grid-template-columns: 40px 1fr;
     align-items: center;
     gap: 12px;
   }
 
   .quickPostAvatar {
-    width: 46px;
-    height: 46px;
+    width: 40px;
+    height: 40px;
     display: grid;
     place-items: center;
     border-radius: 999px;
@@ -1240,7 +1240,7 @@ const exchangeStyles = `
   }
 
   .quickPostInput {
-    min-height: 46px;
+    min-height: 40px;
     display: flex;
     align-items: center;
     border-radius: 999px;
@@ -1260,13 +1260,13 @@ const exchangeStyles = `
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 8px;
     border-top: 1px solid #eef0f5;
-    padding-top: 10px;
+    padding-top: 6px;
   }
 
   .quickPostActions a {
-    min-height: 38px;
+    min-height: 30px;
     display: grid;
     place-items: center;
     border-radius: 12px;
