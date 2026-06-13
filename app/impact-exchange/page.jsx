@@ -1564,8 +1564,9 @@ function ExchangePostCard({
   const externalUrl = formatExternalUrl(post.link_url || post.post_url || "");
   const isOwner = currentUserId && post.user_id === currentUserId;
 
-   const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+  const [activePhotoIndex, setActivePhotoIndex] = useState(null);
 
     const postShareUrl =
     typeof window !== "undefined"
@@ -1636,6 +1637,33 @@ function ExchangePostCard({
     window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
     setShareMenuOpen(false);
   }
+    function openPhotoViewer(index) {
+    setActivePhotoIndex(index);
+  }
+
+  function closePhotoViewer() {
+    setActivePhotoIndex(null);
+  }
+
+  function showPreviousPhoto() {
+    setActivePhotoIndex((current) => {
+      if (current === null) {
+        return 0;
+      }
+
+      return current === 0 ? mediaUrls.length - 1 : current - 1;
+    });
+  }
+
+  function showNextPhoto() {
+    setActivePhotoIndex((current) => {
+      if (current === null) {
+        return 0;
+      }
+
+      return current === mediaUrls.length - 1 ? 0 : current + 1;
+    });
+  }
 
   return (
     <article
@@ -1659,8 +1687,16 @@ function ExchangePostCard({
               4
             )}`}
           >
-            {mediaUrls.slice(0, 4).map((url, index) => (
-              <img key={`${url}-${index}`} src={url} alt="" />
+                       {mediaUrls.slice(0, 4).map((url, index) => (
+              <button
+                type="button"
+                key={`${url}-${index}`}
+                className="postCollagePhotoButton"
+                onClick={() => openPhotoViewer(index)}
+                aria-label={`Open photo ${index + 1}`}
+              >
+                <img src={url} alt="" />
+              </button>
             ))}
           </div>
         ) : (
@@ -1910,6 +1946,57 @@ function ExchangePostCard({
               <button type="button" onClick={onSubmitComment}>
                 Post
               </button>
+            </div>
+          </div>
+        )}
+                {activePhotoIndex !== null && mediaUrls[activePhotoIndex] && (
+          <div className="photoViewerOverlay" onClick={closePhotoViewer}>
+            <div
+              className="photoViewerCard"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="photoViewerTop">
+                <span>
+                  Photo {activePhotoIndex + 1} of {mediaUrls.length}
+                </span>
+
+                <button type="button" onClick={closePhotoViewer}>
+                  ×
+                </button>
+              </div>
+
+              <div className="photoViewerStage">
+                {mediaUrls.length > 1 && (
+                  <button
+                    type="button"
+                    className="photoViewerArrow left"
+                    onClick={showPreviousPhoto}
+                    aria-label="Previous photo"
+                  >
+                    ‹
+                  </button>
+                )}
+
+                <img src={mediaUrls[activePhotoIndex]} alt="" />
+
+                {mediaUrls.length > 1 && (
+                  <button
+                    type="button"
+                    className="photoViewerArrow right"
+                    onClick={showNextPhoto}
+                    aria-label="Next photo"
+                  >
+                    ›
+                  </button>
+                )}
+              </div>
+
+              {(post.title || post.body) && (
+                <div className="photoViewerCaption">
+                  {post.title && <h3>{post.title}</h3>}
+                  {post.body && <p>{post.body}</p>}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -3006,6 +3093,137 @@ const exchangeStyles = `
   .postCollage.collageCount4 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+      .postCollagePhotoButton {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    display: block;
+    border: 0;
+    background: transparent;
+    cursor: zoom-in;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .postCollagePhotoButton img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .photoViewerOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: grid;
+    place-items: center;
+    background: rgba(2, 6, 23, 0.86);
+    padding: 28px;
+  }
+
+  .photoViewerCard {
+    width: min(980px, 94vw);
+    max-height: 92vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 24px;
+    background: rgba(10, 14, 22, 0.98);
+    box-shadow: 0 34px 90px rgba(0, 0, 0, 0.62);
+  }
+
+  .photoViewerTop {
+    min-height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(238, 243, 247, 0.72);
+    font-size: 0.84rem;
+    font-weight: 900;
+    padding: 0 18px;
+  }
+
+  .photoViewerTop button,
+  .photoViewerArrow {
+    border: 0;
+    background: transparent;
+    color: #eef3f7;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .photoViewerTop button {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  .photoViewerTop button:hover,
+  .photoViewerArrow:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .photoViewerStage {
+    position: relative;
+    min-height: 360px;
+    display: grid;
+    place-items: center;
+    background: #020617;
+  }
+
+  .photoViewerStage img {
+    max-width: 100%;
+    max-height: 68vh;
+    display: block;
+    object-fit: contain;
+  }
+
+  .photoViewerArrow {
+    position: absolute;
+    top: 50%;
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(2, 6, 23, 0.52);
+    font-size: 2rem;
+    transform: translateY(-50%);
+  }
+
+  .photoViewerArrow.left {
+    left: 16px;
+  }
+
+  .photoViewerArrow.right {
+    right: 16px;
+  }
+
+  .photoViewerCaption {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 18px 22px 22px;
+  }
+
+  .photoViewerCaption h3 {
+    margin: 0;
+    color: #eef3f7;
+    font-size: 1.1rem;
+    font-weight: 950;
+  }
+
+  .photoViewerCaption p {
+    margin: 8px 0 0;
+    color: rgba(238, 243, 247, 0.72);
+    font-size: 0.95rem;
+    line-height: 1.55;
   }
   .commentsPanel {
     margin-top: 14px;
