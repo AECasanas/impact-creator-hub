@@ -1911,16 +1911,16 @@ const exchangeStyles = `
   }
 
    .leftMenuItem span {
-    width: 34px;
-    flex: 0 0 34px;
+    width: 33px;
+    flex: 0 0 33px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
   }
 
   .leftMenuProfileIcon img {
-    width: 34px;
-    height: 34px;
+    width: 33px;
+    height: 33px;
     display: block;
     border-radius: 999px;
     object-fit: cover;
