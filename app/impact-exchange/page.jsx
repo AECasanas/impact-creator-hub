@@ -962,8 +962,6 @@ setNewPostFiles(selectedImages);
             Exchange
           </a>
           <a href={dashboardPath}>Dashboard</a>
-          <a href="/dashboard/post">Post</a>
-          <a href="/dashboard/saved">Saved</a>
         </nav>
 
         <div className="topIconGroup">
@@ -1007,8 +1005,7 @@ setNewPostFiles(selectedImages);
                   currentUserInitial
                 )}
               </a>
-
-              <button
+                            <button
                 type="button"
                 className="topIconButton"
                 aria-label="Sign out"
@@ -1017,6 +1014,7 @@ setNewPostFiles(selectedImages);
               >
                 <LogOut size={17} strokeWidth={2.4} />
               </button>
+
             </>
           ) : (
             <a href="/login?redirect=/impact-exchange" className="loginButton">
@@ -2377,15 +2375,19 @@ const exchangeStyles = `
     border-radius: 999px;
     object-fit: cover;
   }
-  .notificationDot {
+    .notificationDot {
     position: absolute;
-    top: 7px;
-    right: 8px;
-    width: 8px;
-    height: 8px;
-    border: 2px solid #ffffff;
+    top: 6px;
+    right: 6px;
+    width: 11px;
+    height: 11px;
+    border: 2px solid #10131a;
     border-radius: 999px;
-    background: #ff6b61;
+    background: #ff1744;
+    box-shadow:
+      0 0 0 2px rgba(255, 23, 68, 0.25),
+      0 0 12px rgba(255, 23, 68, 0.95),
+      0 0 24px rgba(255, 23, 68, 0.65);
   }
 
   .loginButton {
