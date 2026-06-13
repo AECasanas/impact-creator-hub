@@ -41,7 +41,7 @@ async function handleSignup() {
     },
   });
 
-  if (error) {
+   if (error) {
     setMessage(error.message);
     setLoading(false);
     return;
