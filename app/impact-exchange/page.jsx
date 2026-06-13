@@ -47,6 +47,7 @@ export default function ImpactExchangePage() {
   const [commentCounts, setCommentCounts] = useState({});
   const [userLikes, setUserLikes] = useState({});
   const [savedPosts, setSavedPosts] = useState({});
+  const [saveCounts, setSaveCounts] = useState({});
   const [followedCreators, setFollowedCreators] = useState({});
   const [followedBrands, setFollowedBrands] = useState({});
   const [commentsByPost, setCommentsByPost] = useState({});
@@ -283,33 +284,45 @@ export default function ImpactExchangePage() {
     setUserLikes(nextUserLikes);
   }
 
-  async function loadSavedPosts(loadedPosts, currentUser) {
+    async function loadSavedPosts(loadedPosts, currentUser) {
     const postIds = loadedPosts.map((post) => post.id);
 
-    if (!currentUser || postIds.length === 0) {
+    if (postIds.length === 0) {
       setSavedPosts({});
+      setSaveCounts({});
       return;
     }
 
     const { data, error } = await supabase
       .from("impact_exchange_saved_posts")
-      .select("id, post_id")
-      .eq("user_id", currentUser.id)
+      .select("id, post_id, user_id")
       .in("post_id", postIds);
 
     if (error) {
       console.warn("LOAD SAVED POSTS ERROR:", error);
       setSavedPosts({});
+      setSaveCounts({});
       return;
     }
 
     const nextSavedPosts = {};
+    const nextSaveCounts = {};
+
+    postIds.forEach((postId) => {
+      nextSaveCounts[postId] = 0;
+    });
 
     (data || []).forEach((savedPost) => {
-      nextSavedPosts[savedPost.post_id] = true;
+      nextSaveCounts[savedPost.post_id] =
+        (nextSaveCounts[savedPost.post_id] || 0) + 1;
+
+      if (currentUser && savedPost.user_id === currentUser.id) {
+        nextSavedPosts[savedPost.post_id] = true;
+      }
     });
 
     setSavedPosts(nextSavedPosts);
+    setSaveCounts(nextSaveCounts);
   }
   async function loadFollowedProfiles(currentUser) {
     if (!currentUser) {
@@ -477,7 +490,7 @@ export default function ImpactExchangePage() {
       return;
     }
 
-    const alreadySaved = savedPosts[postId];
+       const alreadySaved = savedPosts[postId];
 
     if (alreadySaved) {
       const { error } = await supabase
@@ -496,6 +509,11 @@ export default function ImpactExchangePage() {
         [postId]: false,
       }));
 
+      setSaveCounts((current) => ({
+        ...current,
+        [postId]: Math.max((current[postId] || 1) - 1, 0),
+      }));
+
       return;
     }
 
@@ -512,6 +530,11 @@ export default function ImpactExchangePage() {
     setSavedPosts((current) => ({
       ...current,
       [postId]: true,
+    }));
+
+    setSaveCounts((current) => ({
+      ...current,
+      [postId]: (current[postId] || 0) + 1,
     }));
   }
 
@@ -903,6 +926,8 @@ export default function ImpactExchangePage() {
   commentCount={commentCounts[post.id] || 0}
   likedByUser={userLikes[post.id] || false}
   savedByUser={savedPosts[post.id] || false}
+  saveCount={saveCounts[post.id] || 0}
+  shareCount={post.share_count || 0}
   comments={commentsByPost[post.id] || []}
   commentDraft={commentDrafts[post.id] || ""}
   commentsOpen={openComments[post.id] || false}
@@ -1161,6 +1186,8 @@ function ExchangePostCard({
   commentCount,
   likedByUser,
   savedByUser,
+  saveCount,
+  shareCount,
   comments,
   commentDraft,
   commentsOpen,
@@ -1383,7 +1410,7 @@ function ExchangePostCard({
     onClick={() => setShareMenuOpen((current) => !current)}
   >
     <Share2 size={16} strokeWidth={2.4} />{" "}
-    {shareCopied ? "Copied!" : "Share"}
+    {shareCopied ? "Copied!" : "Share"} {shareCount}
   </button>
 
   {shareMenuOpen && (
@@ -1492,7 +1519,7 @@ function ExchangePostCard({
               strokeWidth={2.4}
               fill={savedByUser ? "currentColor" : "none"}
             />{" "}
-            {savedByUser ? "Saved" : "Save"}
+            {savedByUser ? "Saved" : "Save"} {saveCount}
           </button>
         </div>
 
