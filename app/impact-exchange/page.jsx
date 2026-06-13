@@ -1489,7 +1489,6 @@ function ExchangePostCard({
 
                  {isOwner && (
           <div className="ownerActions">
-            <span className="ownerActionsLabel">Owner tools</span>
 
             <div className="ownerActionButtons">
               <button type="button" onClick={onStartEditPost}>
