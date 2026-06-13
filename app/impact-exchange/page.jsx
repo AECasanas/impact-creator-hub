@@ -820,7 +820,7 @@ export default function ImpactExchangePage() {
           </div>
 
           <div className="quickPostCard">
-            <div className="quickPostTop">
+                      <div className="quickPostTop">
               <div className="quickPostAvatar">
                 {user ? user.email?.charAt(0)?.toUpperCase() || "I" : "I"}
               </div>
@@ -831,23 +831,32 @@ export default function ImpactExchangePage() {
               >
                 What do you want to share today?
               </a>
-            </div>
 
-            <div className="quickPostActions">
-              <a href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}>
-                <ImagePlus size={18} strokeWidth={2.4} />
-                <span>Photo/video</span>
-              </a>
+              <div className="quickPostActions">
+                <a
+                  href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}
+                  title="Photo/video"
+                  aria-label="Photo/video"
+                >
+                  <ImagePlus size={20} strokeWidth={2.4} />
+                </a>
 
-              <a href={user ? "/create-postcard" : "/login?redirect=/create-postcard"}>
-                <Mail size={18} strokeWidth={2.4} />
-                <span>Postcard</span>
-              </a>
+                <a
+                  href={user ? "/create-postcard" : "/login?redirect=/create-postcard"}
+                  title="Postcard"
+                  aria-label="Postcard"
+                >
+                  <Mail size={20} strokeWidth={2.4} />
+                </a>
 
-              <a href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}>
-                <Handshake size={18} strokeWidth={2.4} />
-                <span>Collaboration</span>
-              </a>
+                <a
+                  href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}
+                  title="Collaboration"
+                  aria-label="Collaboration"
+                >
+                  <Handshake size={20} strokeWidth={2.4} />
+                </a>
+              </div>
             </div>
           </div>
 
@@ -1959,9 +1968,9 @@ const exchangeStyles = `
     padding: 14px 16px;
   }
 
-  .quickPostTop {
+    .quickPostTop {
     display: grid;
-    grid-template-columns: 46px 1fr;
+    grid-template-columns: 46px 1fr auto;
     align-items: center;
     gap: 12px;
   }
@@ -1994,25 +2003,20 @@ const exchangeStyles = `
     background: #eef2f7;
   }
 
-  .quickPostActions {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+   .quickPostActions {
+    display: flex;
+    align-items: center;
     gap: 8px;
-    margin-top: 12px;
-    border-top: 1px solid #eef0f5;
-    padding-top: 10px;
   }
 
   .quickPostActions a {
-    min-height: 38px;
+    width: 42px;
+    height: 42px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    border-radius: 12px;
+    border-radius: 999px;
     color: rgba(16,23,47,0.7);
-    font-size: 0.84rem;
-    font-weight: 900;
     text-decoration: none;
   }
 
