@@ -476,8 +476,6 @@ export default function CreatePostcardPage() {
               </div>
             )}
 
-            <label></label>
-
             <label>
               Edit front title
               <input
