@@ -11,6 +11,7 @@ export default function InquiriesPage() {
   const [activeTab, setActiveTab] = useState("Inbox");
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [pageTheme, setPageTheme] = useState("dark");
 
   useEffect(() => {
     loadMessages();
@@ -189,7 +190,7 @@ export default function InquiriesPage() {
   }
 
   return (
-    <main className="inquiriesPage">
+        <main className={`inquiriesPage ${pageTheme === "light" ? "lightMode" : "darkMode"}`}>
       <section className="inquiriesShell">
         <header className="inquiriesHeader">
           <a href="/impact-exchange" className="brandLink">
@@ -204,6 +205,15 @@ export default function InquiriesPage() {
           <nav>
             <a href="/impact-exchange">Exchange</a>
             <a href="/dashboard/profile">Dashboard</a>
+                        <button
+              type="button"
+              className="themeToggle"
+              onClick={() =>
+                setPageTheme(pageTheme === "dark" ? "light" : "dark")
+              }
+            >
+              {pageTheme === "dark" ? "Light inbox" : "Dark inbox"}
+            </button>
           </nav>
         </header>
 
@@ -612,6 +622,7 @@ export default function InquiriesPage() {
 function MessageDetail({ message, sender, formatDate }) {
   const payload = message.postcard_payload || {};
   const isPostcard = message.message_type === "postcard";
+  const [showPostcardModal, setShowPostcardModal] = useState(false);
 
   return (
     <article className="messageDetail">
