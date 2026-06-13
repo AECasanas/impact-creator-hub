@@ -1916,8 +1916,8 @@ const exchangeStyles = `
     justify-content: center;
   }
   .leftMenuProfileIcon img {
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
     border-radius: 999px;
     object-fit: cover;
   }
