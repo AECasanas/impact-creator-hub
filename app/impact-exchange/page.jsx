@@ -1499,8 +1499,15 @@ function ExchangePostCard({
                  {isOwner && (
           <div className="ownerActions">
 
-            <div className="ownerActionButtons">
-              <button type="button" onClick={onStartEditPost}>
+                       <div className="ownerActionButtons">
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onStartEditPost();
+                }}
+              >
                 <Pencil size={14} strokeWidth={2.4} /> Edit this post
               </button>
 
