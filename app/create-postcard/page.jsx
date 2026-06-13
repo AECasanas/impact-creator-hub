@@ -433,44 +433,17 @@ export default function CreatePostcardPage() {
 
             <h2>Edit the postcard</h2>
 
-                       <label>
-              Send to
-              <input
-                value={recipientSearch}
-                onChange={(event) => {
-                  setRecipientSearch(event.target.value);
-                  setRecipientUserId("");
-                }}
-                placeholder="Search creators or brands..."
-              />
-            </label>
+                const filteredRecipients =
+    recipientSearch.trim() && !recipientUserId
+      ? recipients
+          .filter((recipient) => {
+            const searchValue = `${recipient.name} ${recipient.type} ${recipient.label}`
+              .toLowerCase();
 
-            {recipientSearch && (
-              <div className="recipientResults">
-                {filteredRecipients.length > 0 ? (
-                  filteredRecipients.map((recipient) => (
-                    <button
-                      type="button"
-                      key={`${recipient.type}-${recipient.profile_id}`}
-                      className={
-                        recipientUserId === recipient.user_id
-                          ? "recipientOption selectedRecipient"
-                          : "recipientOption"
-                      }
-                      onClick={() => {
-                        setRecipientUserId(recipient.user_id);
-                        setRecipientSearch(`${recipient.name} · ${recipient.type}`);
-                      }}
-                    >
-                      <strong>{recipient.name}</strong>
-                      <span>{recipient.type}{recipient.label ? ` · ${recipient.label}` : ""}</span>
-                    </button>
-                  ))
-                ) : (
-                  <p className="noRecipientResults">No matching users found.</p>
-                )}
-              </div>
-            )}
+            return searchValue.includes(recipientSearch.trim().toLowerCase());
+          })
+          .slice(0, 6)
+      : [];
 
             <label>
               Edit front title
@@ -972,7 +945,15 @@ export default function CreatePostcardPage() {
           border-color: #17c9d5;
           box-shadow: 0 0 0 4px rgba(23, 201, 213, 0.14);
         }
-                .recipientResults {
+               .recipientHelpText {
+          margin: -8px 0 12px;
+          color: #667085;
+          font-size: 0.76rem;
+          font-weight: 800;
+          line-height: 1.35;
+        }
+
+        .recipientResults {
           display: grid;
           gap: 8px;
           margin: -6px 0 14px;
@@ -1011,11 +992,6 @@ export default function CreatePostcardPage() {
         }
 
         .noRecipientResults {
-          margin: 0;
-          border: 1px dashed #d9dee8;
-          border-radius: 14px;
-          padding: 12px;
-        }
 
         .postingAs {
           display: grid;
