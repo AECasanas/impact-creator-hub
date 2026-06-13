@@ -1027,15 +1027,18 @@ export default function ImpactExchangePage() {
                 What do you want to share today?
               </button>
 
-              <div className="quickPostActions">
-                <button
-                  type="button"
+                               <div className="quickPostActions">
+                <a
+                  href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}
                   title="Photo/video"
                   aria-label="Photo/video"
-                  onClick={() => openCreatePostModal("Photo/video")}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    openCreatePostModal("Photo/video");
+                  }}
                 >
                   <ImagePlus size={20} strokeWidth={2.4} />
-                </button>
+                </a>
 
                 <a
                   href={user ? "/create-postcard" : "/login?redirect=/create-postcard"}
@@ -1045,14 +1048,17 @@ export default function ImpactExchangePage() {
                   <Mail size={20} strokeWidth={2.4} />
                 </a>
 
-                <button
-                  type="button"
+                <a
+                  href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}
                   title="Collaboration"
                   aria-label="Collaboration"
-                  onClick={() => openCreatePostModal("Collaboration")}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    openCreatePostModal("Collaboration");
+                  }}
                 >
                   <Handshake size={20} strokeWidth={2.4} />
-                </button>
+                </a>
               </div>
             </div>
           </div>
