@@ -38,7 +38,6 @@ export default function ImpactExchangePage() {
   const [dashboardPath, setDashboardPath] = useState("/dashboard/profile");
   const [currentUserAvatarUrl, setCurrentUserAvatarUrl] = useState("");
   const [currentUserInitial, setCurrentUserInitial] = useState("I");
-  const [currentUserAccentColor, setCurrentUserAccentColor] = useState("#00e8f0");
   const [posts, setPosts] = useState([]);
   const [profileMap, setProfileMap] = useState({});
   const [brandMap, setBrandMap] = useState({});
@@ -110,10 +109,10 @@ export default function ImpactExchangePage() {
     setLoading(false);
   }
 
-    async function resolveDashboardPath(userId) {
+  async function resolveDashboardPath(userId) {
     const { data: brandProfile } = await supabase
       .from("brand_profiles")
-      .select("id, company_name, logo_url, accent_color")
+      .select("id, company_name, logo_url")
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -123,13 +122,12 @@ export default function ImpactExchangePage() {
       setCurrentUserInitial(
         (brandProfile.company_name || "B").charAt(0).toUpperCase()
       );
-      setCurrentUserAccentColor(brandProfile.accent_color || "#00e8f0");
       return;
     }
 
     const { data: creatorProfile } = await supabase
       .from("creator_profiles")
-      .select("id, display_name, profile_photo_url, accent_color")
+      .select("id, display_name, profile_photo_url")
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -139,13 +137,11 @@ export default function ImpactExchangePage() {
       setCurrentUserInitial(
         (creatorProfile.display_name || "I").charAt(0).toUpperCase()
       );
-      setCurrentUserAccentColor(creatorProfile.accent_color || "#00e8f0");
       return;
     }
 
     setCurrentUserAvatarUrl("");
     setCurrentUserInitial("I");
-    setCurrentUserAccentColor("#00e8f0");
     setDashboardPath("/create-profile/free");
   }
 
@@ -754,12 +750,8 @@ export default function ImpactExchangePage() {
             <span className="notificationDot"></span>
           </button>
 
-                  {user ? (
-            <a
-              href={dashboardPath}
-              className="topProfileButton"
-              style={{ "--profile-accent": currentUserAccentColor }}
-            >
+          {user ? (
+                       <a href={dashboardPath} className="topProfileButton">
               {currentUserAvatarUrl ? (
                 <img
                   src={currentUserAvatarUrl}
@@ -785,11 +777,8 @@ export default function ImpactExchangePage() {
             Dashboard
           </a>
 
-                   <a href={dashboardPath} className="leftMenuItem">
-            <span
-              className="leftMenuProfileIcon"
-              style={{ "--profile-accent": currentUserAccentColor }}
-            >
+          <a href={dashboardPath} className="leftMenuItem">
+                        <span className="leftMenuProfileIcon">
               {currentUserAvatarUrl ? (
                 <img src={currentUserAvatarUrl} alt="Your profile" />
               ) : (
@@ -1839,7 +1828,8 @@ const exchangeStyles = `
     gap: 10px;
   }
 
-   .topIconButton {
+  .topIconButton,
+  .topProfileButton {
     position: relative;
     width: 42px;
     height: 42px;
@@ -1855,35 +1845,11 @@ const exchangeStyles = `
     font-weight: 950;
     text-decoration: none;
   }
-
-  .topProfileButton {
-    position: relative;
-    width: 50px;
-    height: 50px;
-    display: grid;
-    place-items: center;
-    border: 1px solid var(--profile-accent, #00e8f0);
-    border-radius: 999px;
-    background: #ffffff;
-    color: #10172f;
-    box-shadow: none;
-    cursor: pointer;
-    font: inherit;
-    font-weight: 950;
-    text-decoration: none;
-    overflow: hidden;
-  }
-             .topProfileImage {
+  .topProfileImage {
     width: 100%;
     height: 100%;
-    border: 0;
     border-radius: 999px;
     object-fit: cover;
-    box-shadow: none;
-  }
-
-  .exchangePage.darkFeed .topProfileButton {
-    box-shadow: none;
   }
   .notificationDot {
     position: absolute;
@@ -1944,21 +1910,17 @@ const exchangeStyles = `
     text-decoration: none;
   }
 
-    .leftMenuItem span {
-    width: 30px;
+  .leftMenuItem span {
+    width: 26px;
     display: inline-flex;
     justify-content: center;
   }
-
-      .leftMenuProfileIcon img {
-    width: 30px;
-    height: 30px;
-    border: 1px solid var(--profile-accent, #00e8f0);
+  .leftMenuProfileIcon img {
+    width: 22px;
+    height: 22px;
     border-radius: 999px;
     object-fit: cover;
-    box-shadow: none;
-  } 
-
+  }
   .leftMenuItem:hover,
   .leftMenuItem.activeLeftMenu {
     background: #ffffff;
