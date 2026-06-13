@@ -83,6 +83,8 @@ export default function CreatePostcardPage() {
 
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [recipients, setRecipients] = useState([]);
+  const [recipientUserId, setRecipientUserId] = useState("");
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [posting, setPosting] = useState(false);
   const [status, setStatus] = useState("");
@@ -155,6 +157,7 @@ export default function CreatePostcardPage() {
       }
 
       setProfile(data);
+            await loadRecipients(user.id);
     } catch (error) {
       console.warn("LOAD POSTCARD PROFILE ERROR:", error);
 
@@ -167,6 +170,49 @@ export default function CreatePostcardPage() {
     } finally {
       setLoadingProfile(false);
     }
+  }
+    async function loadRecipients(currentUserId) {
+    const { data: creators, error: creatorError } = await supabase
+      .from("creator_profiles")
+      .select("id, user_id, display_name, creator_type, slug")
+      .eq("is_published", true)
+      .neq("user_id", currentUserId);
+
+    const { data: brands, error: brandError } = await supabase
+      .from("brand_profiles")
+      .select("id, user_id, company_name, brand_type, slug")
+      .eq("is_published", true)
+      .neq("user_id", currentUserId);
+
+    if (creatorError || brandError) {
+      console.warn("LOAD POSTCARD RECIPIENTS ERROR:", creatorError || brandError);
+      setRecipients([]);
+      return;
+    }
+
+    const creatorRecipients = (creators || [])
+      .filter((creator) => creator.user_id)
+      .map((creator) => ({
+        type: "Creator",
+        profile_id: creator.id,
+        user_id: creator.user_id,
+        name: creator.display_name || "Creator",
+        label: creator.creator_type || "Creator",
+        slug: creator.slug || "",
+      }));
+
+    const brandRecipients = (brands || [])
+      .filter((brand) => brand.user_id)
+      .map((brand) => ({
+        type: "Brand",
+        profile_id: brand.id,
+        user_id: brand.user_id,
+        name: brand.company_name || "Brand",
+        label: brand.brand_type || "Brand",
+        slug: brand.slug || "",
+      }));
+
+    setRecipients([...creatorRecipients, ...brandRecipients]);
   }
 
   function handleImageUpload(event) {
@@ -216,26 +262,24 @@ export default function CreatePostcardPage() {
     return data.publicUrl;
   }
 
-  async function handlePostToImpactExchange() {
+  async function handleSendPostcard() {
     setStatus("");
     setErrorMessage("");
     setPosting(true);
 
     try {
       if (!user) {
-        setErrorMessage("Please log in before posting to Impact Exchange.");
+        setErrorMessage("Please log in before sending a postcard.");
         return;
       }
 
       if (!profile) {
-        setErrorMessage("Please create your creator profile before posting.");
+        setErrorMessage("Please create your creator profile before sending.");
         return;
       }
 
-      if (!profile.slug) {
-        setErrorMessage(
-          "Please save your creator profile first so your postcard can link to your public profile."
-        );
+      if (!recipientUserId) {
+        setErrorMessage("Choose someone to send this postcard to.");
         return;
       }
 
@@ -243,72 +287,50 @@ export default function CreatePostcardPage() {
         profile.slug || profile.display_name || "creator"
       );
 
-      let postcardImageUrl = "";
-
-      if (imageFile) {
-        setStatus("Uploading postcard image...");
-        postcardImageUrl = await uploadPostcardImage(imageFile, cleanSlug);
-      }
-
-      const postcardBody = [
-        greeting,
-        "",
-        message,
-        "",
-        signature,
-        selectedStamp ? "" : null,
-        selectedStamp ? `Selected stamp: ${selectedStamp.name}` : null,
-      ]
-        .filter((line) => line !== null && line !== undefined)
-        .join("\n");
+      const postcardBody = [greeting, "", message, "", signature].join("\n");
 
       const payload = {
-        user_id: user.id,
-        creator_profile_id: profile.id,
-        creator_slug: cleanSlug,
-
-        author_type: "creator",
-        author_name: profile.display_name || cleanSlug,
-        author_role: profile.creator_type || "Creator",
-        author_avatar_url: profile.profile_photo_url || "",
-        author_accent_name: profile.accent_name || "Electric Cyan",
-        author_accent_color: profile.accent_color || "#00e8f0",
-        author_profile_url: `/creator/${cleanSlug}`,
-
-        title: postcardTitle.trim() || "Postcard",
+        sender_user_id: user.id,
+        recipient_user_id: recipientUserId,
+        message_type: "postcard",
+        subject: postcardTitle.trim() || "Postcard",
         body: postcardBody,
-        post_type: "Postcard",
-        category: "Postcard",
-        post_url: "",
-        link_url: "",
-        image_url: postcardImageUrl,
-        is_published: true,
-        updated_at: new Date().toISOString(),
+        postcard_payload: {
+          postcard_title: postcardTitle.trim() || "Postcard",
+          greeting: greeting.trim(),
+          message: message.trim(),
+          signature: signature.trim(),
+          creator_profile_id: profile.id,
+          creator_slug: cleanSlug,
+          author_name: profile.display_name || cleanSlug,
+          author_role: profile.creator_type || "Creator",
+          author_avatar_url: profile.profile_photo_url || "",
+          author_accent_name: profile.accent_name || "Electric Cyan",
+          author_accent_color: profile.accent_color || "#00e8f0",
+          author_profile_url: `/creator/${cleanSlug}`,
+        },
       };
 
-      const { error } = await supabase
-        .from("impact_exchange_posts")
-        .insert(payload);
+      const { error } = await supabase.from("impact_messages").insert(payload);
 
       if (error) {
         throw error;
       }
 
-      setStatus("Postcard posted to Impact Exchange.");
+      setStatus("Postcard sent.");
     } catch (error) {
-      console.warn("POSTCARD POST ERROR:", error);
+      console.warn("POSTCARD SEND ERROR:", error);
 
       setErrorMessage(
         error?.message ||
           error?.details ||
           error?.hint ||
-          "Something went wrong while posting your postcard."
+          "Something went wrong while sending your postcard."
       );
     } finally {
       setPosting(false);
     }
   }
-
   return (
     <main className="postcardPage">
       <section className="shell">
@@ -369,8 +391,8 @@ export default function CreatePostcardPage() {
 
             <div className="backSide">
               <div className="stamp">
-                <div className="miniImage">
-                  <span>{stampText || "ICH"}</span>
+                              <div className="miniImage watermarkStamp">
+                  <img src="/logo-ripple.png" alt="Impact Creator Hub watermark" />
                 </div>
               </div>
 
@@ -398,9 +420,23 @@ export default function CreatePostcardPage() {
 
             <h2>Edit the postcard</h2>
 
-            <label>
-              Replace image
-              <input type="file" accept="image/*" onChange={handleImageUpload} />
+                      <label>
+              Send to
+              <select
+                value={recipientUserId}
+                onChange={(event) => setRecipientUserId(event.target.value)}
+              >
+                <option value="">Choose a recipient...</option>
+
+                {recipients.map((recipient) => (
+                  <option
+                    key={`${recipient.type}-${recipient.profile_id}`}
+                    value={recipient.user_id}
+                  >
+                    {recipient.name} · {recipient.type}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label>
@@ -426,7 +462,7 @@ export default function CreatePostcardPage() {
               <textarea
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
-                placeholder="Write your update..."
+                placeholder="Write your message..."
               />
             </label>
 
@@ -439,36 +475,6 @@ export default function CreatePostcardPage() {
               />
             </label>
 
-            <label>
-              Stamp text
-              <input
-                value={stampText}
-                onChange={(event) => setStampText(event.target.value)}
-                placeholder="ICH"
-              />
-            </label>
-
-            <div className="stampChoiceBox">
-              <div>
-                <span>Optional stamp art</span>
-                <strong>{selectedStamp ? selectedStamp.name : "None selected"}</strong>
-              </div>
-
-              <button type="button" onClick={() => setStampModalOpen(true)}>
-                Add Stamp
-              </button>
-            </div>
-
-            {selectedStamp && (
-              <div className="selectedStampPreview">
-                <img src={selectedStamp.src} alt={selectedStamp.name} />
-
-                <button type="button" onClick={() => setSelectedStampId("")}>
-                  Remove selected stamp
-                </button>
-              </div>
-            )}
-
             {profile?.display_name && (
               <div className="postingAs">
                 <span>Posting as</span>
@@ -479,58 +485,18 @@ export default function CreatePostcardPage() {
             {status && <p className="successNote">{status}</p>}
             {errorMessage && <p className="errorNote">{errorMessage}</p>}
 
-            <div className="postcardActions">
+                    <div className="postcardActions">
               <button
                 type="button"
-                onClick={handlePostToImpactExchange}
+                onClick={handleSendPostcard}
                 disabled={posting || loadingProfile}
               >
-                {posting ? "Posting..." : "Post the postcard to Exchange"}
+                {posting ? "Sending..." : "Send"}
               </button>
-
-              <a href="/impact-exchange">View Exchange</a>
             </div>
           </aside>
         </section>
       </section>
-
-      {stampModalOpen && (
-        <div className="modalOverlay">
-          <div className="stampModal">
-            <div className="modalHeader">
-              <div>
-                <p className="eyebrow">Choose a stamp</p>
-                <h2>Add optional stamp art</h2>
-              </div>
-
-              <button
-                className="closeModal"
-                type="button"
-                onClick={() => setStampModalOpen(false)}
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="stampGrid">
-              {stampOptions.map((stamp) => (
-                <button
-                  key={stamp.id}
-                  type="button"
-                  className={selectedStampId === stamp.id ? "activeStamp" : ""}
-                  onClick={() => {
-                    setSelectedStampId(stamp.id);
-                    setStampModalOpen(false);
-                  }}
-                >
-                  <img src={stamp.src} alt={stamp.name} />
-                  <span>{stamp.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
       <style jsx>{`
         .postcardPage {
@@ -831,17 +797,22 @@ export default function CreatePostcardPage() {
           justify-content: flex-end;
         }
 
-        .miniImage {
+               .miniImage {
           width: 110px;
           height: 140px;
           display: grid;
           place-items: center;
-          border: 4px solid #289c9a;
-          background: #ff9f73;
-          color: #25375f;
-          font-size: 1.6rem;
-          font-weight: 900;
+          border: 2px solid rgba(40, 156, 154, 0.22);
+          background: rgba(40, 156, 154, 0.04);
           overflow: hidden;
+        }
+
+        .watermarkStamp img {
+          width: 68px;
+          height: 68px;
+          object-fit: contain;
+          opacity: 0.18;
+          filter: grayscale(1);
         }
 
         .messageArea {
@@ -1088,90 +1059,6 @@ export default function CreatePostcardPage() {
           color: #c0392b;
         }
 
-        .modalOverlay {
-          position: fixed;
-          inset: 0;
-          z-index: 100;
-          display: grid;
-          place-items: center;
-          background: rgba(0, 0, 0, 0.72);
-          padding: 22px;
-        }
-
-        .stampModal {
-          width: min(980px, 100%);
-          max-height: 86vh;
-          overflow: auto;
-          border: 1px solid rgba(255, 255, 255, 0.14);
-          border-radius: 24px;
-          background: #f8fafc;
-          color: #10172f;
-          box-shadow: 0 30px 90px rgba(0, 0, 0, 0.38);
-          padding: 24px;
-        }
-
-        .modalHeader {
-          display: flex;
-          justify-content: space-between;
-          gap: 18px;
-          align-items: flex-start;
-          margin-bottom: 18px;
-        }
-
-        .modalHeader h2 {
-          margin-top: 8px;
-          font-family: Georgia, "Times New Roman", serif;
-          font-size: 2rem;
-          letter-spacing: -0.04em;
-        }
-
-        .closeModal {
-          width: 42px;
-          height: 42px;
-          border: 0;
-          border-radius: 999px;
-          background: #10172f;
-          color: #ffffff;
-          cursor: pointer;
-          font-size: 1.7rem;
-          line-height: 1;
-        }
-
-        .stampGrid {
-          display: grid;
-          grid-template-columns: repeat(4, minmax(0, 1fr));
-          gap: 14px;
-        }
-
-        .stampGrid button {
-          border: 1px solid #d9dee8;
-          border-radius: 16px;
-          background: #ffffff;
-          cursor: pointer;
-          padding: 10px;
-          text-align: left;
-        }
-
-        .stampGrid button.activeStamp {
-          border-color: #17c9d5;
-          box-shadow: 0 0 0 4px rgba(23, 201, 213, 0.16);
-        }
-
-        .stampGrid img {
-          width: 100%;
-          aspect-ratio: 1 / 1;
-          object-fit: contain;
-          display: block;
-        }
-
-        .stampGrid span {
-          display: block;
-          margin-top: 8px;
-          color: #10172f;
-          font-size: 0.8rem;
-          font-weight: 950;
-          line-height: 1.25;
-        }
 
         @media (max-width: 980px) {
           .workspace,
