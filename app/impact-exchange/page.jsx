@@ -1193,7 +1193,7 @@ setNewPostFiles(selectedImages);
             </SidebarCard>
           )}
 
-          <SidebarCard title="Exchange status">
+          <SidebarCard title="Exchange status today">
             <div className="exchangeStats">
               <div>
                 <strong>{posts.length}</strong>
