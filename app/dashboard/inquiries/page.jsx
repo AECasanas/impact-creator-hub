@@ -2,9 +2,18 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import {
+  Bell,
+  LogOut,
+  Search,
+} from "lucide-react";
 
 export default function InquiriesPage() {
   const [user, setUser] = useState(null);
+  const [dashboardPath, setDashboardPath] = useState("/dashboard/profile");
+  const [currentUserAvatarUrl, setCurrentUserAvatarUrl] = useState("");
+  const [currentUserInitial, setCurrentUserInitial] = useState("I");
+  const [unreadMessages, setUnreadMessages] = useState(0); 
   const [messages, setMessages] = useState([]);
   const [senderMap, setSenderMap] = useState({});
   const [activeMessage, setActiveMessage] = useState(null);
@@ -38,6 +47,8 @@ export default function InquiriesPage() {
       }
 
       setUser(user);
+            await resolveDashboardPath(user.id);
+      await loadUnreadMessages(user.id);
 
       const { data, error } = await supabase
         .from("impact_messages")
@@ -188,25 +199,149 @@ export default function InquiriesPage() {
       year: "numeric",
     });
   }
+  async function resolveDashboardPath(userId) {
+    const { data: brandProfile } = await supabase
+      .from("brand_profiles")
+      .select("id, company_name, logo_url")
+      .eq("user_id", userId)
+      .maybeSingle();
 
+    if (brandProfile) {
+      setDashboardPath("/dashboard/brand");
+      setCurrentUserAvatarUrl(brandProfile.logo_url || "");
+      setCurrentUserInitial(
+        (brandProfile.company_name || "B").charAt(0).toUpperCase()
+      );
+      return;
+    }
+
+    const { data: creatorProfile } = await supabase
+      .from("creator_profiles")
+      .select("id, display_name, profile_photo_url")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (creatorProfile) {
+      setDashboardPath("/dashboard/profile");
+      setCurrentUserAvatarUrl(creatorProfile.profile_photo_url || "");
+      setCurrentUserInitial(
+        (creatorProfile.display_name || "I").charAt(0).toUpperCase()
+      );
+      return;
+    }
+
+    setCurrentUserAvatarUrl("");
+    setCurrentUserInitial("I");
+    setDashboardPath("/create-profile/free");
+  }
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+
+    setUser(null);
+    setCurrentUserAvatarUrl("");
+    setCurrentUserInitial("I");
+    setDashboardPath("/dashboard/profile");
+    setUnreadMessages(0);
+
+    window.location.href = "/login";
+  }
+
+  async function loadUnreadMessages(userId) {
+    const { count, error } = await supabase
+      .from("impact_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("recipient_user_id", userId)
+      .eq("is_read", false);
+
+    if (error) {
+      console.warn("LOAD UNREAD MESSAGES ERROR:", error);
+      setUnreadMessages(0);
+      return;
+    }
+
+    setUnreadMessages(count || 0);
+  }
   return (
         <main className={`inquiriesPage ${pageTheme === "light" ? "lightMode" : "darkMode"}`}>
       <section className="inquiriesShell">
-        <header className="inquiriesHeader">
-          <a href="/impact-exchange" className="brandLink">
+              <header className="exchangeHeader">
+          <a href="/" className="brandHeader">
             <img src="/logo-ripple.png" alt="Impact Creator Hub logo" />
 
             <div>
               <strong>Impact Creator Hub</strong>
-              <span>Messages and postcards</span>
+              <span>
+                BUILD YOUR BRAND. <em>GROW YOUR IMPACT.</em>
+              </span>
             </div>
           </a>
 
-          <nav>
-            <a href="/impact-exchange">Exchange</a>
-            <a href="/dashboard/profile">Dashboard</a>
-                        
+          <nav className="topMenu">
+            <a href="/impact-exchange" className="activeTopMenu">
+              Exchange
+            </a>
+            <a href={dashboardPath}>Dashboard</a>
           </nav>
+
+          <div className="topIconGroup">
+            <button type="button" className="topIconButton" aria-label="Search">
+              <Search size={17} strokeWidth={2.4} />
+            </button>
+
+            <button
+              type="button"
+              className="topIconButton"
+              aria-label={
+                unreadMessages > 0
+                  ? `${unreadMessages} unread postcard notification${unreadMessages === 1 ? "" : "s"}`
+                  : "Notifications"
+              }
+              title={
+                unreadMessages > 0
+                  ? `${unreadMessages} unread postcard notification${unreadMessages === 1 ? "" : "s"}`
+                  : "Notifications"
+              }
+              onClick={() => {
+                window.location.href = user
+                  ? "/dashboard/inquiries"
+                  : "/login?redirect=/dashboard/inquiries";
+              }}
+            >
+              <Bell size={17} strokeWidth={2.4} />
+              {unreadMessages > 0 && <span className="notificationDot"></span>}
+            </button>
+
+            {user ? (
+              <>
+                <a href={dashboardPath} className="topProfileButton">
+                  {currentUserAvatarUrl ? (
+                    <img
+                      src={currentUserAvatarUrl}
+                      alt="Your profile"
+                      className="topProfileImage"
+                    />
+                  ) : (
+                    currentUserInitial
+                  )}
+                </a>
+
+                <button
+                  type="button"
+                  className="topIconButton"
+                  aria-label="Sign out"
+                  title="Sign out"
+                  onClick={handleSignOut}
+                >
+                  <LogOut size={17} strokeWidth={2.4} />
+                </button>
+              </>
+            ) : (
+              <a href="/login?redirect=/dashboard/inquiries" className="loginButton">
+                Log In
+              </a>
+            )}
+          </div>
         </header>
 
         <section className="hero">
@@ -672,6 +807,168 @@ export default function InquiriesPage() {
 
         .inquiriesPage.lightMode .plainMessageView {
           background: rgba(16, 23, 47, 0.06);
+        }
+                .exchangeHeader {
+          width: min(1540px, 100%);
+          min-height: 78px;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 18px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 14px;
+        }
+
+        .brandHeader {
+          display: inline-flex;
+          align-items: center;
+          gap: 14px;
+          color: #eef3f7;
+          text-decoration: none;
+        }
+
+        .brandHeader img {
+          width: 58px;
+          height: 58px;
+          object-fit: contain;
+          background: #000000;
+        }
+
+        .brandHeader strong {
+          display: block;
+          font-size: 1.08rem;
+          font-weight: 950;
+        }
+
+        .brandHeader span {
+          display: block;
+          margin-top: 4px;
+          color: rgba(238, 243, 247, 0.72);
+          font-size: 0.62rem;
+          font-weight: 900;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+        }
+
+        .brandHeader em {
+          color: #ff8c82;
+          font-style: normal;
+        }
+
+        .topMenu {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-left: auto;
+        }
+
+        .topMenu a {
+          min-height: 44px;
+          display: inline-flex;
+          align-items: center;
+          border-radius: 999px;
+          color: rgba(238, 243, 247, 0.78);
+          font-size: 0.95rem;
+          font-weight: 950;
+          padding: 0 18px;
+          text-decoration: none;
+        }
+
+        .topMenu a:hover,
+        .topMenu .activeTopMenu {
+          background: rgba(255, 255, 255, 0.08);
+          color: #00e8f0;
+        }
+
+        .topIconGroup {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .topIconButton {
+          position: relative;
+          width: 52px;
+          height: 52px;
+          display: grid;
+          place-items: center;
+          border: 1px solid rgba(255, 255, 255, 0.13);
+          border-radius: 999px;
+          background: rgba(7, 10, 16, 0.46);
+          color: #eef3f7;
+          cursor: pointer;
+        }
+
+        .topProfileButton {
+          width: 58px;
+          height: 58px;
+          display: grid;
+          place-items: center;
+          border: 1px solid rgba(255, 255, 255, 0.13);
+          border-radius: 999px;
+          background: rgba(7, 10, 16, 0.46);
+          color: #eef3f7;
+          font-weight: 950;
+          overflow: hidden;
+          text-decoration: none;
+        }
+
+        .topProfileImage {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .notificationDot {
+          position: absolute;
+          top: 7px;
+          right: 8px;
+          width: 9px;
+          height: 9px;
+          border: 2px solid #10131a;
+          border-radius: 999px;
+          background: #ff1744;
+        }
+
+        .loginButton {
+          min-height: 44px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 999px;
+          background: #00e8f0;
+          color: #020617;
+          font-size: 0.9rem;
+          font-weight: 950;
+          padding: 0 18px;
+          text-decoration: none;
+        }
+
+        .inquiriesPage.lightMode .exchangeHeader {
+          border-bottom-color: rgba(16, 23, 47, 0.12);
+        }
+
+        .inquiriesPage.lightMode .brandHeader,
+        .inquiriesPage.lightMode .topMenu a {
+          color: #10172f;
+        }
+
+        .inquiriesPage.lightMode .brandHeader span {
+          color: rgba(16, 23, 47, 0.58);
+        }
+
+        .inquiriesPage.lightMode .topIconButton,
+        .inquiriesPage.lightMode .topProfileButton {
+          border-color: rgba(16, 23, 47, 0.12);
+          background: #fffdf9;
+          color: #10172f;
+        }
+
+        .inquiriesPage.lightMode .topMenu a:hover,
+        .inquiriesPage.lightMode .topMenu .activeTopMenu {
+          background: rgba(0, 232, 240, 0.12);
+          color: #008b95;
         }
         @media (max-width: 900px) {
           .inquiriesLayout {
