@@ -2964,26 +2964,33 @@ const exchangeStyles = `
     object-fit: cover;
   }
 
-  .postCollage {
+   .postCollage {
     display: grid;
+    width: 650px;
+    height: 500px;
     gap: 3px;
     overflow: hidden;
     background: #020617;
   }
 
   .postCollage img {
+    display: block;
     width: 100%;
     height: 100%;
+    min-width: 0;
+    min-height: 0;
     object-fit: cover;
+    overflow: hidden;
   }
 
   .postCollage.collageCount2 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
   }
 
   .postCollage.collageCount3 {
-    grid-template-columns: 1.2fr 1fr;
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
   }
 
   .postCollage.collageCount3 img:first-child {
@@ -2991,8 +2998,8 @@ const exchangeStyles = `
   }
 
   .postCollage.collageCount4 {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
   }
   .commentsPanel {
     margin-top: 14px;
