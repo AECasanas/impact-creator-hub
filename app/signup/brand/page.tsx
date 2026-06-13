@@ -283,7 +283,7 @@ export default function BrandSignupPage() {
 
             <p className="creatorLink">
               Are you a creator?{" "}
-              <a href="/signup/creator">Create a creator profile</a>
+              <a href="/signup">Create a creator profile</a>
             </p>
 
             <p className="creatorLink">

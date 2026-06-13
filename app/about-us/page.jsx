@@ -71,7 +71,7 @@ export default function AboutUsPage() {
             About Us
           </a>
           <a href="/login">Login</a>
-          <a href="/signup/creator" className="getStarted">
+          <a href="/signup" className="getStarted">
             Get Started
           </a>
         </nav>

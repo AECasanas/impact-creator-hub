@@ -162,7 +162,7 @@ function SiteFooter() {
             </p>
 
             <div className="footerCtaRow">
-              <a href="/signup/creator" className="btnPrimary">
+              <a href="/signup" className="btnPrimary">
                 Join as a Creator
               </a>
 
@@ -263,7 +263,7 @@ function SiteFooter() {
 
             <div className="linkCol">
               <h4>Creators</h4>
-              <a href="/signup/creator">Join Free</a>
+              <a href="/signup">Join Free</a>
               <a href="/features">Impact Kit</a>
               <a href="/impact-exchange">Impact Exchange</a>
               <a href="/for-creators">How It Works</a>

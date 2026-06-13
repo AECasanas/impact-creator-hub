@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function SignupPage() {
@@ -11,32 +11,71 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  async function handleSignup() {
-    setLoading(true);
-    setMessage("");
+async function handleSignup() {
+  setLoading(true);
+  setMessage("");
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          account_type: "creator",
-        },
-      },
-    });
+  const cleanFullName = fullName.trim();
+  const cleanEmail = email.trim();
 
+  if (!cleanFullName || !cleanEmail || !password) {
+    setMessage("Please enter your name, email, and password.");
     setLoading(false);
+    return;
+  }
 
-    if (error) {
-      setMessage(error.message);
+  if (password.length < 6) {
+    setMessage("Password must be at least 6 characters.");
+    setLoading(false);
+    return;
+  }
+
+  const { data, error } = await supabase.auth.signUp({
+    email: cleanEmail,
+    password,
+    options: {
+      data: {
+        full_name: cleanFullName,
+        account_type: "creator",
+      },
+    },
+  });
+
+  if (error) {
+    setMessage(error.message);
+    setLoading(false);
+    return;
+  }
+
+  if (data?.user) {
+    const { error: accountError } = await supabase.from("user_accounts").upsert(
+      {
+        user_id: data.user.id,
+        account_type: "creator",
+        active_profile_type: "creator",
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id" }
+    );
+
+    if (accountError) {
+      setMessage(accountError.message);
+      setLoading(false);
       return;
     }
-
-    setMessage("Account created! Please check your email to confirm your signup."); setTimeout(() => {
-  window.location.href = "/create-profile/free";
-}, 2500);
   }
+
+  if (data?.session) {
+    setLoading(false);
+    window.location.href = "/dashboard/profile";
+    return;
+  }
+
+  setMessage(
+    "Account created. Please check your email to confirm your signup. After confirming, log in to continue to your creator dashboard."
+  );
+  setLoading(false);
+}
   return (
     <main className="signupPage">
       <div className="overlay"></div>
@@ -113,7 +152,7 @@ export default function SignupPage() {
               <a>Terms of Service</a> and <a>Privacy Policy</a>.
             </p>
 <p className="loginText">
-  Already a member? <a href="/login?redirect=/create-profile/free">Log in</a>
+ Already a member? <a href="/login?redirect=/dashboard/profile">Log in</a>
 </p>
            
 
