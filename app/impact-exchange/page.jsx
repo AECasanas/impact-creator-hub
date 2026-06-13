@@ -1839,14 +1839,13 @@ const exchangeStyles = `
     gap: 10px;
   }
 
-  .topIconButton,
-  .topProfileButton {
+   .topIconButton {
     position: relative;
     width: 42px;
     height: 42px;
     display: grid;
     place-items: center;
-    border: .5px solid #e6e8ef;
+    border: 1px solid #e6e8ef;
     border-radius: 999px;
     background: #ffffff;
     color: #10172f;
@@ -1856,15 +1855,34 @@ const exchangeStyles = `
     font-weight: 950;
     text-decoration: none;
   }
-          .topProfileImage {
+
+  .topProfileButton {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--profile-accent, #00e8f0);
+    border-radius: 999px;
+    background: #ffffff;
+    color: #10172f;
+    box-shadow: none;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 950;
+    text-decoration: none;
+    overflow: hidden;
+  }
+             .topProfileImage {
     width: 100%;
     height: 100%;
-    border: .5px solid var(--profile-accent, #00e8f0);
+    border: 0;
     border-radius: 999px;
     object-fit: cover;
-    box-shadow: 0 0 2px var(--profile-accent, #00e8f0);
+    box-shadow: none;
   }
-      .exchangePage.darkFeed .topProfileButton {
+
+  .exchangePage.darkFeed .topProfileButton {
     box-shadow: none;
   }
   .notificationDot {
@@ -1926,19 +1944,20 @@ const exchangeStyles = `
     text-decoration: none;
   }
 
-  .leftMenuItem span {
-    width: 26px;
+    .leftMenuItem span {
+    width: 30px;
     display: inline-flex;
     justify-content: center;
   }
-       .leftMenuProfileIcon img {
-    width: 24px;
-    height: 24px;
-    border: .5px solid var(--profile-accent, #00e8f0);
+
+      .leftMenuProfileIcon img {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--profile-accent, #00e8f0);
     border-radius: 999px;
     object-fit: cover;
-    box-shadow: 0 0 2px var(--profile-accent, #00e8f0);
-  }   
+    box-shadow: none;
+  } 
 
   .leftMenuItem:hover,
   .leftMenuItem.activeLeftMenu {
