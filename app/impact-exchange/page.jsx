@@ -1910,14 +1910,18 @@ const exchangeStyles = `
     text-decoration: none;
   }
 
-  .leftMenuItem span {
-    width: 26px;
+   .leftMenuItem span {
+    width: 32px;
+    flex: 0 0 32px;
     display: inline-flex;
     justify-content: center;
+    align-items: center;
   }
+
   .leftMenuProfileIcon img {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
+    display: block;
     border-radius: 999px;
     object-fit: cover;
   }
