@@ -49,6 +49,7 @@ export default function ImpactExchangePage() {
   const [userLikes, setUserLikes] = useState({});
   const [savedPosts, setSavedPosts] = useState({});
   const [saveCounts, setSaveCounts] = useState({});
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const [followedCreators, setFollowedCreators] = useState({});
   const [followedBrands, setFollowedBrands] = useState({});
   const [commentsByPost, setCommentsByPost] = useState({});
@@ -91,8 +92,11 @@ export default function ImpactExchangePage() {
 
     setUser(user || null);
 
-    if (user) {
+        if (user) {
       await resolveDashboardPath(user.id);
+      await loadUnreadMessages(user.id);
+    } else {
+      setUnreadMessages(0);
     }
 
     const { data, error } = await supabase
@@ -155,15 +159,31 @@ export default function ImpactExchangePage() {
     setCurrentUserInitial("I");
     setDashboardPath("/create-profile/free");
   }
-  async function handleSignOut() {
+   async function handleSignOut() {
     await supabase.auth.signOut();
 
     setUser(null);
     setCurrentUserAvatarUrl("");
     setCurrentUserInitial("I");
     setDashboardPath("/dashboard/profile");
+    setUnreadMessages(0);
 
     window.location.href = "/login";
+  }
+    async function loadUnreadMessages(userId) {
+    const { count, error } = await supabase
+      .from("impact_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("recipient_user_id", userId)
+      .eq("is_read", false);
+
+    if (error) {
+      console.warn("LOAD UNREAD MESSAGES ERROR:", error);
+      setUnreadMessages(0);
+      return;
+    }
+
+    setUnreadMessages(count || 0);
   }
   async function loadProfilesForPosts(loadedPosts) {
     const creatorIds = [
@@ -951,13 +971,27 @@ setNewPostFiles(selectedImages);
             <Search size={17} strokeWidth={2.4} />
           </button>
 
-          <button
+                   <button
             type="button"
             className="topIconButton"
-            aria-label="Notifications"
+            aria-label={
+              unreadMessages > 0
+                ? `${unreadMessages} unread postcard notification${unreadMessages === 1 ? "" : "s"}`
+                : "Notifications"
+            }
+            title={
+              unreadMessages > 0
+                ? `${unreadMessages} unread postcard notification${unreadMessages === 1 ? "" : "s"}`
+                : "Notifications"
+            }
+            onClick={() => {
+              window.location.href = user
+                ? "/dashboard/inquiries"
+                : "/login?redirect=/dashboard/inquiries";
+            }}
           >
             <Bell size={17} strokeWidth={2.4} />
-            <span className="notificationDot"></span>
+            {unreadMessages > 0 && <span className="notificationDot"></span>}
           </button>
 
                    {user ? (
