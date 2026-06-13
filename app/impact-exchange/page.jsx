@@ -762,7 +762,13 @@ export default function ImpactExchangePage() {
       return;
     }
 
-    setNewPostFiles(acceptedFiles.slice(0, 4));
+   const selectedImages = acceptedFiles.slice(0, 4);
+
+if (selectedImages.length !== selectedFiles.length) {
+  alert(`Selected ${selectedFiles.length} files. Posting ${selectedImages.length}.`);
+}
+
+setNewPostFiles(selectedImages);
   }
 
   async function uploadNewPostFiles() {
