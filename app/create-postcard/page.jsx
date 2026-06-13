@@ -97,7 +97,7 @@ export default function CreatePostcardPage() {
   const [postcardTitle, setPostcardTitle] = useState("Postcard");
   const [greeting, setGreeting] = useState("Dear...");
   const [message, setMessage] = useState(
-    "Write a short update, idea, project note, or collaboration opportunity."
+    "Write a short note, idea, thank-you, or collaboration message."
   );
   const [signature, setSignature] = useState("From, Impact Creator Hub");
   const [stampText, setStampText] = useState("ICH");
@@ -158,6 +158,7 @@ export default function CreatePostcardPage() {
       }
 
       setProfile(data);
+            setSignature(`From, ${data.display_name || "Impact Creator Hub"}`);
             await loadRecipients(user.id);
     } catch (error) {
       console.warn("LOAD POSTCARD PROFILE ERROR:", error);
@@ -360,14 +361,15 @@ export default function CreatePostcardPage() {
           </a>
         </header>
 
-        <section className="intro">
-          <p className="eyebrow">Impact Exchange</p>
+              <section className="intro">
+          <p className="eyebrow">Impact Messages</p>
 
-          <h1>Create a postcard post</h1>
+          <h1>Send a postcard</h1>
 
           <p>
-            Draft a visual postcard for a social update, project idea, creative
-            call, or collaboration opportunity.
+            Send a short, visual note to another creator or brand inside Impact
+            Creator Hub. Use it for a warm introduction, thank-you, project idea,
+            or collaboration message.
           </p>
         </section>
 
@@ -410,7 +412,7 @@ export default function CreatePostcardPage() {
               <div className="messageArea">
                 <h3>{greeting || "Dear..."}</h3>
 
-                <p>{message}</p>
+             <p className="postcardMessageText">{message}</p>
 
                 <div className="writeLines">
                   <span></span>
@@ -488,17 +490,17 @@ export default function CreatePostcardPage() {
               />
             </label>
 
-            <label>
-              Message
-                           <textarea
+                      <label>
+              Message 300 characters max
+              <textarea
                 value={message}
-                maxLength={500}
+                maxLength={300}
                 onChange={(event) => setMessage(event.target.value)}
                 placeholder="Write your message..."
               />
             </label>
-                        <p className="messageCounter">{message.length}/500 characters</p>
 
+            <p className="messageCounter">{message.length}/300 characters</p>
             <label>
               Signature
               <input
@@ -510,7 +512,7 @@ export default function CreatePostcardPage() {
 
             {profile?.display_name && (
               <div className="postingAs">
-                <span>Posting as</span>
+                <span>Postcard from</span>
                 <strong>{profile.display_name}</strong>
               </div>
             )}
@@ -870,11 +872,21 @@ export default function CreatePostcardPage() {
           letter-spacing: -0.03em;
         }
 
-        .messageArea p {
+          .messageArea p {
           max-width: 460px;
           color: rgba(37, 55, 95, 0.86);
           font-size: 1rem;
-          line-height: 1.65;
+          line-height: 1.45;
+        }
+
+        .postcardMessageText {
+          min-height: 116px;
+          max-height: 116px;
+          overflow: hidden;
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+          line-height: 1.45;
         }
 
         .writeLines {
@@ -941,7 +953,7 @@ export default function CreatePostcardPage() {
         }
 
         textarea {
-          min-height: 170px;
+          min-height: 150px;
           resize: vertical;
           line-height: 1.5;
         }
