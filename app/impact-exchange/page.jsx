@@ -1856,13 +1856,16 @@ const exchangeStyles = `
     font-weight: 950;
     text-decoration: none;
   }
-       .topProfileImage {
+          .topProfileImage {
     width: 100%;
     height: 100%;
     border: 1px solid var(--profile-accent, #00e8f0);
     border-radius: 999px;
     object-fit: cover;
-    box-shadow: 0 0 8px color-mix(in srgb, var(--profile-accent, #00e8f0) 20%, transparent);
+    box-shadow: 0 0 2px var(--profile-accent, #00e8f0);
+  }
+      .exchangePage.darkFeed .topProfileButton {
+    box-shadow: none;
   }
   .notificationDot {
     position: absolute;
@@ -1928,14 +1931,15 @@ const exchangeStyles = `
     display: inline-flex;
     justify-content: center;
   }
-      .leftMenuProfileIcon img {
+       .leftMenuProfileIcon img {
     width: 24px;
     height: 24px;
     border: 1px solid var(--profile-accent, #00e8f0);
     border-radius: 999px;
     object-fit: cover;
-    box-shadow: 0 0 6px color-mix(in srgb, var(--profile-accent, #00e8f0) 20%, transparent);
-  }
+    box-shadow: 0 0 2px var(--profile-accent, #00e8f0);
+  }   
+
   .leftMenuItem:hover,
   .leftMenuItem.activeLeftMenu {
     background: #ffffff;
