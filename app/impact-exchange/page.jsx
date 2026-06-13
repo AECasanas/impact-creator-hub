@@ -66,6 +66,15 @@ export default function ImpactExchangePage() {
     is_published: true,
   });
   const [editSaving, setEditSaving] = useState(false);
+    const [creatingPostType, setCreatingPostType] = useState(null);
+  const [newPostDraft, setNewPostDraft] = useState({
+    title: "",
+    body: "",
+    link_url: "",
+    collage_layout: "auto",
+  });
+  const [newPostFiles, setNewPostFiles] = useState([]);
+  const [newPostSaving, setNewPostSaving] = useState(false);
 
   useEffect(() => {
     loadPage();
@@ -713,6 +722,168 @@ export default function ImpactExchangePage() {
 
     cancelEditPost();
   }
+    function openCreatePostModal(postType) {
+    if (!user) {
+      window.location.assign("/login?redirect=/impact-exchange");
+      return;
+    }
+
+    setCreatingPostType(postType);
+    setNewPostDraft({
+      title: "",
+      body: "",
+      link_url: "",
+      collage_layout: "auto",
+    });
+    setNewPostFiles([]);
+  }
+
+  function cancelCreatePost() {
+    setCreatingPostType(null);
+    setNewPostDraft({
+      title: "",
+      body: "",
+      link_url: "",
+      collage_layout: "auto",
+    });
+    setNewPostFiles([]);
+  }
+
+  function handleNewPostFiles(event) {
+    const selectedFiles = Array.from(event.target.files || []);
+    const acceptedFiles = selectedFiles.filter(
+      (file) => file.type.startsWith("image/") || file.type.startsWith("video/")
+    );
+
+    const videoFile = acceptedFiles.find((file) => file.type.startsWith("video/"));
+
+    if (videoFile) {
+      setNewPostFiles([videoFile]);
+      return;
+    }
+
+    setNewPostFiles(acceptedFiles.slice(0, 4));
+  }
+
+  async function uploadNewPostFiles() {
+    if (!user || newPostFiles.length === 0) {
+      return {
+        urls: [],
+        mediaType: "",
+      };
+    }
+
+    const uploadedUrls = [];
+
+    for (const file of newPostFiles) {
+      const fileExt = file.name.split(".").pop() || "upload";
+      const filePath = `${user.id}/${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2)}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("impact-exchange-media")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage
+        .from("impact-exchange-media")
+        .getPublicUrl(filePath);
+
+      uploadedUrls.push(data.publicUrl);
+    }
+
+    return {
+      urls: uploadedUrls,
+      mediaType: newPostFiles[0]?.type.startsWith("video/") ? "video" : "image",
+    };
+  }
+
+  async function saveNewPost() {
+    if (!user) {
+      window.location.assign("/login?redirect=/impact-exchange");
+      return;
+    }
+
+    const title = newPostDraft.title.trim();
+    const body = newPostDraft.body.trim();
+    const linkUrl = newPostDraft.link_url.trim();
+
+    if (!title && !body && newPostFiles.length === 0) {
+      alert("Add a title, caption, photo, or video before posting.");
+      return;
+    }
+
+    setNewPostSaving(true);
+
+    try {
+      const { data: brandProfile } = await supabase
+        .from("brand_profiles")
+        .select("id, slug, company_name")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      const { data: creatorProfile } = brandProfile
+        ? { data: null }
+        : await supabase
+            .from("creator_profiles")
+            .select("id, slug, display_name")
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+      const { urls, mediaType } = await uploadNewPostFiles();
+
+      const payload = {
+        user_id: user.id,
+        title,
+        body,
+        post_type: creatingPostType || "Photo/video",
+        link_url: linkUrl,
+        image_url: urls[0] || "",
+        media_urls: urls,
+        media_type: mediaType,
+        collage_layout: newPostDraft.collage_layout,
+        is_published: true,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (brandProfile) {
+        payload.author_type = "brand";
+        payload.brand_profile_id = brandProfile.id;
+        payload.brand_slug = brandProfile.slug || "";
+        payload.author_name = brandProfile.company_name || "Brand";
+      } else if (creatorProfile) {
+        payload.author_type = "creator";
+        payload.creator_profile_id = creatorProfile.id;
+        payload.creator_slug = creatorProfile.slug || "";
+        payload.author_name = creatorProfile.display_name || "Creator";
+      } else {
+        payload.author_type = "creator";
+        payload.author_name = user.email || "Creator";
+      }
+
+      const { error: insertError } = await supabase
+        .from("impact_exchange_posts")
+        .insert(payload);
+
+      if (insertError) {
+        throw insertError;
+      }
+
+      cancelCreatePost();
+      await loadPage();
+    } catch (postError) {
+      alert(postError.message || "Could not create this post.");
+    } finally {
+      setNewPostSaving(false);
+    }
+  }
   const filteredPosts = useMemo(() => {
     if (activeFilter === "All") {
       return posts;
@@ -848,21 +1019,23 @@ export default function ImpactExchangePage() {
                 {user ? user.email?.charAt(0)?.toUpperCase() || "I" : "I"}
               </div>
 
-              <a
-                href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}
+                          <button
+                type="button"
                 className="quickPostInput"
+                onClick={() => openCreatePostModal("Photo/video")}
               >
                 What do you want to share today?
-              </a>
+              </button>
 
               <div className="quickPostActions">
-                <a
-                  href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}
+                <button
+                  type="button"
                   title="Photo/video"
                   aria-label="Photo/video"
+                  onClick={() => openCreatePostModal("Photo/video")}
                 >
                   <ImagePlus size={20} strokeWidth={2.4} />
-                </a>
+                </button>
 
                 <a
                   href={user ? "/create-postcard" : "/login?redirect=/create-postcard"}
@@ -872,13 +1045,14 @@ export default function ImpactExchangePage() {
                   <Mail size={20} strokeWidth={2.4} />
                 </a>
 
-                <a
-                  href={user ? "/dashboard/post" : "/login?redirect=/dashboard/post"}
+                <button
+                  type="button"
                   title="Collaboration"
                   aria-label="Collaboration"
+                  onClick={() => openCreatePostModal("Collaboration")}
                 >
                   <Handshake size={20} strokeWidth={2.4} />
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -1055,7 +1229,131 @@ export default function ImpactExchangePage() {
           )}
                </aside>
       </section>
+      {creatingPostType && (
+        <div className="editModalOverlay">
+          <div className="editModalCard">
+            <div className="editModalHeader">
+              <div>
+                <p>Create post</p>
+                <h2>
+                  {creatingPostType === "Collaboration"
+                    ? "Start a collaboration post."
+                    : "Share photos or video."}
+                </h2>
+              </div>
 
+              <button type="button" onClick={cancelCreatePost}>
+                ×
+              </button>
+            </div>
+
+            <div className="editModalGrid">
+              <label>
+                Post title
+                <input
+                  value={newPostDraft.title}
+                  onChange={(event) =>
+                    setNewPostDraft((current) => ({
+                      ...current,
+                      title: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+
+              <label>
+                Layout
+                <select
+                  value={newPostDraft.collage_layout}
+                  onChange={(event) =>
+                    setNewPostDraft((current) => ({
+                      ...current,
+                      collage_layout: event.target.value,
+                    }))
+                  }
+                >
+                  <option value="auto">Auto</option>
+                  <option value="single">Single image</option>
+                  <option value="split">2-image split</option>
+                  <option value="grid">Photo grid</option>
+                </select>
+              </label>
+            </div>
+
+            <label className="editModalFull">
+              Caption / details
+              <textarea
+                value={newPostDraft.body}
+                onChange={(event) =>
+                  setNewPostDraft((current) => ({
+                    ...current,
+                    body: event.target.value,
+                  }))
+                }
+              />
+            </label>
+
+            <label className="editModalFull">
+              Link URL
+              <input
+                value={newPostDraft.link_url}
+                onChange={(event) =>
+                  setNewPostDraft((current) => ({
+                    ...current,
+                    link_url: event.target.value,
+                  }))
+                }
+              />
+            </label>
+
+            <div className="createMediaGrid">
+              <label className="createMediaUpload">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime"
+                  multiple
+                  onChange={handleNewPostFiles}
+                />
+                Upload up to 4 photos, or 1 video
+              </label>
+
+              {newPostFiles.length > 0 && (
+                <div className="createMediaPreviewGrid">
+                  {newPostFiles.map((file, index) =>
+                    file.type.startsWith("video/") ? (
+                      <video
+                        key={`${file.name}-${index}`}
+                        src={URL.createObjectURL(file)}
+                        controls
+                      />
+                    ) : (
+                      <img
+                        key={`${file.name}-${index}`}
+                        src={URL.createObjectURL(file)}
+                        alt=""
+                      />
+                    )
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="editModalActions">
+              <button type="button" onClick={cancelCreatePost}>
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={saveNewPost}
+                disabled={newPostSaving}
+              >
+                {newPostSaving ? "Posting..." : "Post"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {editingPost && (
         <div className="editModalOverlay">
           <div className="editModalCard">
@@ -1230,6 +1528,17 @@ function ExchangePostCard({
 
   const bannerUrl =
     post.image_url || (isBrand ? brand?.banner_url : profile?.banner_photo_url);
+      const mediaUrls =
+    Array.isArray(post.media_urls) && post.media_urls.length > 0
+      ? post.media_urls
+      : bannerUrl
+        ? [bannerUrl]
+        : [];
+
+  const firstMediaUrl = mediaUrls[0] || "";
+
+  const firstMediaIsVideo =
+    post.media_type === "video" || /\.(mp4|webm|mov)$/i.test(firstMediaUrl);
 
   const accentName = isBrand ? brand?.accent_name : profile?.accent_name;
 
@@ -1323,13 +1632,33 @@ function ExchangePostCard({
         "--post-accent": accentColor,
       }}
     >
-      {bannerUrl ? (
-        <div
-          className="postBanner"
-          style={{
-            backgroundImage: `linear-gradient(180deg, rgba(5, 9, 20, 0.04), rgba(5, 9, 20, 0.18)), url(${bannerUrl})`,
-          }}
-        />
+          {mediaUrls.length > 0 ? (
+        firstMediaIsVideo ? (
+          <video
+            className="postBanner postVideo"
+            src={firstMediaUrl}
+            controls
+            playsInline
+          />
+        ) : mediaUrls.length > 1 ? (
+          <div
+            className={`postBanner postCollage collageCount${Math.min(
+              mediaUrls.length,
+              4
+            )}`}
+          >
+            {mediaUrls.slice(0, 4).map((url, index) => (
+              <img key={`${url}-${index}`} src={url} alt="" />
+            ))}
+          </div>
+        ) : (
+          <div
+            className="postBanner"
+            style={{
+              backgroundImage: `linear-gradient(180deg, rgba(5, 9, 20, 0.04), rgba(5, 9, 20, 0.18)), url(${firstMediaUrl})`,
+            }}
+          />
+        )
       ) : (
         <div className="postBanner emptyBanner" />
       )}
@@ -2020,16 +2349,20 @@ const exchangeStyles = `
     font-weight: 950;
   }
 
-  .quickPostInput {
+   .quickPostInput {
     min-height: 46px;
     display: flex;
     align-items: center;
+    border: 0;
     border-radius: 999px;
     background: #f7f8fb;
     color: rgba(16,23,47,0.56);
+    cursor: pointer;
+    font: inherit;
     font-size: 0.95rem;
     font-weight: 800;
     padding: 0 18px;
+    text-align: left;
     text-decoration: none;
   }
 
@@ -2043,18 +2376,23 @@ const exchangeStyles = `
     gap: 8px;
   }
 
-  .quickPostActions a {
+  .quickPostActions a,
+  .quickPostActions button {
     width: 42px;
     height: 42px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    border: 0;
     border-radius: 999px;
+    background: transparent;
     color: rgba(16,23,47,0.7);
+    cursor: pointer;
     text-decoration: none;
   }
 
-  .quickPostActions a:hover {
+  .quickPostActions a:hover,
+  .quickPostActions button:hover {
     background: #f7f8fb;
     color: #008b94;
   }
@@ -2574,6 +2912,81 @@ const exchangeStyles = `
   .editModalActions button:disabled {
     cursor: not-allowed;
     opacity: 0.58;
+  }
+      .createMediaGrid {
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .createMediaUpload {
+    min-height: 118px;
+    display: grid;
+    place-items: center;
+    border: 1px dashed rgba(255, 255, 255, 0.24);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.055);
+    color: rgba(238, 243, 247, 0.74);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 900;
+    padding: 18px;
+    text-align: center;
+  }
+
+  .createMediaUpload input {
+    display: none;
+  }
+
+  .createMediaPreviewGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .createMediaPreviewGrid img,
+  .createMediaPreviewGrid video {
+    width: 100%;
+    height: 92px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    object-fit: cover;
+  }
+
+  .postVideo {
+    display: block;
+    object-fit: cover;
+  }
+
+  .postCollage {
+    display: grid;
+    gap: 3px;
+    overflow: hidden;
+    background: #020617;
+  }
+
+  .postCollage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .postCollage.collageCount2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .postCollage.collageCount3 {
+    grid-template-columns: 1.2fr 1fr;
+    grid-template-rows: repeat(2, 1fr);
+  }
+
+  .postCollage.collageCount3 img:first-child {
+    grid-row: span 2;
+  }
+
+  .postCollage.collageCount4 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
   }
   .commentsPanel {
     margin-top: 14px;
