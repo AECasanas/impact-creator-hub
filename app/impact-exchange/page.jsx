@@ -38,6 +38,7 @@ export default function ImpactExchangePage() {
   const [dashboardPath, setDashboardPath] = useState("/dashboard/profile");
   const [currentUserAvatarUrl, setCurrentUserAvatarUrl] = useState("");
   const [currentUserInitial, setCurrentUserInitial] = useState("I");
+  const [currentUserAccentColor, setCurrentUserAccentColor] = useState("#00e8f0");
   const [posts, setPosts] = useState([]);
   const [profileMap, setProfileMap] = useState({});
   const [brandMap, setBrandMap] = useState({});
@@ -109,10 +110,10 @@ export default function ImpactExchangePage() {
     setLoading(false);
   }
 
-  async function resolveDashboardPath(userId) {
+    async function resolveDashboardPath(userId) {
     const { data: brandProfile } = await supabase
       .from("brand_profiles")
-      .select("id, company_name, logo_url")
+      .select("id, company_name, logo_url, accent_color")
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -122,12 +123,13 @@ export default function ImpactExchangePage() {
       setCurrentUserInitial(
         (brandProfile.company_name || "B").charAt(0).toUpperCase()
       );
+      setCurrentUserAccentColor(brandProfile.accent_color || "#00e8f0");
       return;
     }
 
     const { data: creatorProfile } = await supabase
       .from("creator_profiles")
-      .select("id, display_name, profile_photo_url")
+      .select("id, display_name, profile_photo_url, accent_color")
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -137,11 +139,13 @@ export default function ImpactExchangePage() {
       setCurrentUserInitial(
         (creatorProfile.display_name || "I").charAt(0).toUpperCase()
       );
+      setCurrentUserAccentColor(creatorProfile.accent_color || "#00e8f0");
       return;
     }
 
     setCurrentUserAvatarUrl("");
     setCurrentUserInitial("I");
+    setCurrentUserAccentColor("#00e8f0");
     setDashboardPath("/create-profile/free");
   }
 
@@ -750,8 +754,12 @@ export default function ImpactExchangePage() {
             <span className="notificationDot"></span>
           </button>
 
-          {user ? (
-                       <a href={dashboardPath} className="topProfileButton">
+                  {user ? (
+            <a
+              href={dashboardPath}
+              className="topProfileButton"
+              style={{ "--profile-accent": currentUserAccentColor }}
+            >
               {currentUserAvatarUrl ? (
                 <img
                   src={currentUserAvatarUrl}
@@ -777,8 +785,11 @@ export default function ImpactExchangePage() {
             Dashboard
           </a>
 
-          <a href={dashboardPath} className="leftMenuItem">
-                        <span className="leftMenuProfileIcon">
+                   <a href={dashboardPath} className="leftMenuItem">
+            <span
+              className="leftMenuProfileIcon"
+              style={{ "--profile-accent": currentUserAccentColor }}
+            >
               {currentUserAvatarUrl ? (
                 <img src={currentUserAvatarUrl} alt="Your profile" />
               ) : (
@@ -1845,11 +1856,15 @@ const exchangeStyles = `
     font-weight: 950;
     text-decoration: none;
   }
-  .topProfileImage {
+    .topProfileImage {
     width: 100%;
     height: 100%;
+    border: 2px solid var(--profile-accent, #00e8f0);
     border-radius: 999px;
     object-fit: cover;
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, 0.08),
+      0 0 18px color-mix(in srgb, var(--profile-accent, #00e8f0) 44%, transparent);
   }
   .notificationDot {
     position: absolute;
@@ -1915,11 +1930,15 @@ const exchangeStyles = `
     display: inline-flex;
     justify-content: center;
   }
-  .leftMenuProfileIcon img {
-    width: 22px;
-    height: 22px;
+   .leftMenuProfileIcon img {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--profile-accent, #00e8f0);
     border-radius: 999px;
     object-fit: cover;
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, 0.06),
+      0 0 14px color-mix(in srgb, var(--profile-accent, #00e8f0) 42%, transparent);
   }
   .leftMenuItem:hover,
   .leftMenuItem.activeLeftMenu {
