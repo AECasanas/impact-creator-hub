@@ -1846,7 +1846,7 @@ const exchangeStyles = `
     height: 42px;
     display: grid;
     place-items: center;
-    border: 1px solid #e6e8ef;
+    border: .5px solid #e6e8ef;
     border-radius: 999px;
     background: #ffffff;
     color: #10172f;
@@ -1859,7 +1859,7 @@ const exchangeStyles = `
           .topProfileImage {
     width: 100%;
     height: 100%;
-    border: 1px solid var(--profile-accent, #00e8f0);
+    border: .5px solid var(--profile-accent, #00e8f0);
     border-radius: 999px;
     object-fit: cover;
     box-shadow: 0 0 2px var(--profile-accent, #00e8f0);
@@ -1934,7 +1934,7 @@ const exchangeStyles = `
        .leftMenuProfileIcon img {
     width: 24px;
     height: 24px;
-    border: 1px solid var(--profile-accent, #00e8f0);
+    border: .5px solid var(--profile-accent, #00e8f0);
     border-radius: 999px;
     object-fit: cover;
     box-shadow: 0 0 2px var(--profile-accent, #00e8f0);
