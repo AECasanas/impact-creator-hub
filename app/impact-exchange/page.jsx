@@ -1410,7 +1410,7 @@ function ExchangePostCard({
     onClick={() => setShareMenuOpen((current) => !current)}
   >
     <Share2 size={16} strokeWidth={2.4} />{" "}
-    {shareCopied ? "Copied!" : "Share"} {shareCount}
+   {shareCopied ? "Copied!" : "Share"}{shareCount > 0 ? ` ${shareCount}` : ""}
   </button>
 
   {shareMenuOpen && (
@@ -1519,7 +1519,7 @@ function ExchangePostCard({
               strokeWidth={2.4}
               fill={savedByUser ? "currentColor" : "none"}
             />{" "}
-            {savedByUser ? "Saved" : "Save"} {saveCount}
+           {savedByUser ? "Saved" : "Save"}{saveCount > 0 ? ` ${saveCount}` : ""}
           </button>
         </div>
 
