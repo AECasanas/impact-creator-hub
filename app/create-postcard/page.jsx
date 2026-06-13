@@ -333,16 +333,17 @@ export default function CreatePostcardPage() {
       setPosting(false);
     }
   }
-    const filteredRecipients = recipientSearch.trim()
-    ? recipients
-        .filter((recipient) => {
-          const searchValue = `${recipient.name} ${recipient.type} ${recipient.label}`
-            .toLowerCase();
+    const filteredRecipients =
+    recipientSearch.trim() && !recipientUserId
+      ? recipients
+          .filter((recipient) => {
+            const searchValue = `${recipient.name} ${recipient.type} ${recipient.label}`
+              .toLowerCase();
 
-          return searchValue.includes(recipientSearch.trim().toLowerCase());
-        })
-        .slice(0, 6)
-    : [];
+            return searchValue.includes(recipientSearch.trim().toLowerCase());
+          })
+          .slice(0, 6)
+      : [];
   return (
     <main className="postcardPage">
       <section className="shell">
@@ -433,17 +434,49 @@ export default function CreatePostcardPage() {
 
             <h2>Edit the postcard</h2>
 
-                const filteredRecipients =
-    recipientSearch.trim() && !recipientUserId
-      ? recipients
-          .filter((recipient) => {
-            const searchValue = `${recipient.name} ${recipient.type} ${recipient.label}`
-              .toLowerCase();
+                        <label>
+              Send to
+              <input
+                value={recipientSearch}
+                onChange={(event) => {
+                  setRecipientSearch(event.target.value);
+                  setRecipientUserId("");
+                }}
+                placeholder="Search by creator name or brand name"
+              />
+            </label>
 
-            return searchValue.includes(recipientSearch.trim().toLowerCase());
-          })
-          .slice(0, 6)
-      : [];
+            <p className="recipientHelpText">
+              Start typing a creator or brand name, then select a match.
+            </p>
+
+            {recipientSearch && !recipientUserId && (
+              <div className="recipientResults">
+                {filteredRecipients.length > 0 ? (
+                  filteredRecipients.map((recipient) => (
+                    <button
+                      type="button"
+                      key={`${recipient.type}-${recipient.profile_id}`}
+                      className="recipientOption"
+                      onClick={() => {
+                        setRecipientUserId(recipient.user_id);
+                        setRecipientSearch(`${recipient.name} · ${recipient.type}`);
+                      }}
+                    >
+                      <strong>{recipient.name}</strong>
+                      <span>
+                        {recipient.type}
+                        {recipient.label ? ` · ${recipient.label}` : ""}
+                      </span>
+                    </button>
+                  ))
+                ) : (
+                  <p className="noRecipientResults">No matching users found.</p>
+                )}
+              </div>
+            )}
+
+            <label></label>
 
             <label>
               Edit front title
@@ -991,7 +1024,12 @@ export default function CreatePostcardPage() {
           font-weight: 800;
         }
 
-        .noRecipientResults {
+                .noRecipientResults {
+          margin: 0;
+          border: 1px dashed #d9dee8;
+          border-radius: 14px;
+          padding: 12px;
+        }
 
         .postingAs {
           display: grid;
