@@ -2375,19 +2375,15 @@ const exchangeStyles = `
     border-radius: 999px;
     object-fit: cover;
   }
-    .notificationDot {
+     .notificationDot {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 11px;
-    height: 11px;
+    top: 7px;
+    right: 8px;
+    width: 9px;
+    height: 9px;
     border: 2px solid #10131a;
     border-radius: 999px;
     background: #ff1744;
-    box-shadow:
-      0 0 0 2px rgba(255, 23, 68, 0.25),
-      0 0 12px rgba(255, 23, 68, 0.95),
-      0 0 24px rgba(255, 23, 68, 0.65);
   }
 
   .loginButton {
