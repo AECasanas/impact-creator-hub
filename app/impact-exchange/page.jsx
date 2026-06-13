@@ -13,6 +13,7 @@ import {
   House,
   ImagePlus,
   Link as LinkIcon,
+  LogOut,
   Mail,
   MessageCircle,
   PenLine,
@@ -154,7 +155,16 @@ export default function ImpactExchangePage() {
     setCurrentUserInitial("I");
     setDashboardPath("/create-profile/free");
   }
+  async function handleSignOut() {
+    await supabase.auth.signOut();
 
+    setUser(null);
+    setCurrentUserAvatarUrl("");
+    setCurrentUserInitial("I");
+    setDashboardPath("/dashboard/profile");
+
+    window.location.href = "/login";
+  }
   async function loadProfilesForPosts(loadedPosts) {
     const creatorIds = [
       ...new Set(
@@ -950,18 +960,30 @@ setNewPostFiles(selectedImages);
             <span className="notificationDot"></span>
           </button>
 
-          {user ? (
-                       <a href={dashboardPath} className="topProfileButton">
-              {currentUserAvatarUrl ? (
-                <img
-                  src={currentUserAvatarUrl}
-                  alt="Your profile"
-                  className="topProfileImage"
-                />
-              ) : (
-                currentUserInitial
-              )}
-            </a>
+                   {user ? (
+            <>
+              <a href={dashboardPath} className="topProfileButton">
+                {currentUserAvatarUrl ? (
+                  <img
+                    src={currentUserAvatarUrl}
+                    alt="Your profile"
+                    className="topProfileImage"
+                  />
+                ) : (
+                  currentUserInitial
+                )}
+              </a>
+
+              <button
+                type="button"
+                className="topIconButton"
+                aria-label="Sign out"
+                title="Sign out"
+                onClick={handleSignOut}
+              >
+                <LogOut size={17} strokeWidth={2.4} />
+              </button>
+            </>
           ) : (
             <a href="/login?redirect=/impact-exchange" className="loginButton">
               Log In
