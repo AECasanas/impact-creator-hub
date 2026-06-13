@@ -1856,15 +1856,13 @@ const exchangeStyles = `
     font-weight: 950;
     text-decoration: none;
   }
-    .topProfileImage {
+       .topProfileImage {
     width: 100%;
     height: 100%;
-    border: 2px solid var(--profile-accent, #00e8f0);
+    border: 1px solid var(--profile-accent, #00e8f0);
     border-radius: 999px;
     object-fit: cover;
-    box-shadow:
-      0 0 0 2px rgba(255, 255, 255, 0.08),
-      0 0 18px color-mix(in srgb, var(--profile-accent, #00e8f0) 44%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--profile-accent, #00e8f0) 20%, transparent);
   }
   .notificationDot {
     position: absolute;
@@ -1930,15 +1928,13 @@ const exchangeStyles = `
     display: inline-flex;
     justify-content: center;
   }
-   .leftMenuProfileIcon img {
+      .leftMenuProfileIcon img {
     width: 24px;
     height: 24px;
-    border: 2px solid var(--profile-accent, #00e8f0);
+    border: 1px solid var(--profile-accent, #00e8f0);
     border-radius: 999px;
     object-fit: cover;
-    box-shadow:
-      0 0 0 2px rgba(255, 255, 255, 0.06),
-      0 0 14px color-mix(in srgb, var(--profile-accent, #00e8f0) 42%, transparent);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--profile-accent, #00e8f0) 20%, transparent);
   }
   .leftMenuItem:hover,
   .leftMenuItem.activeLeftMenu {
