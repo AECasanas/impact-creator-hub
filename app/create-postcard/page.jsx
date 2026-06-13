@@ -85,6 +85,7 @@ export default function CreatePostcardPage() {
   const [profile, setProfile] = useState(null);
   const [recipients, setRecipients] = useState([]);
   const [recipientUserId, setRecipientUserId] = useState("");
+  const [recipientSearch, setRecipientSearch] = useState("");
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [posting, setPosting] = useState(false);
   const [status, setStatus] = useState("");
@@ -331,6 +332,16 @@ export default function CreatePostcardPage() {
       setPosting(false);
     }
   }
+    const filteredRecipients = recipientSearch.trim()
+    ? recipients
+        .filter((recipient) => {
+          const searchValue = `${recipient.name} ${recipient.type} ${recipient.label}`
+            .toLowerCase();
+
+          return searchValue.includes(recipientSearch.trim().toLowerCase());
+        })
+        .slice(0, 6)
+    : [];
   return (
     <main className="postcardPage">
       <section className="shell">
@@ -420,27 +431,47 @@ export default function CreatePostcardPage() {
 
             <h2>Edit the postcard</h2>
 
-                      <label>
+                       <label>
               Send to
-              <select
-                value={recipientUserId}
-                onChange={(event) => setRecipientUserId(event.target.value)}
-              >
-                <option value="">Choose a recipient...</option>
-
-                {recipients.map((recipient) => (
-                  <option
-                    key={`${recipient.type}-${recipient.profile_id}`}
-                    value={recipient.user_id}
-                  >
-                    {recipient.name} · {recipient.type}
-                  </option>
-                ))}
-              </select>
+              <input
+                value={recipientSearch}
+                onChange={(event) => {
+                  setRecipientSearch(event.target.value);
+                  setRecipientUserId("");
+                }}
+                placeholder="Search creators or brands..."
+              />
             </label>
 
+            {recipientSearch && (
+              <div className="recipientResults">
+                {filteredRecipients.length > 0 ? (
+                  filteredRecipients.map((recipient) => (
+                    <button
+                      type="button"
+                      key={`${recipient.type}-${recipient.profile_id}`}
+                      className={
+                        recipientUserId === recipient.user_id
+                          ? "recipientOption selectedRecipient"
+                          : "recipientOption"
+                      }
+                      onClick={() => {
+                        setRecipientUserId(recipient.user_id);
+                        setRecipientSearch(`${recipient.name} · ${recipient.type}`);
+                      }}
+                    >
+                      <strong>{recipient.name}</strong>
+                      <span>{recipient.type}{recipient.label ? ` · ${recipient.label}` : ""}</span>
+                    </button>
+                  ))
+                ) : (
+                  <p className="noRecipientResults">No matching users found.</p>
+                )}
+              </div>
+            )}
+
             <label>
-              Front title
+              Edit front title
               <input
                 value={postcardTitle}
                 onChange={(event) => setPostcardTitle(event.target.value)}
@@ -459,12 +490,14 @@ export default function CreatePostcardPage() {
 
             <label>
               Message
-              <textarea
+                           <textarea
                 value={message}
+                maxLength={500}
                 onChange={(event) => setMessage(event.target.value)}
                 placeholder="Write your message..."
               />
             </label>
+                        <p className="messageCounter">{message.length}/500 characters</p>
 
             <label>
               Signature
@@ -797,21 +830,32 @@ export default function CreatePostcardPage() {
           justify-content: flex-end;
         }
 
-               .miniImage {
-          width: 110px;
-          height: 140px;
+                 .miniImage {
+          position: relative;
+          width: 112px;
+          height: 142px;
           display: grid;
           place-items: center;
-          border: 2px solid rgba(40, 156, 154, 0.22);
-          background: rgba(40, 156, 154, 0.04);
           overflow: hidden;
+          border: 2px solid rgba(40, 156, 154, 0.38);
+          background:
+            radial-gradient(circle, transparent 5px, #fffdf9 5.5px) -8px -8px / 18px 18px,
+            rgba(40, 156, 154, 0.045);
+          box-shadow: inset 0 0 0 8px rgba(255, 255, 255, 0.55);
+        }
+
+        .miniImage::before {
+          content: "";
+          position: absolute;
+          inset: 8px;
+          border: 1px solid rgba(40, 156, 154, 0.22);
         }
 
         .watermarkStamp img {
-          width: 68px;
-          height: 68px;
+          width: 92px;
+          height: 92px;
           object-fit: contain;
-          opacity: 0.18;
+          opacity: 0.22;
           filter: grayscale(1);
         }
 
@@ -880,7 +924,7 @@ export default function CreatePostcardPage() {
           font-weight: 900;
         }
 
-        input,
+                input,
         textarea {
           width: 100%;
           border: 1px solid #d9dee8;
@@ -896,15 +940,19 @@ export default function CreatePostcardPage() {
           min-height: 46px;
         }
 
-        input[type="file"] {
-          padding: 10px;
-          min-height: auto;
-        }
-
         textarea {
-          min-height: 120px;
+          min-height: 170px;
           resize: vertical;
           line-height: 1.5;
+        }
+
+        .messageCounter {
+          margin-top: -8px;
+          margin-bottom: 14px;
+          color: #667085;
+          font-size: 0.76rem;
+          font-weight: 800;
+          text-align: right;
         }
 
         input:focus,
@@ -912,77 +960,49 @@ export default function CreatePostcardPage() {
           border-color: #17c9d5;
           box-shadow: 0 0 0 4px rgba(23, 201, 213, 0.14);
         }
-
-        .stampChoiceBox {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 14px;
-          border: 1px solid rgba(16, 23, 47, 0.08);
-          border-radius: 16px;
-          background: rgba(23, 201, 213, 0.08);
-          margin-top: 8px;
-          padding: 14px;
+                .recipientResults {
+          display: grid;
+          gap: 8px;
+          margin: -6px 0 14px;
         }
 
-        .stampChoiceBox span {
-          display: block;
-          color: #667085;
-          font-size: 0.72rem;
-          font-weight: 900;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-        }
-
-        .stampChoiceBox strong {
-          display: block;
-          margin-top: 4px;
-          color: #10172f;
-          font-size: 0.9rem;
-          font-weight: 950;
-        }
-
-        .stampChoiceBox button {
-          min-height: 40px;
-          border: 0;
-          border-radius: 999px;
-          background: #17c9d5;
-          color: #020617;
-          cursor: pointer;
-          font: inherit;
-          font-size: 0.82rem;
-          font-weight: 950;
-          padding: 0 14px;
-          white-space: nowrap;
-        }
-
-        .selectedStampPreview {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-top: 12px;
+        .recipientOption {
+          width: 100%;
+          display: grid;
+          gap: 4px;
           border: 1px solid #d9dee8;
-          border-radius: 16px;
+          border-radius: 14px;
           background: #ffffff;
-          padding: 10px;
-        }
-
-        .selectedStampPreview img {
-          width: 70px;
-          height: 70px;
-          object-fit: contain;
-          display: block;
-        }
-
-        .selectedStampPreview button {
-          border: 0;
-          background: transparent;
           color: #10172f;
           cursor: pointer;
           font: inherit;
+          padding: 11px 12px;
+          text-align: left;
+        }
+
+        .recipientOption:hover,
+        .selectedRecipient {
+          border-color: #17c9d5;
+          background: rgba(23, 201, 213, 0.1);
+        }
+
+        .recipientOption strong {
+          font-size: 0.88rem;
+          font-weight: 950;
+        }
+
+        .recipientOption span,
+        .noRecipientResults {
+          color: #667085;
           font-size: 0.78rem;
-          font-weight: 900;
-          text-decoration: underline;
+          font-weight: 800;
+        }
+
+        .noRecipientResults {
+          margin: 0;
+          border: 1px dashed #d9dee8;
+          border-radius: 14px;
+          padding: 12px;
         }
 
         .postingAs {
@@ -1077,10 +1097,6 @@ export default function CreatePostcardPage() {
 
           .backSide {
             padding: 36px;
-          }
-
-          .stampGrid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
           }
         }
 
