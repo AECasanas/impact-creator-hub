@@ -205,15 +205,7 @@ export default function InquiriesPage() {
           <nav>
             <a href="/impact-exchange">Exchange</a>
             <a href="/dashboard/profile">Dashboard</a>
-                        <button
-              type="button"
-              className="themeToggle"
-              onClick={() =>
-                setPageTheme(pageTheme === "dark" ? "light" : "dark")
-              }
-            >
-              {pageTheme === "dark" ? "Light inbox" : "Dark inbox"}
-            </button>
+                        
           </nav>
         </header>
 
@@ -225,7 +217,17 @@ export default function InquiriesPage() {
             Impact Creator Hub.
           </span>
         </section>
-
+        <div className="inboxControls">
+          <button
+            type="button"
+            className="themeToggle"
+            onClick={() =>
+              setPageTheme(pageTheme === "dark" ? "light" : "dark")
+            }
+          >
+            {pageTheme === "dark" ? "Light inbox" : "Dark inbox"}
+          </button>
+        </div>
         <section className="inquiriesLayout">
           <aside className="messageListCard">
             <div className="tabs">
@@ -603,7 +605,74 @@ export default function InquiriesPage() {
           color: rgba(238, 243, 247, 0.64);
           line-height: 1.6;
         }
+        .inboxControls {
+          display: flex;
+          justify-content: flex-end;
+          margin: 0 0 14px;
+        }
 
+        .themeToggle {
+          min-height: 42px;
+          border: 1px solid #00e8f0;
+          border-radius: 999px;
+          background: #00e8f0;
+          color: #020617;
+          cursor: pointer;
+          font: inherit;
+          font-size: 0.84rem;
+          font-weight: 950;
+          padding: 0 18px;
+        }
+
+        .inquiriesPage.lightMode {
+          background: #f7f8fb;
+          color: #10172f;
+        }
+
+        .inquiriesPage.lightMode .inquiriesHeader {
+          border-bottom-color: rgba(16, 23, 47, 0.12);
+        }
+
+        .inquiriesPage.lightMode .brandLink,
+        .inquiriesPage.lightMode .inquiriesHeader nav a,
+        .inquiriesPage.lightMode .hero h1,
+        .inquiriesPage.lightMode .messagePlaceholder h2,
+        .inquiriesPage.lightMode .messageRow,
+        .inquiriesPage.lightMode .detailSender a,
+        .inquiriesPage.lightMode .detailSender strong,
+        .inquiriesPage.lightMode .plainMessageView h2 {
+          color: #10172f;
+        }
+
+        .inquiriesPage.lightMode .hero span,
+        .inquiriesPage.lightMode .messagePlaceholder p,
+        .inquiriesPage.lightMode .messageRow span,
+        .inquiriesPage.lightMode .messageRow p,
+        .inquiriesPage.lightMode .detailSender span,
+        .inquiriesPage.lightMode .plainMessageView p {
+          color: rgba(16, 23, 47, 0.62);
+        }
+
+        .inquiriesPage.lightMode .messageListCard,
+        .inquiriesPage.lightMode .messageDetailCard {
+          border-color: rgba(16, 23, 47, 0.12);
+          background: #fffdf9;
+          box-shadow: 0 24px 70px rgba(16, 23, 47, 0.12);
+        }
+
+        .inquiriesPage.lightMode .tabs,
+        .inquiriesPage.lightMode .messageRow {
+          border-bottom-color: rgba(16, 23, 47, 0.08);
+        }
+
+        .inquiriesPage.lightMode .messageRow:hover,
+        .inquiriesPage.lightMode .activeMessageRow {
+          background: rgba(0, 232, 240, 0.08);
+        }
+
+        .inquiriesPage.lightMode .plainMessageView {
+          background: rgba(16, 23, 47, 0.06);
+        }
         @media (max-width: 900px) {
           .inquiriesLayout {
             grid-template-columns: 1fr;
